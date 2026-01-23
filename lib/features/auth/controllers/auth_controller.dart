@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/auth_repository.dart';
+import '../../../routes/app_routes.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _repo = AuthRepository();
@@ -30,7 +31,7 @@ class AuthController extends GetxController {
           backgroundColor: Colors.green, colorText: Colors.white);
       
       // TODO: Arahkan ke Dashboard
-      // Get.offAllNamed(Routes.DASHBOARD); 
+      Get.offAllNamed(Routes.DASHBOARD);
       
     } catch (e) {
       // Gagal

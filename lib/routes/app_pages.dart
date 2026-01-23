@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'app_routes.dart';
-import '../features/auth/views/login_view.dart'; // Import View
+import '../features/auth/views/login_view.dart';
+// Import Dashboard View
+import '../features/dashboard/views/dashboard_view.dart'; 
 
 class AppPages {
   static const INITIAL = Routes.LOGIN;
@@ -10,6 +12,10 @@ class AppPages {
       name: Routes.LOGIN,
       page: () => const LoginView(),
     ),
-    // Nanti Dashboard disini
+    // --- Tambahkan Ini ---
+    GetPage(
+      name: Routes.DASHBOARD,
+      page: () => const DashboardView(),
+    ),
   ];
 }

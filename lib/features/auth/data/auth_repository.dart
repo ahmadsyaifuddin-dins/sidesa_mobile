@@ -32,6 +32,10 @@ class AuthRepository {
           await _storage.write(key: 'auth_token', value: user.token);
           // Simpan nama user juga buat sapaan nanti (opsional)
           await _storage.write(key: 'user_name', value: user.name);
+          
+          if (user.nik != null) {
+            await _storage.write(key: 'user_nik', value: user.nik);
+          }
         }
 
         return user;
@@ -47,6 +51,32 @@ class AuthRepository {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+// Tambahkan fungsi ini di bawah fungsi login
+  Future<UserModel> getProfile() async {
+    try {
+      // 1. Ambil Token dari HP
+      String? token = await _storage.read(key: 'auth_token');
+      
+      if (token == null) throw Exception("Token tidak ditemukan, silakan login ulang.");
+
+      // 2. Request ke API /user dengan Header Bearer Token
+      final response = await _dio.get(
+        ApiConfig.user, // Pastikan endpoint ini ada di api_config.dart
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      // 3. Kembalikan data user terbaru
+      return UserModel.fromJson(response.data); // Backend Laravel biasanya bungkus di key 'data' atau langsung
+    } catch (e) {
+      throw Exception("Gagal memuat profil: $e");
     }
   }
 
