@@ -50,7 +50,9 @@ class SuratModel {
   String get tanggalFormatted {
     try {
       final date = DateTime.parse(createdAt);
-      return DateFormat('d MMM yyyy, HH:mm').format(date); // Tambah jam biar detail
+      final localDate = date.toLocal(); 
+      // 3. Format tanggal yang sudah lokal
+      return DateFormat('d MMM yyyy, HH:mm').format(localDate);
     } catch (e) {
       return "-";
     }

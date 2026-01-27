@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../data/surat_repository.dart';
 
 class BuatSuratController extends GetxController {
   final SuratRepository _repo = SuratRepository();
-
+  final ImagePicker _picker = ImagePicker();
   // State Form
   var isLoading = false.obs;
   var jenisSuratTerpilih = 'sku'.obs; // Default SKU
+  var selectedImage = Rxn<XFile>();
 
   // Input Controller Umum
   final keteranganC = TextEditingController();
@@ -23,6 +25,17 @@ class BuatSuratController extends GetxController {
     {'kode': 'sktm', 'nama': 'Surat Keterangan Tidak Mampu'},
   ];
 
+  // FUNGSI PILIH GAMBAR
+  void pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(
+      source: source, 
+      imageQuality: 50 // Kompres biar gak kegedean (hemat kuota & cepat)
+    );
+    if (image != null) {
+      selectedImage.value = image;
+    }
+  }
+
   void kirimSurat() async {
     if (keteranganC.text.isEmpty) {
       Get.snackbar("Error", "Keterangan keperluan harus diisi", backgroundColor: Colors.red[100]);
@@ -35,6 +48,11 @@ class BuatSuratController extends GetxController {
         Get.snackbar("Error", "Detail usaha wajib diisi", backgroundColor: Colors.red[100]);
         return;
       }
+    }
+
+    if (selectedImage.value == null) {
+      Get.snackbar("Peringatan", "Mohon lampirkan Foto KTP/Syarat", backgroundColor: Colors.orange[100]);
+      return;
     }
 
     isLoading.value = true;
@@ -55,13 +73,12 @@ class BuatSuratController extends GetxController {
         jenisSurat: jenisSuratTerpilih.value,
         keterangan: keteranganC.text,
         dataForm: dataForm,
+        lampiran: selectedImage.value,
       );
 
       Get.back(); // Tutup halaman form
-      Get.snackbar("Sukses", "Surat berhasil diajukan!", backgroundColor: Colors.green, colorText: Colors.white);
+      Get.snackbar("Sukses", "Surat & Berkas berhasil dikirim!", backgroundColor: Colors.green, colorText: Colors.white);
       
-      // TODO: Refresh halaman dashboard/riwayat biar muncul status terbaru
-
     } catch (e) {
       Get.snackbar("Gagal", e.toString().replaceAll("Exception:", ""), backgroundColor: Colors.red, colorText: Colors.white);
     } finally {

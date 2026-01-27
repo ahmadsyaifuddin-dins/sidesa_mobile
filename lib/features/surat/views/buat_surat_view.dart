@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/buat_surat_controller.dart';
+import 'dart:io';
 
 class BuatSuratView extends StatelessWidget {
   const BuatSuratView({super.key});
@@ -109,6 +111,69 @@ class BuatSuratView extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 20),
+
+            // 4. UPLOAD LAMPIRAN (BARU)
+            const Text("Lampiran (Foto KTP/Syarat)", style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            
+            Obx(() {
+              if (controller.selectedImage.value == null) {
+                // KONDISI: BELUM ADA FOTO
+                return InkWell(
+                  onTap: () => _showPickerBottomSheet(context, controller),
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      border: Border.all(color: Colors.grey[400]!, style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.camera_alt, size: 40, color: Colors.grey),
+                        SizedBox(height: 10),
+                        Text("Tap untuk ambil foto", style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                );
+              } else {
+                // KONDISI: SUDAH ADA FOTO (PREVIEW)
+                return Stack(
+                  children: [
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        image: DecorationImage(
+                          image: FileImage(File(controller.selectedImage.value!.path)),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    // Tombol Hapus/Ganti
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            controller.selectedImage.value = null; // Hapus
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            }),
+
             const SizedBox(height: 30),
 
             // 4. Tombol Kirim
@@ -129,6 +194,36 @@ class BuatSuratView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+  // Fungsi Bottom Sheet Pilihan
+  void _showPickerBottomSheet(BuildContext context, BuatSuratController controller) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Ambil dari Galeri'),
+                onTap: () {
+                  controller.pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Ambil dari Kamera'),
+                onTap: () {
+                  controller.pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
