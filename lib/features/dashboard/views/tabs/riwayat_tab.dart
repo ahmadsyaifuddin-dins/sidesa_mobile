@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../../../data/models/surat_model.dart';
 
@@ -108,11 +109,12 @@ class _RiwayatTabState extends State<RiwayatTab> {
 
   Widget _buildCard(SuratModel surat) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      // Margin bawah agar antar kartu ada jarak
+      margin: const EdgeInsets.only(bottom: 15),
+      
+      // Dekorasi Luar (Khusus Shadow)
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.05),
@@ -121,55 +123,76 @@ class _RiwayatTabState extends State<RiwayatTab> {
           )
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Icon Surat
-          Container(
-            padding: const EdgeInsets.all(12),
+      
+      // Material digunakan agar efek 'Ripple' (gelombang klik) terlihat di atas warna putih
+      child: Material(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Get.to(() => const DetailSuratView(), arguments: surat);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            // Dekorasi Dalam (Khusus Border)
             decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[200]!),
             ),
-            child: Icon(Icons.description_outlined, color: Colors.blue[700]),
-          ),
-          const SizedBox(width: 15),
-          
-          // Detail
-          Expanded(
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  surat.namaSurat,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Diajukan: ${surat.tanggalFormatted}",
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                const SizedBox(height: 8),
-                // Badge Status
+                // 1. Icon Surat
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: surat.statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    surat.status.toUpperCase(),
-                    style: TextStyle(
-                      color: surat.statusColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Icon(Icons.description_outlined, color: Colors.blue[700]),
+                ),
+                const SizedBox(width: 15),
+                
+                // 2. Detail Teks & Status
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        surat.namaSurat,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Diajukan: ${surat.tanggalFormatted}",
+                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Badge Status
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: surat.statusColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          surat.status.toUpperCase(),
+                          style: TextStyle(
+                            color: surat.statusColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

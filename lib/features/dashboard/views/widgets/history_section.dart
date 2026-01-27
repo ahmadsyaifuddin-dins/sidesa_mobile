@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../../../data/models/surat_model.dart';
 
@@ -77,7 +78,9 @@ class HistorySection extends StatelessWidget {
   }
 
   Widget _buildHistoryItem(SuratModel surat) {
-    return Container(
+    return InkWell( 
+      onTap: () => Get.to(() => const DetailSuratView(), arguments: surat),
+    child: Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -128,6 +131,7 @@ class HistorySection extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

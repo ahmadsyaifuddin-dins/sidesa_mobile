@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pastikan sudah 'flutter pub add intl'
+import 'package:intl/intl.dart';
 
 class SuratModel {
   final String uuid;
   final String jenisSurat;
   final String status;
   final String createdAt;
+  
+  // Field Tambahan untuk Detail
+  final String? keteranganPemohon;
+  final String? keteranganOperator; // Alasan tolak/catatan admin
+  final Map<String, dynamic>? dataForm; // Isi form (JSON)
+  final String? fileHasil; // Link PDF (jika selesai)
 
   SuratModel({
     required this.uuid,
     required this.jenisSurat,
     required this.status,
     required this.createdAt,
+    this.keteranganPemohon,
+    this.keteranganOperator,
+    this.dataForm,
+    this.fileHasil,
   });
 
   factory SuratModel.fromJson(Map<String, dynamic> json) {
@@ -19,11 +29,15 @@ class SuratModel {
       uuid: json['uuid'],
       jenisSurat: json['jenis_surat'],
       status: json['status'],
-      createdAt: json['created_at'], // Laravel format: 2026-01-23T11:36:23.000000Z
+      createdAt: json['created_at'],
+      keteranganPemohon: json['keterangan_pemohon'],
+      keteranganOperator: json['keterangan_operator'],
+      // Pastikan data_form di-parse sebagai Map
+      dataForm: json['data_form'] is Map ? Map<String, dynamic>.from(json['data_form']) : null,
+      fileHasil: json['file_hasil'],
     );
   }
 
-  // Helper: Ubah kode 'sku' jadi 'Surat Keterangan Usaha'
   String get namaSurat {
     switch (jenisSurat) {
       case 'sku': return 'Surat Keterangan Usaha';
@@ -33,17 +47,15 @@ class SuratModel {
     }
   }
 
-  // Helper: Format Tanggal (Contoh: 23 Jan 2026)
   String get tanggalFormatted {
     try {
       final date = DateTime.parse(createdAt);
-      return DateFormat('d MMM yyyy').format(date);
+      return DateFormat('d MMM yyyy, HH:mm').format(date); // Tambah jam biar detail
     } catch (e) {
       return "-";
     }
   }
 
-  // Helper: Warna Badge Status
   Color get statusColor {
     switch (status) {
       case 'pending': return Colors.orange;
