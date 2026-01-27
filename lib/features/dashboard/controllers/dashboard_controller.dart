@@ -12,6 +12,7 @@ class DashboardController extends GetxController {
 
   var userName = ''.obs;
   var userNik = ''.obs;
+  var userEmail = ''.obs;
   
   // STATE HISTORY
   var historySurat = <SuratModel>[].obs;
@@ -34,8 +35,10 @@ class DashboardController extends GetxController {
   void loadUserData() async {
     String? name = await _storage.read(key: 'user_name');
     String? nik = await _storage.read(key: 'user_nik');
+    String? email = await _storage.read(key: 'user_email');
     if (name != null) userName.value = name;
     if (nik != null) userNik.value = nik;
+    if (email != null) userEmail.value = email;
   }
 
   Future<void> fetchHistory() async {

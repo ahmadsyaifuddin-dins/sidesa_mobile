@@ -35,6 +35,7 @@ class AuthRepository {
           
           if (user.nik != null) {
             await _storage.write(key: 'user_nik', value: user.nik);
+            await _storage.write(key: 'user_email', value: user.email);
           }
         }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/dashboard/views/tabs/profile_tab.dart';
 import '../controllers/dashboard_controller.dart';
 
 // Import Tabs
@@ -20,6 +21,7 @@ class DashboardView extends StatelessWidget {
         children: [
           const HomeTab(),      // Index 0
           const RiwayatTab(),   // Index 1
+          const ProfileTab(),   // Index 2
           Container(color: Colors.white, child: Center(child: TextButton(onPressed: ()=>controller.logout(), child: Text("Logout (Sementara)")))), // Index 2 (Profil)
         ],
       )),
