@@ -67,7 +67,7 @@ class SuratRepository {
       String? token = await _storage.read(key: 'auth_token');
       
       final response = await _dio.get(
-        _endpoint, // URL: /api/surat
+        _endpoint,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -77,16 +77,12 @@ class SuratRepository {
       );
 
       if (response.statusCode == 200) {
-        // Debugging: Cek isi data di terminal
-        // print("Data API: ${response.data}"); 
-        
         List data = response.data['data'];
         return data.map((json) => SuratModel.fromJson(json)).toList();
       }
       return [];
     } catch (e) {
-      // Return list kosong kalau error
-      print("Error ambil surat: $e");
+      print("Error ambil surat: $e"); // Print error API umum saja (misal koneksi putus)
       return [];
     }
   }
