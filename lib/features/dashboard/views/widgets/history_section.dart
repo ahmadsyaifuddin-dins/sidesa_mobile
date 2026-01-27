@@ -19,7 +19,10 @@ class HistorySection extends StatelessWidget {
             const Text("Aktivitas Terkini",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                // Pindah ke Tab Riwayat (Index 1)
+                Get.find<DashboardController>().changeTab(1);
+              },
               style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
