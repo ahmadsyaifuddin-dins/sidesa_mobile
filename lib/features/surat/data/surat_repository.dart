@@ -1,9 +1,11 @@
-import 'dart:convert'; // Wajib import ini buat jsonEncode
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/config/api_config.dart';
 import '../../../data/models/surat_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class SuratRepository {
   final Dio _dio = Dio();
@@ -21,9 +23,6 @@ class SuratRepository {
   }) async {
     try {
       String? token = await _storage.read(key: 'auth_token');
-      
-      // Gunakan jsonEncode agar formatnya valid JSON: {"key": "value"}
-      // Kalau pakai .toString() hasilnya {key: value} -> Laravel Gagal Baca
       FormData formData = FormData.fromMap({
           "jenis_surat": jenisSurat,
           "keterangan": keterangan,
@@ -84,6 +83,31 @@ class SuratRepository {
     } catch (e) {
       print("Error ambil surat: $e"); // Print error API umum saja (misal koneksi putus)
       return [];
+    }
+  }
+
+  Future<String?> downloadFile(String url, String fileName) async {
+    try {
+      String savePath;
+
+      // 1. TENTUKAN LOKASI PENYIMPANAN
+      if (Platform.isAndroid) {
+        // Khusus Android: Simpan ke folder "Download" agar muncul di File Manager
+        savePath = "/storage/emulated/0/Download/$fileName";
+      } else {
+        // Fallback untuk iOS (karena iOS tidak punya akses folder bebas)
+        final dir = await getApplicationDocumentsDirectory();
+        savePath = "${dir.path}/$fileName";
+      }
+
+      // 2. EKSEKUSI DOWNLOAD
+      // File akan otomatis menimpa jika nama file sama
+      await _dio.download(url, savePath);
+
+      return savePath;
+    } catch (e) {
+      // Jika gagal (misal izin ditolak atau koneksi putus), kembalikan null
+      return null;
     }
   }
 }

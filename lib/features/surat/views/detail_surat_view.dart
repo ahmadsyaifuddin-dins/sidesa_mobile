@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/surat_model.dart';
+import 'package:open_file/open_file.dart';
+import '../data/surat_repository.dart';
 
 class DetailSuratView extends StatelessWidget {
   const DetailSuratView({super.key});
@@ -115,17 +117,51 @@ class DetailSuratView extends StatelessWidget {
             const SizedBox(height: 30),
 
             // 3. Tombol Aksi (Jika Selesai)
-            if (surat.status == 'selesai')
+            if (surat.status == 'selesai' && surat.fileHasil != null)
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    Get.snackbar("Info", "Fitur Download PDF akan segera aktif!");
-                    // Nanti kita coding logic download di sini
+                  onPressed: () async {
+                    try {
+                      Get.snackbar("Mengunduh...", "Menyimpan ke folder Download...", 
+                        backgroundColor: Colors.blue[100], duration: const Duration(seconds: 2));
+                      
+                      final repo = SuratRepository();
+                      
+                      // 1. Ambil URL & Tentukan Ekstensi (Prioritas DOCX)
+                      String urlFile = surat.fileHasil!;
+                      String extension = "docx"; // Default Word
+                      
+                      if (urlFile.endsWith(".pdf")) extension = "pdf";
+                      else if (urlFile.endsWith(".doc")) extension = "doc";
+                      
+                      final fileName = "Surat_${surat.jenisSurat}_${surat.uuid.substring(0,5)}.$extension";
+
+                      // 3. Download
+                      final path = await repo.downloadFile(urlFile, fileName);
+                      
+                      if (path != null) {
+                         // SUKSES!
+                         Get.snackbar(
+                           "Download Berhasil!", 
+                           "Tersimpan di: Folder Download HP.\nMembuka file...", 
+                           backgroundColor: Colors.green[100],
+                           duration: const Duration(seconds: 4),
+                           snackPosition: SnackPosition.BOTTOM // Biar kebaca jelas
+                         );
+                         
+                         await Future.delayed(const Duration(seconds: 1));
+                         await OpenFile.open(path);
+                      } else {
+                         Get.snackbar("Gagal", "File tidak dapat disimpan. Cek izin penyimpanan.", backgroundColor: Colors.red[100]);
+                      }
+                    } catch (e) {
+                      Get.snackbar("Error", "Terjadi kesalahan: $e", backgroundColor: Colors.red[100]);
+                    }
                   },
-                  icon: const Icon(Icons.download_rounded),
-                  label: const Text("DOWNLOAD DOKUMEN"),
+                  icon: const Icon(Icons.description_rounded),
+                  label: const Text("UNDUH DOKUMEN (WORD)"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
