@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart'; // Wajib import ini
+import 'package:sidesa_mobile/features/aduan/views/aduan_view.dart';
 
 class ServiceMenu extends StatelessWidget {
   const ServiceMenu({super.key});
@@ -65,14 +66,9 @@ class ServiceMenu extends StatelessWidget {
               
               // 2. ADUAN WARGA (Persiapan Fase 2)
               _buildItem(Icons.campaign_outlined, "Aduan", Colors.red, () {
-                 Get.snackbar(
-                  "Segera Hadir", 
-                  "Fitur Aduan Warga sedang dalam tahap pengembangan.", 
-                  backgroundColor: Colors.red[100], colorText: Colors.red[900]
-                );
-                // Nanti diganti jadi: Get.toNamed(Routes.ADUAN);
-              }),
-              
+                 // Ganti snackbar dengan ini:
+                 Get.to(() => const AduanView()); 
+              }),              
               // 3. SIDESA AI (Persiapan Fase 3)
               _buildItem(Icons.support_agent_outlined, "SiDesa AI", Colors.teal, () {
                  Get.snackbar(
