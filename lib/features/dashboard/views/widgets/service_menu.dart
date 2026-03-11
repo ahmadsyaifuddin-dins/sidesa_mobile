@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart'; // Wajib import ini
+import 'package:url_launcher/url_launcher.dart'; 
 import 'package:sidesa_mobile/features/aduan/views/aduan_view.dart';
+import 'package:sidesa_mobile/features/chat/views/chat_view.dart';
 
 class ServiceMenu extends StatelessWidget {
   const ServiceMenu({super.key});
@@ -27,7 +28,7 @@ class ServiceMenu extends StatelessWidget {
       onConfirm: () async {
         Get.back(); // Tutup dialog pop-up
         
-        // Sesuaikan IP jika di-test pakai HP asli (misal: 192.168.43.208:8000)
+        // Sesuaikan IP jika di-test pakai HP asli
         final Uri url = Uri.parse('http://192.168.43.208:8000/layanan-surat/buat');
         
         try {
@@ -53,36 +54,32 @@ class ServiceMenu extends StatelessWidget {
           "Layanan Desa",
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16), // Jarak teks ke icon sedikit dilebarkan
+        
+        // MENGGUNAKAN ROW AGAR POSISI KE TENGAH
         SizedBox(
-          height: 90,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Membagi jarak sama rata
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. BUAT SURAT (Ke Web Laravel)
               _buildItem(Icons.mark_email_unread_outlined, "Buat Surat", Colors.orange, () {
                 _bukaLayananSuratWeb();
               }),
               
-              // 2. ADUAN WARGA (Persiapan Fase 2)
+              // 2. ADUAN WARGA 
               _buildItem(Icons.campaign_outlined, "Aduan", Colors.red, () {
-                 // Ganti snackbar dengan ini:
                  Get.to(() => const AduanView()); 
               }),              
-              // 3. SIDESA AI (Persiapan Fase 3)
+              
+              // 3. SIDESA AI
               _buildItem(Icons.support_agent_outlined, "SiDesa AI", Colors.teal, () {
-                 Get.snackbar(
-                  "Segera Hadir", 
-                  "Fitur Chat Assistant SiDesa AI sedang dalam tahap pengembangan.", 
-                  backgroundColor: Colors.teal[100], colorText: Colors.teal[900]
-                );
-                // Nanti diganti jadi: Get.toNamed(Routes.CHAT_AI);
+                 Get.to(() => const ChatView()); 
               }),
               
-              // 4. MENU LAINNYA
-              _buildItem(Icons.storefront_outlined, "UMKM", Colors.green, () {}),
-              _buildItem(Icons.newspaper_outlined, "Berita", Colors.blue, () {}),
-              _buildItem(Icons.map_outlined, "Peta", Colors.purple, () {}),
+              // Jika nanti menu UMKM/Berita mau diaktifkan lagi, 
+              // lebih baik gunakan Wrap() ketimbang Row() agar tidak sempit.
             ],
           ),
         ),
@@ -90,29 +87,30 @@ class ServiceMenu extends StatelessWidget {
     );
   }
 
-  // Helper Widget tetep sama persis kaya kodemu
+  // Helper Widget yang sudah diperbaiki (Tanpa Padding Kanan)
   Widget _buildItem(IconData icon, String label, Color color, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, color: color, size: 24),
+    return Column(
+      mainAxisSize: MainAxisSize.min, // Agar tidak makan tempat berlebih
+      children: [
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            width: 55, // Sedikit dibesarkan dari 50 ke 55
+            height: 55,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
             ),
+            child: Icon(icon, color: color, size: 26), // Ukuran icon menyesuaikan
           ),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label, 
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500) // Font dibesarkan sedikit
+        ),
+      ],
     );
   }
 }
