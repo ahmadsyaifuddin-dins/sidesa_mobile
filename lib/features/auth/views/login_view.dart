@@ -80,7 +80,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // --- 1. LOGO APLIKASI ---
+                      // 1. LOGO APLIKASI
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -103,7 +103,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                       ),
                       const SizedBox(height: 30),
 
-                      // --- 2. CARD FORM LOGIN ---
+                      // 2. CARD FORM LOGIN
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
@@ -135,7 +135,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                             ),
                             const SizedBox(height: 30),
 
-                            // --- INPUT EMAIL ---
+                            // INPUT EMAIL
                             TextField(
                               controller: controller.emailC,
                               decoration: InputDecoration(
@@ -155,7 +155,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                             ),
                             const SizedBox(height: 20),
 
-                            // --- INPUT PASSWORD ---
+                            // INPUT PASSWORD
                             TextField(
                               controller: controller.passwordC,
                               obscureText: _isObscure,
@@ -188,7 +188,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                             ),
                             const SizedBox(height: 30),
 
-                            // --- TOMBOL LOGIN ---
+                            // TOMBOL LOGIN
                             Obx(() => SizedBox(
                                   width: double.infinity,
                                   height: 55,
