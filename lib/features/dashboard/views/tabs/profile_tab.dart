@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -126,9 +127,10 @@ class ProfileTab extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        _buildMenuTile(Icons.lock_outline, "Ganti Password", () {
-                           Get.snackbar("Info", "Fitur Ganti Password segera hadir");
-                        }),
+                       _buildMenuTile(Icons.lock_outline, "Ganti Password", () {
+                      // Panggil fungsi BottomSheet
+                      _showChangePasswordSheet(context);
+                    }),
                         const Divider(height: 1, indent: 50),
                         _buildMenuTile(Icons.help_outline, "Bantuan & Layanan", () {}),
                         const Divider(height: 1, indent: 50),
@@ -214,6 +216,104 @@ class ProfileTab extends StatelessWidget {
         Get.back(); // Tutup dialog
         controller.logout(); // Eksekusi logout
       }
+    );
+  }
+
+  void _showChangePasswordSheet(BuildContext context) {
+    // Controller lokal untuk input
+    final currentPassC = TextEditingController();
+    final newPassC = TextEditingController();
+    final confirmPassC = TextEditingController();
+    var isLoading = false.obs; // State loading lokal
+    final AuthRepository authRepo = AuthRepository(); // Panggil repo
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Ganti Password", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              const Text("Pastikan password baru Anda kuat dan mudah diingat.", style: TextStyle(color: Colors.grey, fontSize: 12)),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: currentPassC,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Password Saat Ini",
+                  prefixIcon: const Icon(Icons.lock_clock),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              TextField(
+                controller: newPassC,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Password Baru",
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              TextField(
+                controller: confirmPassC,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Konfirmasi Password Baru",
+                  prefixIcon: const Icon(Icons.check_circle_outline),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: Obx(() => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+                  ),
+                  onPressed: isLoading.value ? null : () async {
+                    if (currentPassC.text.isEmpty || newPassC.text.isEmpty || confirmPassC.text.isEmpty) {
+                      Get.snackbar("Error", "Semua kolom harus diisi!", backgroundColor: Colors.red, colorText: Colors.white);
+                      return;
+                    }
+
+                    isLoading.value = true;
+                    try {
+                      await authRepo.changePassword(currentPassC.text, newPassC.text, confirmPassC.text);
+                      Get.back(); // Tutup bottom sheet
+                      Get.snackbar("Berhasil", "Password akun Anda berhasil diperbarui.", backgroundColor: Colors.green, colorText: Colors.white);
+                    } catch (e) {
+                      String msg = e.toString().replaceAll("Exception: ", "");
+                      Get.snackbar("Gagal", msg, backgroundColor: Colors.red, colorText: Colors.white);
+                    } finally {
+                      isLoading.value = false;
+                    }
+                  },
+                  child: isLoading.value 
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : const Text("Simpan Password", style: TextStyle(fontWeight: FontWeight.bold)),
+                )),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true, // Agar bottom sheet bisa menyesuaikan keyboard
     );
   }
 }

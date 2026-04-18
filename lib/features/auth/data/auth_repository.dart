@@ -86,4 +86,33 @@ class AuthRepository {
     await _storage.delete(key: 'auth_token');
     await _storage.delete(key: 'user_name');
   }
+
+  // Fungsi Ganti Password
+  Future<void> changePassword(String currentPassword, String newPassword, String confirmPassword) async {
+    try {
+      String? token = await _storage.read(key: 'auth_token');
+      if (token == null) throw Exception("Sesi telah habis, silakan login ulang.");
+
+      final response = await _dio.post(
+        ApiConfig.changePassword,
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'new_password_confirmation': confirmPassword,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode != 200 || response.data['success'] != true) {
+        throw Exception(response.data['message'] ?? 'Gagal mengubah password');
+      }
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Koneksi bermasalah');
+    }
+  }
 }
