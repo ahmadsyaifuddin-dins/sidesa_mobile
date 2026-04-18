@@ -81,24 +81,31 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // 1. LOGO APLIKASI
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/logo_pancasila.png',
-                          width: 80, // Mengatur lebar gambar
-                          height: 80, // Mengatur tinggi gambar
-                          fit: BoxFit.contain, // Memastikan gambar proporsional dan tidak terpotong
+                      // TAMBAHKAN GestureDetector DI SINI
+                      GestureDetector(
+                        onLongPress: () {
+                          // Panggil fungsi rahasia saat logo ditekan lama
+                          controller.showChangeIPDialog(); 
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/logo_pancasila.png',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 30),
