@@ -1,7 +1,10 @@
+// Lokasi: lib/features/aduan/views/aduan_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/aduan_controller.dart';
 import 'buat_aduan_view.dart';
+import 'detail_aduan_view.dart'; 
 
 class AduanView extends StatelessWidget {
   const AduanView({super.key});
@@ -61,44 +64,51 @@ class AduanView extends StatelessWidget {
               if (aduan.status == 'selesai') statusColor = Colors.green;
               if (aduan.status == 'ditolak') statusColor = Colors.red;
 
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            aduan.kodeAduan,
-                            style: TextStyle(color: Colors.grey[600], fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(color: statusColor.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                            child: Text(aduan.status.toUpperCase(), style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(aduan.judul, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      const SizedBox(height: 4),
-                      Text(aduan.deskripsi, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Icon(Icons.category, size: 14, color: Colors.grey[500]),
-                          const SizedBox(width: 4),
-                          Text(aduan.kategori, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                          const Spacer(),
-                          Text(aduan.createdAt.substring(0, 10), style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-                        ],
-                      ),
-                    ],
+              return InkWell(
+                onTap: () {
+                  // Arahkan ke halaman Detail saat card di-tap
+                  Get.to(() => DetailAduanView(aduan: aduan));
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              aduan.kodeAduan,
+                              style: TextStyle(color: Colors.grey[600], fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(color: statusColor.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                              child: Text(aduan.status.toUpperCase(), style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(aduan.judul, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        const SizedBox(height: 4),
+                        Text(aduan.deskripsi, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(Icons.category, size: 14, color: Colors.grey[500]),
+                            const SizedBox(width: 4),
+                            Text(aduan.kategori, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                            const Spacer(),
+                            Text(aduan.createdAt.substring(0, 10), style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

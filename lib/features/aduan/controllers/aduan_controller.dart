@@ -1,3 +1,5 @@
+// Lokasi: lib/features/aduan/controllers/aduan_controller.dart
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -70,9 +72,8 @@ class AduanController extends GetxController {
     }
   }
 
-  // --- FUNGSI KIRIM ADUAN ---
+  // --- FUNGSI KIRIM ADUAN BARU ---
   Future<void> kirimAduan() async {
-    // Validasi Kosong
     if (judulC.text.isEmpty || deskripsiC.text.isEmpty) {
       Get.snackbar("Peringatan", "Judul dan Deskripsi wajib diisi!", 
           backgroundColor: Colors.orange[100]);
@@ -94,7 +95,6 @@ class AduanController extends GetxController {
       Get.snackbar("Berhasil", "Aduan Anda berhasil dikirim", 
           backgroundColor: Colors.green[100]);
       
-      // Bersihkan form & Refresh list
       _resetForm();
       fetchRiwayatAduan();
       
@@ -106,6 +106,68 @@ class AduanController extends GetxController {
     }
   }
 
+  // --- FUNGSI SETUP FORM EDIT ---
+  void setupEditForm(AduanModel aduan) {
+    judulC.text = aduan.judul;
+    deskripsiC.text = aduan.deskripsi;
+    kategori.value = aduan.kategori;
+    prioritas.value = aduan.prioritas; 
+    isAnonymous.value = aduan.isAnonymous == 1; // Konversi dari int ke bool
+    foto.value = null; // Kosongkan file local agar aman
+  }
+
+  // --- FUNGSI SIMPAN EDIT ADUAN ---
+  Future<void> simpanEditAduan(int id) async {
+    if (judulC.text.isEmpty || deskripsiC.text.isEmpty) {
+      Get.snackbar("Peringatan", "Judul dan Deskripsi wajib diisi!", backgroundColor: Colors.orange[100]);
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      await _repo.updateAduan(
+        id: id,
+        judul: judulC.text,
+        kategori: kategori.value,
+        deskripsi: deskripsiC.text,
+        prioritas: prioritas.value,
+        isAnonymous: isAnonymous.value,
+        fotoBaru: foto.value,
+      );
+
+      Get.back(); // Tutup halaman form edit
+      Get.back(); // Tutup halaman detail (kembali ke list)
+      Get.snackbar("Berhasil", "Aduan berhasil diperbarui", backgroundColor: Colors.green[100]);
+      
+      _resetForm();
+      fetchRiwayatAduan(); // Refresh list terbaru
+    } catch (e) {
+      Get.snackbar("Gagal", e.toString().replaceAll("Exception: ", ""), backgroundColor: Colors.red[100]);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // --- FUNGSI HAPUS ADUAN ---
+  Future<void> hapusAduan(int aduanId) async {
+    try {
+      // Tampilkan loading dialog
+      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+      
+      await _repo.hapusAduan(aduanId);
+      
+      Get.back(); // Tutup loading
+      Get.back(); // Tutup halaman detail 
+      
+      Get.snackbar("Berhasil", "Aduan berhasil dihapus.", backgroundColor: Colors.green[100]);
+      fetchRiwayatAduan(); // Refresh list aduan
+    } catch (e) {
+      Get.back(); // Tutup loading
+      Get.snackbar("Gagal", e.toString().replaceAll("Exception: ", ""), backgroundColor: Colors.red[100]);
+    }
+  }
+
+  // --- FUNGSI RESET FORM ---
   void _resetForm() {
     judulC.clear();
     deskripsiC.clear();

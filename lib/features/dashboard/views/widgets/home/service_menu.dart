@@ -70,7 +70,7 @@ class ServiceMenu extends StatelessWidget {
               
               // 2. ADUAN WARGA 
               _buildItem(Icons.campaign_outlined, "Aduan", Colors.red, () {
-                 Get.to(() => const AduanView()); 
+                 Get.to(() => AduanView());
               }),              
               
               // 3. SIDESA AI
