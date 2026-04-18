@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controllers/dashboard_controller.dart';
+import '../../../controllers/dashboard_controller.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});

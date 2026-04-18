@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
-import '../../controllers/dashboard_controller.dart';
-import '../../../../data/models/surat_model.dart';
+import '../../../controllers/dashboard_controller.dart';
+import '../../../../../data/models/surat_model.dart';
 
 class HistorySection extends StatelessWidget {
   const HistorySection({super.key});

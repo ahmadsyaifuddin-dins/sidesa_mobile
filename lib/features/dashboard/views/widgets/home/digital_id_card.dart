@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // Import package QR
-import '../../controllers/dashboard_controller.dart';
+import '../../../controllers/dashboard_controller.dart';
 
 class DigitalIdCard extends StatelessWidget {
   const DigitalIdCard({super.key});

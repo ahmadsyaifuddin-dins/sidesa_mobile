@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_controller.dart';
-import '../widgets/dashboard_header.dart';
-import '../widgets/digital_id_card.dart';
-import '../widgets/history_section.dart';
-import '../widgets/service_menu.dart';
+import '../widgets/home/dashboard_header.dart';
+import '../widgets/home/digital_id_card.dart';
+import '../widgets/home/history_section.dart';
+import '../widgets/home/service_menu.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
