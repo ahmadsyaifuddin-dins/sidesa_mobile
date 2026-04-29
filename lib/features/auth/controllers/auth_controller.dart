@@ -15,11 +15,17 @@ class AuthController extends GetxController {
   final passwordC = TextEditingController();
 
   var isLoading = false.obs;
+  var isObscure = true.obs;
+  void toggleObscure() => isObscure.toggle();
 
   Future<void> login() async {
     if (emailC.text.isEmpty || passwordC.text.isEmpty) {
-      Get.snackbar("Error", "Email dan Password harus diisi", 
-        backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Error",
+        "Email dan Password harus diisi",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -38,13 +44,21 @@ class AuthController extends GetxController {
         print("❌ Gagal mendapatkan FCM Token: $e");
       }
 
-      Get.snackbar("Berhasil", "Halo, ${user.name}!",
-          backgroundColor: Colors.green, colorText: Colors.white);
+      Get.snackbar(
+        "Berhasil",
+        "Halo, ${user.name}!",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
       Get.offAllNamed(Routes.DASHBOARD);
     } catch (e) {
       String msg = e.toString().replaceAll("Exception: ", "");
-      Get.snackbar("Gagal Masuk", msg,
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        "Gagal Masuk",
+        msg,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -52,15 +66,22 @@ class AuthController extends GetxController {
 
   void showChangeIPDialog() {
     // Ambil IP saat ini dari Hive (atau default jika kosong)
-    final currentIP = Hive.box('settings').get('server_ip', defaultValue: "192.168.0.28");
-    final TextEditingController ipController = TextEditingController(text: currentIP);
+    final currentIP = Hive.box(
+      'settings',
+    ).get('server_ip', defaultValue: "192.168.0.28");
+    final TextEditingController ipController = TextEditingController(
+      text: currentIP,
+    );
 
     Get.defaultDialog(
       title: "⚙️ Developer Mode",
       titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       content: Column(
         children: [
-          const Text("Masukkan IP Laptop Server SIDESA:", style: TextStyle(fontSize: 12)),
+          const Text(
+            "Masukkan IP Laptop Server SIDESA:",
+            style: TextStyle(fontSize: 12),
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: ipController,
@@ -68,7 +89,9 @@ class AuthController extends GetxController {
             decoration: InputDecoration(
               hintText: "Contoh: 192.168.1.10",
               prefixIcon: const Icon(Icons.wifi, color: Colors.blue),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               filled: true,
               fillColor: Colors.grey.shade100,
             ),
@@ -82,10 +105,12 @@ class AuthController extends GetxController {
       cancelTextColor: Colors.blue.shade700,
       onConfirm: () async {
         if (ipController.text.isNotEmpty) {
-          await ApiConfig.setIP(ipController.text); // Simpan ke Hive via ApiConfig
+          await ApiConfig.setIP(
+            ipController.text,
+          ); // Simpan ke Hive via ApiConfig
           Get.back(); // Tutup dialog
           Get.snackbar(
-            "Config Updated", 
+            "Config Updated",
             "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
             backgroundColor: Colors.blue.shade900,
             colorText: Colors.white,
@@ -96,6 +121,7 @@ class AuthController extends GetxController {
       },
     );
   }
+
   @override
   void onClose() {
     emailC.dispose();

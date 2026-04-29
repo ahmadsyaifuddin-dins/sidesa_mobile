@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
+import 'widgets/custom_text_field.dart';
+import 'widgets/login_header.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -9,12 +11,10 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-// Tambahkan SingleTickerProviderStateMixin untuk animasi bawaan Flutter
 class _LoginViewState extends State<LoginView>
     with SingleTickerProviderStateMixin {
+  // Inisialisasi AuthController menggunakan Get.put
   final AuthController controller = Get.put(AuthController());
-
-  bool _isObscure = true;
 
   // Variabel Animasi
   late AnimationController _animController;
@@ -25,38 +25,36 @@ class _LoginViewState extends State<LoginView>
   void initState() {
     super.initState();
 
-    // Inisialisasi Controller Animasi (Durasi 1.2 Detik)
+    // Setup Animasi (Durasi 1.2 Detik agar smooth)
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
 
-    // Animasi Fade In (Transparansi 0 ke 1)
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeIn));
 
-    // Animasi Slide Up (Dari bawah sedikit ke posisi asli)
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
           CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
         );
 
-    // Mulai animasi saat halaman dibuka!
+    // Jalankan animasi saat halaman dimuat
     _animController.forward();
   }
 
   @override
   void dispose() {
-    _animController.dispose(); // Wajib dibersihkan agar tidak memory leak
+    _animController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Background gradient yang elegan
+      // Background Gradient Biru Elegan
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -65,7 +63,7 @@ class _LoginViewState extends State<LoginView>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Colors.blue.shade800, Colors.blue.shade400, Colors.white],
-            stops: const [0.0, 0.4, 0.4], // Membelah background jadi 2 warna
+            stops: const [0.0, 0.4, 0.4],
           ),
         ),
         child: SafeArea(
@@ -79,171 +77,15 @@ class _LoginViewState extends State<LoginView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 1. LOGO APLIKASI
-                      // TAMBAHKAN GestureDetector DI SINI
-                      GestureDetector(
-                        onLongPress: () {
-                          // Panggil fungsi rahasia saat logo ditekan lama
-                          controller.showChangeIPDialog();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Image.asset(
-                            'assets/SIDESA_MOBILE.png',
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                      // 1. HEADER (LOGO) - Modular via Widgets
+                      LoginHeader(
+                        onLogoLongPress: () => controller.showChangeIPDialog(),
                       ),
+
                       const SizedBox(height: 30),
 
                       // 2. CARD FORM LOGIN
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.15),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            const Text(
-                              "SIDESA Mobile",
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Selamat datang! Silakan masuk.",
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                            const SizedBox(height: 30),
-
-                            // INPUT EMAIL
-                            TextField(
-                              controller: controller.emailC,
-                              decoration: InputDecoration(
-                                labelText: "Email / NIK",
-                                prefixIcon: const Icon(
-                                  Icons.person_outline,
-                                  color: Colors.blue,
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey.shade50,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: const BorderSide(
-                                    color: Colors.blue,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-
-                            // INPUT PASSWORD
-                            TextField(
-                              controller: controller.passwordC,
-                              obscureText: _isObscure,
-                              decoration: InputDecoration(
-                                labelText: "Password",
-                                prefixIcon: const Icon(
-                                  Icons.lock_outline,
-                                  color: Colors.blue,
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey.shade50,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: const BorderSide(
-                                    color: Colors.blue,
-                                    width: 2,
-                                  ),
-                                ),
-                                // Tombol Mata
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _isObscure
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isObscure = !_isObscure;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-
-                            // TOMBOL LOGIN
-                            Obx(
-                              () => SizedBox(
-                                width: double.infinity,
-                                height: 55,
-                                child: ElevatedButton(
-                                  onPressed: controller.isLoading.value
-                                      ? null
-                                      : () => controller.login(),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    elevation: 5,
-                                    shadowColor: Colors.blue.withOpacity(0.5),
-                                  ),
-                                  child: controller.isLoading.value
-                                      ? const CircularProgressIndicator(
-                                          color: Colors.white,
-                                        )
-                                      : const Text(
-                                          "MASUK SEKARANG",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.5,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildLoginForm(),
                     ],
                   ),
                 ),
@@ -251,6 +93,98 @@ class _LoginViewState extends State<LoginView>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // Bagian Form Login yang dipisah dalam method agar build() tidak terlalu panjang
+  Widget _buildLoginForm() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Text(
+            "SIDESA Mobile",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Selamat datang! Silakan masuk.",
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 30),
+
+          // INPUT EMAIL / NIK
+          CustomTextField(
+            controller: controller.emailC,
+            label: "Email / NIK",
+            prefixIcon: Icons.person_outline,
+          ),
+
+          const SizedBox(height: 20),
+
+          // INPUT PASSWORD (Reaktif menggunakan Obx)
+          Obx(
+            () => CustomTextField(
+              controller: controller.passwordC,
+              label: "Password",
+              prefixIcon: Icons.lock_outline,
+              isPassword: true,
+              isObscure: controller.isObscure.value,
+              onToggleVisibility: () => controller.toggleObscure(),
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          // TOMBOL LOGIN (Reaktif menggunakan Obx untuk Loading State)
+          Obx(
+            () => SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : () => controller.login(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade700,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 5,
+                  shadowColor: Colors.blue.withOpacity(0.5),
+                ),
+                child: controller.isLoading.value
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "MASUK SEKARANG",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
