@@ -5,6 +5,7 @@ class ApiConfig {
   // Nilai default jika Hive masih kosong (IP laptop kamu saat ini)
   static const String _defaultIP = "192.168.0.28";
   static String get changePassword => "$baseUrl/change-password";
+  static String get updateFcm => "$baseUrl/user/update-fcm";
   
   static String get baseUrl {
     final box = Hive.box('settings');

@@ -81,6 +81,39 @@ class AuthRepository {
     }
   }
 
+  // Fungsi untuk mengirim FCM Token ke Laravel
+  Future<void> sendFcmToken(String fcmToken) async {
+    try {
+      // Ambil token Sanctum (perhatikan key-nya 'auth_token' sesuai kodemu)
+      String? token = await _storage.read(key: 'auth_token');
+      
+      // Jika tidak ada token (belum login), hentikan proses
+      if (token == null) return;
+
+      // Tembak ke API Laravel
+      await _dio.post(
+        ApiConfig.updateFcm, // Pastikan ini sudah ada di api_config.dart
+        data: {
+          'fcm_token': fcmToken,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+          // Timeout cepat saja, karena ini proses background
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      );
+      print("Berhasil mengirim FCM Token ke server!");
+    } catch (e) {
+      // Kita print saja, jangan di-throw (throw Exception) 
+      // agar kalau gagal ngirim token, proses login warga tetap berhasil masuk ke Dashboard.
+      print("Gagal kirim token FCM ke server: $e");
+    }
+  }
+
   // Fungsi Logout
   Future<void> logout() async {
     await _storage.delete(key: 'auth_token');

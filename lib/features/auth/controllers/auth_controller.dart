@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart'; // Tambahkan import Hive
+import 'package:hive_flutter/hive_flutter.dart';
 import '../data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
-import '../../../core/config/api_config.dart'; // Tambahkan import ApiConfig (pastikan path-nya sesuai)
+import '../../../core/config/api_config.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _repo = AuthRepository();
@@ -16,7 +17,6 @@ class AuthController extends GetxController {
   var isLoading = false.obs;
 
   Future<void> login() async {
-    // ... (Kode login yang sudah ada tidak perlu diubah)
     if (emailC.text.isEmpty || passwordC.text.isEmpty) {
       Get.snackbar("Error", "Email dan Password harus diisi", 
         backgroundColor: Colors.red, colorText: Colors.white);
@@ -27,6 +27,17 @@ class AuthController extends GetxController {
 
     try {
       final user = await _repo.login(emailC.text, passwordC.text);
+
+      try {
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          print("🔥 FCM Token berhasil didapat: $fcmToken");
+          await _repo.sendFcmToken(fcmToken);
+        }
+      } catch (e) {
+        print("❌ Gagal mendapatkan FCM Token: $e");
+      }
+
       Get.snackbar("Berhasil", "Halo, ${user.name}!",
           backgroundColor: Colors.green, colorText: Colors.white);
       Get.offAllNamed(Routes.DASHBOARD);

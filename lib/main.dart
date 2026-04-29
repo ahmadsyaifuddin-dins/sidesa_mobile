@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // Wajib ditambahkan
+import 'firebase_options.dart';
 import 'routes/app_pages.dart';
+import 'core/services/fcm_service.dart'; // Pastikan path ini sesuai dengan folder Mas Dins
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Sekadar inisialisasi minimal agar Firebase tahu ada pesan masuk
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print(" Pesan masuk di background: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 1. Inisialisasi Hive (Kode asli Mas Dins)
   await Hive.initFlutter();
+  await Hive.openBox('settings'); 
   
-    await Hive.openBox('settings'); 
-  
+  // 2. Inisialisasi Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // 3. Daftarkan fungsi Background Handler untuk notifikasi
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // 4. Jalankan Service FCM kita secara asinkron (untuk Foreground Notif)
+  await Get.putAsync(() => FcmService().init());
+
   runApp(const MyApp());
 }
 
