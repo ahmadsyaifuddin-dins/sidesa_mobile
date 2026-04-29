@@ -7,51 +7,49 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Put Controller biar logic jalan
+    // Put Controller biar logic jalan (misal: delay 3 detik lalu ke Dashboard/Login)
     Get.put(SplashController());
 
     return Scaffold(
-      backgroundColor: Colors.white, // Atau Colors.blue[900] biar elegan
+      backgroundColor:
+          Colors.white, // Background putih agar menyatu dengan background logo
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Ganti Icon ini dengan Gambar Logo Desamu nanti (Image.asset)
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.verified_user_outlined, 
-                size: 80, 
-                color: Colors.blue
-              ),
+            // Logo SIDESA yang baru (Daun Digital)
+            Image.asset(
+              'assets/SIDESA_MOBILE.png',
+              width:
+                  160, // Ukuran bisa disesuaikan (besarkan/kecilkan sesuai selera)
+              height: 160,
+              fit: BoxFit.contain,
             ),
-            
-            const SizedBox(height: 20),
-            
+
+            const SizedBox(height: 24),
+
             const Text(
               "SIDESA Mobile",
               style: TextStyle(
-                fontSize: 24, 
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
-                letterSpacing: 2
+                color: Colors
+                    .blue, // Nanti bisa diganti ke Colors.green jika ingin senada dengan daun
+                letterSpacing: 2,
               ),
             ),
-            
+
             const SizedBox(height: 10),
+
             const Text(
               "Layanan Desa Digital",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
 
             const SizedBox(height: 50),
 
-            // Loading muter-muter kecil di bawah
-            const CircularProgressIndicator(),
+            // Loading indikator
+            const CircularProgressIndicator(color: Colors.blue),
           ],
         ),
       ),

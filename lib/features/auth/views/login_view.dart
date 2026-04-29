@@ -10,7 +10,8 @@ class LoginView extends StatefulWidget {
 }
 
 // Tambahkan SingleTickerProviderStateMixin untuk animasi bawaan Flutter
-class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMixin {
+class _LoginViewState extends State<LoginView>
+    with SingleTickerProviderStateMixin {
   final AuthController controller = Get.put(AuthController());
 
   bool _isObscure = true;
@@ -23,7 +24,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    
+
     // Inisialisasi Controller Animasi (Durasi 1.2 Detik)
     _animController = AnimationController(
       vsync: this,
@@ -31,14 +32,16 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
     );
 
     // Animasi Fade In (Transparansi 0 ke 1)
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeIn));
 
     // Animasi Slide Up (Dari bawah sedikit ke posisi asli)
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+        );
 
     // Mulai animasi saat halaman dibuka!
     _animController.forward();
@@ -61,11 +64,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade800,
-              Colors.blue.shade400,
-              Colors.white,
-            ],
+            colors: [Colors.blue.shade800, Colors.blue.shade400, Colors.white],
             stops: const [0.0, 0.4, 0.4], // Membelah background jadi 2 warna
           ),
         ),
@@ -85,7 +84,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                       GestureDetector(
                         onLongPress: () {
                           // Panggil fungsi rahasia saat logo ditekan lama
-                          controller.showChangeIPDialog(); 
+                          controller.showChangeIPDialog();
                         },
                         child: Container(
                           padding: const EdgeInsets.all(20),
@@ -101,7 +100,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                             ],
                           ),
                           child: Image.asset(
-                            'assets/logo_pancasila.png',
+                            'assets/SIDESA_MOBILE.png',
                             width: 80,
                             height: 80,
                             fit: BoxFit.contain,
@@ -121,7 +120,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                               color: Colors.grey.withOpacity(0.15),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
-                            )
+                            ),
                           ],
                         ),
                         child: Column(
@@ -147,7 +146,10 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                               controller: controller.emailC,
                               decoration: InputDecoration(
                                 labelText: "Email / NIK",
-                                prefixIcon: const Icon(Icons.person_outline, color: Colors.blue),
+                                prefixIcon: const Icon(
+                                  Icons.person_outline,
+                                  color: Colors.blue,
+                                ),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
@@ -156,7 +158,10 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
-                                  borderSide: const BorderSide(color: Colors.blue, width: 2),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                             ),
@@ -168,7 +173,10 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                               obscureText: _isObscure,
                               decoration: InputDecoration(
                                 labelText: "Password",
-                                prefixIcon: const Icon(Icons.lock_outline, color: Colors.blue),
+                                prefixIcon: const Icon(
+                                  Icons.lock_outline,
+                                  color: Colors.blue,
+                                ),
                                 filled: true,
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
@@ -177,12 +185,17 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
-                                  borderSide: const BorderSide(color: Colors.blue, width: 2),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 2,
+                                  ),
                                 ),
                                 // Tombol Mata
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isObscure ? Icons.visibility_off : Icons.visibility,
+                                    _isObscure
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
                                     color: Colors.grey,
                                   ),
                                   onPressed: () {
@@ -196,34 +209,38 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                             const SizedBox(height: 30),
 
                             // TOMBOL LOGIN
-                            Obx(() => SizedBox(
-                                  width: double.infinity,
-                                  height: 55,
-                                  child: ElevatedButton(
-                                    onPressed: controller.isLoading.value
-                                        ? null
-                                        : () => controller.login(),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue.shade700,
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      elevation: 5,
-                                      shadowColor: Colors.blue.withOpacity(0.5),
+                            Obx(
+                              () => SizedBox(
+                                width: double.infinity,
+                                height: 55,
+                                child: ElevatedButton(
+                                  onPressed: controller.isLoading.value
+                                      ? null
+                                      : () => controller.login(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue.shade700,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
-                                    child: controller.isLoading.value
-                                        ? const CircularProgressIndicator(color: Colors.white)
-                                        : const Text(
-                                            "MASUK SEKARANG",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1.5,
-                                            ),
-                                          ),
+                                    elevation: 5,
+                                    shadowColor: Colors.blue.withOpacity(0.5),
                                   ),
-                                )),
+                                  child: controller.isLoading.value
+                                      ? const CircularProgressIndicator(
+                                          color: Colors.white,
+                                        )
+                                      : const Text(
+                                          "MASUK SEKARANG",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.5,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
