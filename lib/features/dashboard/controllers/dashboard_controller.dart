@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/intl.dart'; // Tambahan import untuk format tanggal
+import 'package:intl/intl.dart';
+import '../../../core/config/api_config.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
 import '../../surat/data/surat_repository.dart';
@@ -19,12 +20,16 @@ class DashboardController extends GetxController {
   var userTanggalLahir = ''.obs;
   var userNoTelp = ''.obs;
   var userAlamat = ''.obs;
+  var userAvatar = ''.obs;
 
-  // STATE HISTORY
+  var isDataHidden = true.obs;
+
+  void toggleDataVisibility() {
+    isDataHidden.value = !isDataHidden.value;
+  }
+
   var historySurat = <SuratModel>[].obs;
   var isLoadingHistory = false.obs;
-
-  // STATE TAB MENU (0: Beranda, 1: Riwayat, 2: Profil)
   var tabIndex = 0.obs;
 
   @override
@@ -32,14 +37,11 @@ class DashboardController extends GetxController {
     super.onInit();
     loadUserData();
     fetchHistory();
-    fetchUserProfile(); // Memanggil data profil lengkap dari API saat dashboard dimuat
+    fetchUserProfile();
   }
 
-  void changeTab(int index) {
-    tabIndex.value = index;
-  }
+  void changeTab(int index) => tabIndex.value = index;
 
-  // Load data dasar dari local storage agar tidak nunggu API (UX lebih responsif)
   void loadUserData() async {
     String? name = await _storage.read(key: 'user_name');
     String? nik = await _storage.read(key: 'user_nik');
@@ -49,7 +51,6 @@ class DashboardController extends GetxController {
     if (email != null) userEmail.value = email;
   }
 
-  // Fetch riwayat surat
   Future<void> fetchHistory() async {
     isLoadingHistory.value = true;
     try {
@@ -62,37 +63,36 @@ class DashboardController extends GetxController {
     }
   }
 
-  // Fetch data profil lengkap (termasuk jenis kelamin, tgl lahir, dll) dari Laravel
   Future<void> fetchUserProfile() async {
     try {
-      // Ambil data mentah dari API via repository
       final data = await _authRepo.getRawProfile();
-
-      // Ambil objek 'warga' dari response JSON
+      final userData = data['user'];
       final wargaData = data['warga'];
 
+      if (userData != null) {
+        // Build URL Avatar menggunakan IP Dinamis
+        userAvatar.value = userData['avatar'] != null
+            ? '${ApiConfig.baseHost}/${userData['avatar']}'
+            : '';
+      }
+
       if (wargaData != null) {
-        // Set state data tambahan
         userJenisKelamin.value = wargaData['jenis_kelamin'] ?? '-';
         userNoTelp.value = wargaData['no_telp'] ?? '-';
         userAlamat.value = wargaData['alamat'] ?? '-';
 
-        // Formatting Tanggal Lahir menjadi DD-MM-YYYY
         if (wargaData['tanggal_lahir'] != null) {
           DateTime parsedDate = DateTime.parse(wargaData['tanggal_lahir']);
-          String formattedDate = DateFormat('dd-MM-yyyy').format(parsedDate);
-          userTanggalLahir.value = formattedDate;
+          userTanggalLahir.value = DateFormat('dd-MM-yyyy').format(parsedDate);
         } else {
           userTanggalLahir.value = '-';
         }
       }
     } catch (e) {
       print("Error fetch user profile: $e");
-      // Opsional: Bisa tambahkan Get.snackbar di sini jika ingin notif ke user saat gagal load profil
     }
   }
 
-  // Fungsi Logout
   void logout() async {
     await _authRepo.logout();
     Get.offAllNamed(Routes.LOGIN);

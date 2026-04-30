@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
+import 'package:sidesa_mobile/features/dashboard/views/edit_profile_view.dart';
 import 'package:sidesa_mobile/features/dashboard/views/tentang_aplikasi_view.dart';
 
 class ProfileMenuCard extends StatelessWidget {
@@ -26,6 +27,13 @@ class ProfileMenuCard extends StatelessWidget {
             ),
             child: Column(
               children: [
+                _buildMenuTile(Icons.edit_outlined, "Edit Profil", () {
+                  Get.to(
+                    () => const EditProfileView(),
+                    transition: Transition.rightToLeft,
+                  );
+                }),
+                const Divider(height: 1, indent: 50),
                 _buildMenuTile(Icons.lock_outline, "Ganti Password", () {
                   _showChangePasswordSheet(context);
                 }),

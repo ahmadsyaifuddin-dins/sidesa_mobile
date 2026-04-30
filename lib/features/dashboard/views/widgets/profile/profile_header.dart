@@ -28,39 +28,53 @@ class ProfileHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Avatar
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.blue.withOpacity(0.2), width: 2),
-            ),
-            child: CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.blue[50],
-              child: Icon(Icons.person, size: 50, color: Colors.blue[300]),
+          Obx(() {
+            return Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.blue.withOpacity(0.2),
+                  width: 2,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.blue[50],
+                // Jika userAvatar tidak kosong, tampilkan gambar dari jaringan
+                backgroundImage: controller.userAvatar.value.isNotEmpty
+                    ? NetworkImage(controller.userAvatar.value)
+                    : null,
+                // Jika userAvatar kosong, tampilkan icon default
+                child: controller.userAvatar.value.isEmpty
+                    ? Icon(Icons.person, size: 50, color: Colors.blue[300])
+                    : null,
+              ),
+            );
+          }),
+
+          const SizedBox(height: 15),
+
+          // Nama User
+          Obx(
+            () => Text(
+              controller.userName.value.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
-          const SizedBox(height: 15),
-          
-          // Nama User
-          Obx(() => Text(
-            controller.userName.value.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 18, 
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5
-            ),
-          )),
           const SizedBox(height: 5),
-          
+
           // Label Warga
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.green[50],
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.green[100]!)
+              border: Border.all(color: Colors.green[100]!),
             ),
             child: const Text(
               "Warga Terverifikasi",

@@ -6,7 +6,11 @@ class ApiConfig {
   static const String _defaultIP = "192.168.0.28";
   static String get changePassword => "$baseUrl/change-password";
   static String get updateFcm => "$baseUrl/user/update-fcm";
-  
+  static String get updateProfile => "$baseUrl/user/update-profile";
+
+  // Helper untuk mengambil URL tanpa '/api' agar bisa dipakai untuk gambar public
+  static String get baseHost => baseUrl.replaceAll('/api', '');
+
   static String get baseUrl {
     final box = Hive.box('settings');
     // Mengambil IP dari Hive, jika belum ada gunakan _defaultIP
@@ -17,7 +21,7 @@ class ApiConfig {
   // Karena baseUrl sekarang dinamis (getter), route di bawah juga harus jadi getter
   static String get login => "$baseUrl/login";
   static String get user => "$baseUrl/user";
-  
+
   // Fungsi helper untuk update IP dari UI
   static Future<void> setIP(String newIP) async {
     final box = Hive.box('settings');
