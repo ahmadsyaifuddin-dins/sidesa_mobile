@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../widgets/home/dashboard_header.dart';
-import '../widgets/home/digital_id_card.dart';
+import '../widgets/home/digital_id/digital_id_card.dart';
 import '../widgets/home/history_section.dart';
 import '../widgets/home/service_menu.dart';
 
@@ -12,7 +12,7 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Kita pakai controller yang sudah ada
-    final controller = Get.find<DashboardController>(); 
+    final controller = Get.find<DashboardController>();
 
     return RefreshIndicator(
       onRefresh: () async {

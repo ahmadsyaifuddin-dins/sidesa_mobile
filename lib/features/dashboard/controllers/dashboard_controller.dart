@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -6,11 +7,14 @@ import '../../auth/data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
 import '../../surat/data/surat_repository.dart';
 import '../../../data/models/surat_model.dart';
+import '../../../core/utils/greeting_util.dart';
 
 class DashboardController extends GetxController {
   final AuthRepository _authRepo = AuthRepository();
   final SuratRepository _suratRepo = SuratRepository();
   final _storage = const FlutterSecureStorage();
+
+  var greetingText = "".obs;
 
   // STATE USER DATA
   var userName = ''.obs;
@@ -35,6 +39,7 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    greetingText.value = GreetingUtil.getRandomGreeting();
     loadUserData();
     fetchHistory();
     fetchUserProfile();
@@ -46,6 +51,7 @@ class DashboardController extends GetxController {
     String? name = await _storage.read(key: 'user_name');
     String? nik = await _storage.read(key: 'user_nik');
     String? email = await _storage.read(key: 'user_email');
+
     if (name != null) userName.value = name;
     if (nik != null) userNik.value = nik;
     if (email != null) userEmail.value = email;
@@ -57,7 +63,12 @@ class DashboardController extends GetxController {
       var list = await _suratRepo.getRiwayatSurat();
       historySurat.assignAll(list);
     } catch (e) {
-      print("Error fetch history: $e");
+      Get.snackbar(
+        "Informasi",
+        "Gagal memuat riwayat surat. Periksa koneksi internet Anda.",
+        backgroundColor: Colors.orange[100],
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoadingHistory.value = false;
     }
@@ -78,7 +89,9 @@ class DashboardController extends GetxController {
 
       if (wargaData != null) {
         userJenisKelamin.value = wargaData['jenis_kelamin'] ?? '-';
-        userNoTelp.value = wargaData['no_telp'] ?? '-';
+        // UBAH DI SINI: Sesuaikan dengan nama kolom di database (nomor_telepon)
+        userNoTelp.value = wargaData['nomor_telepon'] ?? '-';
+        // Pastikan API mengirimkan data alamat dari relasi KartuKeluarga
         userAlamat.value = wargaData['alamat'] ?? '-';
 
         if (wargaData['tanggal_lahir'] != null) {
@@ -89,7 +102,12 @@ class DashboardController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error fetch user profile: $e");
+      Get.snackbar(
+        "Informasi",
+        "Gagal memuat profil terbaru.",
+        backgroundColor: Colors.orange[100],
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../controllers/dashboard_controller.dart';
+import '../../../controllers/dashboard_controller.dart'; // Sesuaikan path
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -17,23 +17,33 @@ class DashboardHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Assalamualaikum,",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+              Obx(
+                () => Text(
+                  controller.greetingText.value,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(height: 4),
-              Obx(() => Text(
-                    controller.userName.value.isNotEmpty
-                        ? controller.userName.value
-                        : "Warga Desa",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[900],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )),
+              Obx(
+                () => Text(
+                  controller.userName.value.isNotEmpty
+                      ? controller.userName.value
+                      : "Warga Desa",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[900],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -41,10 +51,14 @@ class DashboardHeader extends StatelessWidget {
           radius: 20,
           backgroundColor: Colors.blue[50],
           child: IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.blue, size: 20),
+            icon: const Icon(
+              Icons.notifications_none,
+              color: Colors.blue,
+              size: 20,
+            ),
             onPressed: () {},
           ),
-        )
+        ),
       ],
     );
   }

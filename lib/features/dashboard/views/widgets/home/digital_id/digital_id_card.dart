@@ -1,11 +1,10 @@
-// Lokasi: lib/features/dashboard/views/widgets/digital_id_card.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sidesa_mobile/core/config/api_config.dart';
 import 'package:sidesa_mobile/features/dashboard/controllers/dashboard_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
+// Import fungsi bottom sheet yang sudah kita pisahkan
+import 'qr_bottom_sheet.dart';
 
 class DigitalIdCard extends StatelessWidget {
   const DigitalIdCard({super.key});
@@ -35,36 +34,31 @@ class DigitalIdCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            // --- LAYER 1: BACKGROUND WATERMARK PETA NKRI ---
             Positioned(
               right: -50,
               bottom: -20,
               child: Opacity(
-                opacity: 0.15, // Transparansi halus
+                opacity: 0.15,
                 child: Image.asset(
                   'assets/map_nkri.png',
                   width: 350,
                   fit: BoxFit.contain,
-                  // UBAH DI SINI: Siluet peta jadi putih agar kontras dengan biru pekat
                   color: Colors.white,
                 ),
               ),
             ),
-
-            // --- LAYER 2: KONTEN DATA WARGA ---
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header Kartu
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         "SIDESA Mobile",
                         style: TextStyle(
-                          color: Colors.white, // Teks jadi putih
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                           letterSpacing: 2,
@@ -92,13 +86,11 @@ class DigitalIdCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 25),
-
-                  // Data Warga
                   Obx(
                     () => Text(
                       controller.userName.value.toUpperCase(),
                       style: const TextStyle(
-                        color: Colors.white, // Teks jadi putih
+                        color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -109,9 +101,7 @@ class DigitalIdCard extends StatelessWidget {
                     () => Text(
                       controller.userNik.value,
                       style: TextStyle(
-                        color: Colors
-                            .blue
-                            .shade100, // Warna cyan/biru sangat muda untuk NIK
+                        color: Colors.blue.shade100,
                         fontSize: 16,
                         fontFamily: 'Courier',
                         fontWeight: FontWeight.w600,
@@ -120,8 +110,6 @@ class DigitalIdCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 25),
-
-                  // Footer Kartu & QR Code Kecil
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -149,10 +137,9 @@ class DigitalIdCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      // QR Code yang bisa di-tap
                       GestureDetector(
-                        onTap: () => _showQrBottomSheet(context, controller),
+                        // Panggil fungsi eksternal
+                        onTap: () => showQrBottomSheet(context, controller),
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -197,143 +184,6 @@ class DigitalIdCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  // --- FUNGSI BOTTOM SHEET PREVIEW & REDIRECT ---
-  void _showQrBottomSheet(
-    BuildContext context,
-    DashboardController controller,
-  ) {
-    final String nik = controller.userNik.value;
-    final String nama = controller.userName.value;
-    final String webUrl = nik.isNotEmpty
-        ? "${ApiConfig.webUrl}/identitas-warga/$nik"
-        : "";
-
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 5,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            const Text(
-              "Kartu Warga Digital",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.shade100, width: 2),
-              ),
-              child: QrImageView(
-                data: webUrl.isNotEmpty ? webUrl : "SIDESA_GUEST",
-                version: QrVersions.auto,
-                size: 180.0,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    nama.toUpperCase(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "NIK: $nik",
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 14,
-                      fontFamily: 'Courier',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                icon: const Icon(Icons.open_in_browser),
-                label: const Text(
-                  "Verifikasi Lanjut via Web",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onPressed: () async {
-                  if (webUrl.isNotEmpty) {
-                    final Uri url = Uri.parse(webUrl);
-                    try {
-                      if (!await launchUrl(
-                        url,
-                        mode: LaunchMode.externalApplication,
-                      )) {
-                        Get.snackbar(
-                          "Gagal",
-                          "Tidak dapat membuka browser",
-                          backgroundColor: Colors.red[100],
-                        );
-                      }
-                    } catch (e) {
-                      Get.snackbar(
-                        "Error",
-                        "Gagal membuka link: $e",
-                        backgroundColor: Colors.red[100],
-                      );
-                    }
-                  } else {
-                    Get.snackbar(
-                      "Info",
-                      "Data NIK tidak valid",
-                      backgroundColor: Colors.orange[100],
-                    );
-                  }
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
     );
   }
 }
