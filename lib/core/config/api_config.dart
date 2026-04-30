@@ -7,6 +7,7 @@ class ApiConfig {
   static String get changePassword => "$baseUrl/change-password";
   static String get updateFcm => "$baseUrl/user/update-fcm";
   static String get updateProfile => "$baseUrl/user/update-profile";
+  static String cekIdentitas(String nik) => "$baseUrl/identitas-warga/$nik";
 
   // Helper untuk mengambil URL tanpa '/api' agar bisa dipakai untuk gambar public
   static String get baseHost => baseUrl.replaceAll('/api', '');
@@ -16,6 +17,13 @@ class ApiConfig {
     // Mengambil IP dari Hive, jika belum ada gunakan _defaultIP
     String ip = box.get('server_ip', defaultValue: _defaultIP);
     return "http://$ip:8000/api";
+  }
+
+  // Getter khusus untuk Web Base URL (Tanpa /api)
+  static String get webUrl {
+    final box = Hive.box('settings');
+    String ip = box.get('server_ip', defaultValue: '192.168.0.28');
+    return "http://$ip:8000";
   }
 
   // Karena baseUrl sekarang dinamis (getter), route di bawah juga harus jadi getter
