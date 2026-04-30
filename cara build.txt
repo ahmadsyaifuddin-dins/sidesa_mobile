@@ -1,0 +1,14 @@
+- flutter devices
+
+- flutter run --no-debug
+
+- flutter run --release
+
+- flutter run -d <DEVICE_ID> --release
+
+
+Jika tujuannya membuat FILE APK (untuk dikirim ke orang lain)
+Build APK (Android) Release:
+- flutter build apk --release
+
+Cek hasilnya di folder: build/app/outputs/flutter-apk/app-release.apk

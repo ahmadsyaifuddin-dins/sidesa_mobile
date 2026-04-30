@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
+import 'package:sidesa_mobile/features/dashboard/views/tentang_aplikasi_view.dart';
 
 class ProfileMenuCard extends StatelessWidget {
   const ProfileMenuCard({super.key});
@@ -28,8 +29,12 @@ class ProfileMenuCard extends StatelessWidget {
                 _buildMenuTile(Icons.lock_outline, "Ganti Password", () {
                   _showChangePasswordSheet(context);
                 }),
-                const Divider(height: 1, indent: 50),
-                _buildMenuTile(Icons.info_outline, "Tentang Aplikasi", () {}),
+                _buildMenuTile(Icons.info_outline, "Tentang Aplikasi", () {
+                  Get.to(
+                    () => const TentangAplikasiView(),
+                    transition: Transition.rightToLeft,
+                  );
+                }),
               ],
             ),
           ),
