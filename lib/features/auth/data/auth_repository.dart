@@ -11,10 +11,7 @@ class AuthRepository {
     try {
       final response = await _dio.post(
         ApiConfig.login,
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
         options: Options(
           headers: {'Accept': 'application/json'},
           // Timeout biar gak nunggu selamanya kalau server mati
@@ -26,13 +23,13 @@ class AuthRepository {
       if (response.statusCode == 200 && response.data['success'] == true) {
         // 1. Ubah JSON jadi Object
         final user = UserModel.fromJson(response.data);
-        
+
         // 2. Simpan Token ke HP (Aman Terenkripsi)
         if (user.token != null) {
           await _storage.write(key: 'auth_token', value: user.token);
           // Simpan nama user juga buat sapaan nanti (opsional)
           await _storage.write(key: 'user_name', value: user.name);
-          
+
           if (user.nik != null) {
             await _storage.write(key: 'user_nik', value: user.nik);
             await _storage.write(key: 'user_email', value: user.email);
@@ -55,17 +52,15 @@ class AuthRepository {
     }
   }
 
-// Tambahkan fungsi ini di bawah fungsi login
-  Future<UserModel> getProfile() async {
+  // Tambahkan fungsi ini untuk mengambil raw data profile/fungsi login
+  Future<Map<String, dynamic>> getRawProfile() async {
     try {
-      // 1. Ambil Token dari HP
       String? token = await _storage.read(key: 'auth_token');
-      
-      if (token == null) throw Exception("Token tidak ditemukan, silakan login ulang.");
+      if (token == null)
+        throw Exception("Token tidak ditemukan, silakan login ulang.");
 
-      // 2. Request ke API /user dengan Header Bearer Token
       final response = await _dio.get(
-        ApiConfig.user, // Pastikan endpoint ini ada di api_config.dart
+        ApiConfig.user, // Endpoint /me di Laravel
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -74,10 +69,9 @@ class AuthRepository {
         ),
       );
 
-      // 3. Kembalikan data user terbaru
-      return UserModel.fromJson(response.data); // Backend Laravel biasanya bungkus di key 'data' atau langsung
+      return response.data; // Langsung kembalikan JSON mentah
     } catch (e) {
-      throw Exception("Gagal memuat profil: $e");
+      throw Exception("Gagal memuat detail profil: $e");
     }
   }
 
@@ -86,16 +80,14 @@ class AuthRepository {
     try {
       // Ambil token Sanctum (perhatikan key-nya 'auth_token' sesuai kodemu)
       String? token = await _storage.read(key: 'auth_token');
-      
+
       // Jika tidak ada token (belum login), hentikan proses
       if (token == null) return;
 
       // Tembak ke API Laravel
       await _dio.post(
         ApiConfig.updateFcm, // Pastikan ini sudah ada di api_config.dart
-        data: {
-          'fcm_token': fcmToken,
-        },
+        data: {'fcm_token': fcmToken},
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -108,7 +100,7 @@ class AuthRepository {
       );
       print("Berhasil mengirim FCM Token ke server!");
     } catch (e) {
-      // Kita print saja, jangan di-throw (throw Exception) 
+      // Kita print saja, jangan di-throw (throw Exception)
       // agar kalau gagal ngirim token, proses login warga tetap berhasil masuk ke Dashboard.
       print("Gagal kirim token FCM ke server: $e");
     }
@@ -121,10 +113,15 @@ class AuthRepository {
   }
 
   // Fungsi Ganti Password
-  Future<void> changePassword(String currentPassword, String newPassword, String confirmPassword) async {
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
     try {
       String? token = await _storage.read(key: 'auth_token');
-      if (token == null) throw Exception("Sesi telah habis, silakan login ulang.");
+      if (token == null)
+        throw Exception("Sesi telah habis, silakan login ulang.");
 
       final response = await _dio.post(
         ApiConfig.changePassword,

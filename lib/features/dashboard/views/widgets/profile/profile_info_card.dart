@@ -102,11 +102,35 @@ class ProfileInfoCard extends StatelessWidget {
                 Divider(color: Colors.grey[100], thickness: 1.5, height: 0),
                 const SizedBox(height: 15),
 
-                // Info Data NIK & Email
+                // Info Data Kependudukan
                 _buildModernInfoRow(
                   Icons.credit_card_outlined,
                   "Nomor Induk Kependudukan",
                   controller.userNik,
+                ),
+                const SizedBox(height: 15),
+                _buildModernInfoRow(
+                  Icons.person_outline,
+                  "Jenis Kelamin",
+                  controller.userJenisKelamin,
+                ),
+                const SizedBox(height: 15),
+                _buildModernInfoRow(
+                  Icons.calendar_today_outlined,
+                  "Tanggal Lahir",
+                  controller.userTanggalLahir,
+                ),
+                const SizedBox(height: 15),
+                _buildModernInfoRow(
+                  Icons.phone_android_outlined,
+                  "No. Telepon",
+                  controller.userNoTelp,
+                ),
+                const SizedBox(height: 15),
+                _buildModernInfoRow(
+                  Icons.location_on_outlined,
+                  "Alamat Domisili",
+                  controller.userAlamat,
                 ),
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
