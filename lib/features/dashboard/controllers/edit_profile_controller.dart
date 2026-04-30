@@ -22,11 +22,29 @@ class EditProfileController extends GetxController {
         : _dashboardC.userNoTelp.value;
   }
 
+  String _sanitizePhoneNumber(String number) {
+    if (number.isEmpty) return '';
+
+    // 1. Hapus semua karakter yang BUKAN angka (termasuk +, -, spasi, kurung)
+    String cleanNumber = number.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (cleanNumber.isEmpty) return '';
+
+    // 2. Cek awalan nomor untuk standarisasi ke 62
+    if (cleanNumber.startsWith('0')) {
+      cleanNumber = '62${cleanNumber.substring(1)}';
+    } else if (cleanNumber.startsWith('8')) {
+      cleanNumber = '62$cleanNumber';
+    }
+
+    return cleanNumber;
+  }
+
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70, // Kompres sedikit agar tidak terlalu besar
+      imageQuality: 70,
     );
 
     if (image != null) {
@@ -37,12 +55,17 @@ class EditProfileController extends GetxController {
   Future<void> saveProfile() async {
     isLoading.value = true;
     try {
+      // Terapkan sanitasi pada inputan teks sebelum dikirim
+      String sanitizedNumber = _sanitizePhoneNumber(
+        noTelpController.text.trim(),
+      );
+
       await _authRepo.updateProfile(
-        noTelp: noTelpController.text.trim(),
+        noTelp: sanitizedNumber, // Kirim nomor yang sudah disanitasi
         avatar: selectedImage.value,
       );
 
-      // Refresh data profil di dashboard agar avatar & no telp langsung berubah
+      // Refresh data profil di dashboard
       await _dashboardC.fetchUserProfile();
 
       Get.back(); // Tutup halaman edit

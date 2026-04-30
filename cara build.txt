@@ -1,11 +1,16 @@
 - flutter devices
 
-- flutter run --no-debug
+- flutter run --no-debug atau flutter run
 
+
+Jika tujuan Anda adalah menginstal sekaligus langsung menjalankan aplikasi dalam mode performa terbaik (Release Mode) di HP, gunakan perintah ini:
 - flutter run --release
 
 - flutter run -d <DEVICE_ID> --release
 
+
+Perintah ini secara otomatis akan mencari file APK yang sudah Anda build di folder build/app/outputs/flutter-apk/ dan menginstalnya ke perangkat yang terhubung.
+- flutter install
 
 Jika tujuannya membuat FILE APK (untuk dikirim ke orang lain)
 Build APK (Android) Release:
