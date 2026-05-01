@@ -3,14 +3,46 @@ import 'package:get/get.dart';
 import '../../../data/models/surat_model.dart';
 import 'package:open_file/open_file.dart';
 import '../data/surat_repository.dart';
+import '../controllers/surat_controller.dart';
 
 class DetailSuratView extends StatelessWidget {
   const DetailSuratView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Ambil data yang dikirim dari halaman sebelumnya
-    final SuratModel surat = Get.arguments as SuratModel;
+    SuratModel? currentSurat;
+
+    if (Get.arguments is SuratModel) {
+      // 1. Jika dibuka normal dari List Surat
+      currentSurat = Get.arguments as SuratModel;
+    } else if (Get.arguments != null) {
+      // 2. Jika dibuka via Notifikasi FCM (arguments berupa String ID)
+      final String argId = Get.arguments.toString();
+      try {
+        // ASUMSI: Mas Dins memiliki SuratController yang menyimpan listSurat
+        // Jika Controller-nya bernama lain, silakan sesuaikan tipe Get.find()-nya.
+        final controller = Get.find<SuratController>();
+        currentSurat = controller.historySurat.firstWhere(
+          (item) => item.id.toString() == argId,
+        );
+      } catch (e) {
+        currentSurat = null; // Jika ID gagal ditemukan di memori
+      }
+    }
+
+    // --- FALLBACK UI JIKA DATA KOSONG ---
+    if (currentSurat == null) {
+      return Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(title: const Text("Detail Permohonan")),
+        body: const Center(
+          child: Text(
+            "Data surat tidak ditemukan.",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -37,22 +69,22 @@ class DetailSuratView extends StatelessWidget {
               child: Column(
                 children: [
                   Icon(
-                    _getIconStatus(surat.status), 
-                    size: 50, 
-                    color: surat.statusColor
+                    _getIconStatus(currentSurat.status),
+                    size: 50,
+                    color: currentSurat.statusColor,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    surat.status.toUpperCase(),
+                    currentSurat.status.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 18, 
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: surat.statusColor
+                      color: currentSurat.statusColor,
                     ),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Diajukan pada ${surat.tanggalFormatted}",
+                    "Diajukan pada ${currentSurat.tanggalFormatted}",
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
@@ -60,7 +92,8 @@ class DetailSuratView extends StatelessWidget {
             ),
 
             // Jika DITOLAK, Munculkan Alasannya
-            if (surat.status == 'ditolak' && surat.keteranganOperator != null)
+            if (currentSurat.status == 'ditolak' &&
+                currentSurat.keteranganOperator != null)
               Container(
                 margin: const EdgeInsets.only(top: 20),
                 width: double.infinity,
@@ -73,9 +106,18 @@ class DetailSuratView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Alasan Penolakan:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                    const Text(
+                      "Alasan Penolakan:",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
                     const SizedBox(height: 5),
-                    Text(surat.keteranganOperator!, style: TextStyle(color: Colors.red[900])),
+                    Text(
+                      currentSurat.keteranganOperator!,
+                      style: TextStyle(color: Colors.red[900]),
+                    ),
                   ],
                 ),
               ),
@@ -83,7 +125,10 @@ class DetailSuratView extends StatelessWidget {
             const SizedBox(height: 25),
 
             // 2. Informasi Surat
-            const Text("Informasi Surat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Text(
+              "Informasi Surat",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(20),
@@ -94,22 +139,26 @@ class DetailSuratView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _rowDetail("Jenis Surat", surat.namaSurat),
+                  _rowDetail("Jenis Surat", currentSurat.namaSurat),
                   const Divider(height: 20),
-                  _rowDetail("Keperluan", surat.keteranganPemohon ?? "-"),
-                  
+                  _rowDetail(
+                    "Keperluan",
+                    currentSurat.keteranganPemohon ?? "-",
+                  ),
+
                   // Tampilkan Data Form Dinamis (Nama Usaha, dll)
-                  if (surat.dataForm != null) ...[
+                  if (currentSurat.dataForm != null) ...[
                     const Divider(height: 20),
-                    ...surat.dataForm!.entries.map((entry) {
-                      // Ubah key "nama_usaha" jadi "Nama Usaha" biar rapi
-                      String label = entry.key.replaceAll('_', ' ').toUpperCase();
+                    ...currentSurat.dataForm!.entries.map((entry) {
+                      String label = entry.key
+                          .replaceAll('_', ' ')
+                          .toUpperCase();
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: _rowDetail(label, entry.value.toString()),
                       );
                     }).toList(),
-                  ]
+                  ],
                 ],
               ),
             ),
@@ -117,47 +166,62 @@ class DetailSuratView extends StatelessWidget {
             const SizedBox(height: 30),
 
             // 3. Tombol Aksi (Jika Selesai)
-            if (surat.status == 'selesai' && surat.fileHasil != null)
+            if (currentSurat.status == 'selesai' &&
+                currentSurat.fileHasil != null)
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     try {
-                      Get.snackbar("Mengunduh...", "Menyimpan ke folder Download...", 
-                        backgroundColor: Colors.blue[100], duration: const Duration(seconds: 2));
-                      
+                      Get.snackbar(
+                        "Mengunduh...",
+                        "Menyimpan ke folder Download...",
+                        backgroundColor: Colors.blue[100],
+                        duration: const Duration(seconds: 2),
+                      );
+
                       final repo = SuratRepository();
-                      
+
                       // 1. Ambil URL & Tentukan Ekstensi (Prioritas DOCX)
-                      String urlFile = surat.fileHasil!;
-                      String extension = "docx"; // Default Word
-                      
-                      if (urlFile.endsWith(".pdf")) extension = "pdf";
-                      else if (urlFile.endsWith(".doc")) extension = "doc";
-                      
-                      final fileName = "Surat_${surat.jenisSurat}_${surat.uuid.substring(0,5)}.$extension";
+                      String urlFile = currentSurat!.fileHasil!;
+                      String extension = "docx";
+
+                      if (urlFile.endsWith(".pdf"))
+                        extension = "pdf";
+                      else if (urlFile.endsWith(".doc"))
+                        extension = "doc";
+
+                      final fileName =
+                          "Surat_${currentSurat!.jenisSurat}_${currentSurat!.uuid.substring(0, 5)}.$extension";
 
                       // 3. Download
                       final path = await repo.downloadFile(urlFile, fileName);
-                      
+
                       if (path != null) {
-                         // SUKSES!
-                         Get.snackbar(
-                           "Download Berhasil!", 
-                           "Tersimpan di: Folder Download HP.\nMembuka file...", 
-                           backgroundColor: Colors.green[100],
-                           duration: const Duration(seconds: 4),
-                           snackPosition: SnackPosition.BOTTOM // Biar kebaca jelas
-                         );
-                         
-                         await Future.delayed(const Duration(seconds: 1));
-                         await OpenFile.open(path);
+                        Get.snackbar(
+                          "Download Berhasil!",
+                          "Tersimpan di: Folder Download HP.\nMembuka file...",
+                          backgroundColor: Colors.green[100],
+                          duration: const Duration(seconds: 4),
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+
+                        await Future.delayed(const Duration(seconds: 1));
+                        await OpenFile.open(path);
                       } else {
-                         Get.snackbar("Gagal", "File tidak dapat disimpan. Cek izin penyimpanan.", backgroundColor: Colors.red[100]);
+                        Get.snackbar(
+                          "Gagal",
+                          "File tidak dapat disimpan. Cek izin penyimpanan.",
+                          backgroundColor: Colors.red[100],
+                        );
                       }
                     } catch (e) {
-                      Get.snackbar("Error", "Terjadi kesalahan: $e", backgroundColor: Colors.red[100]);
+                      Get.snackbar(
+                        "Error",
+                        "Terjadi kesalahan: $e",
+                        backgroundColor: Colors.red[100],
+                      );
                     }
                   },
                   icon: const Icon(Icons.description_rounded),
@@ -168,17 +232,20 @@ class DetailSuratView extends StatelessWidget {
                   ),
                 ),
               ),
-              
-             // Tombol Batalkan (Jika masih Pending) - Optional
-             if (surat.status == 'pending')
-               Center(
-                 child: TextButton(
-                   onPressed: () {
-                     Get.snackbar("Info", "Fitur pembatalan belum tersedia");
-                   },
-                   child: const Text("Batalkan Permohonan", style: TextStyle(color: Colors.red)),
-                 ),
-               )
+
+            // Tombol Batalkan (Jika masih Pending)
+            if (currentSurat.status == 'pending')
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Get.snackbar("Info", "Fitur pembatalan belum tersedia");
+                  },
+                  child: const Text(
+                    "Batalkan Permohonan",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -191,10 +258,16 @@ class DetailSuratView extends StatelessWidget {
       children: [
         SizedBox(
           width: 100,
-          child: Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+          child: Text(
+            label,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
         ),
         Expanded(
-          child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
+          child: Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+          ),
         ),
       ],
     );
@@ -202,10 +275,14 @@ class DetailSuratView extends StatelessWidget {
 
   IconData _getIconStatus(String status) {
     switch (status) {
-      case 'selesai': return Icons.check_circle;
-      case 'ditolak': return Icons.cancel;
-      case 'diproses': return Icons.sync;
-      default: return Icons.hourglass_top;
+      case 'selesai':
+        return Icons.check_circle;
+      case 'ditolak':
+        return Icons.cancel;
+      case 'diproses':
+        return Icons.sync;
+      default:
+        return Icons.hourglass_top;
     }
   }
 }

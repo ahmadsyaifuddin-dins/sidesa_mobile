@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../../../data/models/surat_model.dart';
+import '../../../surat/controllers/surat_controller.dart';
 
 class RiwayatTab extends StatefulWidget {
   const RiwayatTab({super.key});
@@ -13,18 +14,22 @@ class RiwayatTab extends StatefulWidget {
 
 class _RiwayatTabState extends State<RiwayatTab> {
   // Filter Lokal (Semua, Pending, Selesai, Ditolak)
-  String filterStatus = 'Semua'; 
+  String filterStatus = 'Semua';
   final List<String> filters = ['Semua', 'Pending', 'Selesai', 'Ditolak'];
 
   @override
   Widget build(BuildContext context) {
-    // Kita panggil controller Dashboard yang sudah ada
-    final controller = Get.find<DashboardController>();
+    // Panggil kedua controller agar rapi
+    final dashboardC = Get.find<DashboardController>();
+    final suratC = Get.find<SuratController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Riwayat Pengajuan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: const Text(
+          "Riwayat Pengajuan",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -52,10 +57,14 @@ class _RiwayatTabState extends State<RiwayatTab> {
                     backgroundColor: Colors.grey[100],
                     labelStyle: TextStyle(
                       color: isActive ? Colors.blue[900] : Colors.grey[700],
-                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal
+                      fontWeight: isActive
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     side: BorderSide.none,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 );
               }).toList(),
@@ -65,12 +74,14 @@ class _RiwayatTabState extends State<RiwayatTab> {
           // 2. LIST SURAT
           Expanded(
             child: Obx(() {
-              if (controller.isLoadingHistory.value) {
+              // UBAH: Gunakan suratC
+              if (suratC.isLoadingHistory.value) {
                 return const Center(child: CircularProgressIndicator());
               }
 
               // Logic Filter Data
-              List<SuratModel> dataTampil = controller.historySurat.where((surat) {
+              // UBAH: Gunakan suratC
+              List<SuratModel> dataTampil = suratC.historySurat.where((surat) {
                 if (filterStatus == 'Semua') return true;
                 return surat.status.toLowerCase() == filterStatus.toLowerCase();
               }).toList();
@@ -80,20 +91,29 @@ class _RiwayatTabState extends State<RiwayatTab> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.history_toggle_off, size: 60, color: Colors.grey[300]),
+                      Icon(
+                        Icons.history_toggle_off,
+                        size: 60,
+                        color: Colors.grey[300],
+                      ),
                       const SizedBox(height: 10),
-                      Text("Tidak ada riwayat $filterStatus", style: TextStyle(color: Colors.grey[500])),
+                      Text(
+                        "Tidak ada riwayat $filterStatus",
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
                     ],
                   ),
                 );
               }
 
               return RefreshIndicator(
-                onRefresh: () async => await controller.fetchHistory(),
+                // UBAH: Gunakan suratC
+                onRefresh: () async => await suratC.fetchHistory(),
                 child: ListView.separated(
                   padding: const EdgeInsets.all(20),
                   itemCount: dataTampil.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 15),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 15),
                   itemBuilder: (context, index) {
                     final surat = dataTampil[index];
                     return _buildCard(surat);
@@ -109,10 +129,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
 
   Widget _buildCard(SuratModel surat) {
     return Container(
-      // Margin bawah agar antar kartu ada jarak
       margin: const EdgeInsets.only(bottom: 15),
-      
-      // Dekorasi Luar (Khusus Shadow)
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -120,13 +137,11 @@ class _RiwayatTabState extends State<RiwayatTab> {
             color: Colors.grey.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
-      
-      // Material digunakan agar efek 'Ripple' (gelombang klik) terlihat di atas warna putih
       child: Material(
-        color: Colors.white, 
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -135,7 +150,6 @@ class _RiwayatTabState extends State<RiwayatTab> {
           },
           child: Container(
             padding: const EdgeInsets.all(16),
-            // Dekorasi Dalam (Khusus Border)
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey[200]!),
@@ -143,36 +157,43 @@ class _RiwayatTabState extends State<RiwayatTab> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Icon Surat
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.description_outlined, color: Colors.blue[700]),
+                  child: Icon(
+                    Icons.description_outlined,
+                    color: Colors.blue[700],
+                  ),
                 ),
                 const SizedBox(width: 15),
-                
-                // 2. Detail Teks & Status
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         surat.namaSurat,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "Diajukan: ${surat.tanggalFormatted}",
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                       const SizedBox(height: 8),
-                      
-                      // Badge Status
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: surat.statusColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),

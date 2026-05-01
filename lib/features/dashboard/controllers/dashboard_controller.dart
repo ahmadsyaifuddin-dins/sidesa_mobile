@@ -5,13 +5,12 @@ import 'package:intl/intl.dart';
 import '../../../core/config/api_config.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
-import '../../surat/data/surat_repository.dart';
-import '../../../data/models/surat_model.dart';
 import '../../../core/utils/greeting_util.dart';
+import '../../surat/controllers/surat_controller.dart';
+import '../../aduan/controllers/aduan_controller.dart';
 
 class DashboardController extends GetxController {
   final AuthRepository _authRepo = AuthRepository();
-  final SuratRepository _suratRepo = SuratRepository();
   final _storage = const FlutterSecureStorage();
 
   var greetingText = "".obs;
@@ -27,25 +26,22 @@ class DashboardController extends GetxController {
   var userAvatar = ''.obs;
 
   var isDataHidden = true.obs;
-
-  void toggleDataVisibility() {
-    isDataHidden.value = !isDataHidden.value;
-  }
-
-  var historySurat = <SuratModel>[].obs;
-  var isLoadingHistory = false.obs;
   var tabIndex = 0.obs;
+
+  void toggleDataVisibility() => isDataHidden.value = !isDataHidden.value;
+  void changeTab(int index) => tabIndex.value = index;
 
   @override
   void onInit() {
     super.onInit();
+
+    // Agar data riwayat surat langsung di-fetch dan siap dipakai oleh tab surat
+    Get.put(SuratController());
+    Get.put(AduanController());
     greetingText.value = GreetingUtil.getRandomGreeting();
     loadUserData();
-    fetchHistory();
     fetchUserProfile();
   }
-
-  void changeTab(int index) => tabIndex.value = index;
 
   void loadUserData() async {
     String? name = await _storage.read(key: 'user_name');
@@ -57,23 +53,6 @@ class DashboardController extends GetxController {
     if (email != null) userEmail.value = email;
   }
 
-  Future<void> fetchHistory() async {
-    isLoadingHistory.value = true;
-    try {
-      var list = await _suratRepo.getRiwayatSurat();
-      historySurat.assignAll(list);
-    } catch (e) {
-      Get.snackbar(
-        "Informasi",
-        "Gagal memuat riwayat surat. Periksa koneksi internet Anda.",
-        backgroundColor: Colors.orange[100],
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } finally {
-      isLoadingHistory.value = false;
-    }
-  }
-
   Future<void> fetchUserProfile() async {
     try {
       final data = await _authRepo.getRawProfile();
@@ -81,7 +60,6 @@ class DashboardController extends GetxController {
       final wargaData = data['warga'];
 
       if (userData != null) {
-        // Build URL Avatar menggunakan IP Dinamis
         userAvatar.value = userData['avatar'] != null
             ? '${ApiConfig.baseHost}/${userData['avatar']}'
             : '';
@@ -89,9 +67,7 @@ class DashboardController extends GetxController {
 
       if (wargaData != null) {
         userJenisKelamin.value = wargaData['jenis_kelamin'] ?? '-';
-        // UBAH DI SINI: Sesuaikan dengan nama kolom di database (nomor_telepon)
         userNoTelp.value = wargaData['nomor_telepon'] ?? '-';
-        // Pastikan API mengirimkan data alamat dari relasi KartuKeluarga
         userAlamat.value = wargaData['alamat'] ?? '-';
 
         if (wargaData['tanggal_lahir'] != null) {
@@ -113,6 +89,9 @@ class DashboardController extends GetxController {
 
   void logout() async {
     await _authRepo.logout();
+    // Hapus juga SuratController dari memori saat logout
+    Get.delete<SuratController>();
+    Get.delete<AduanController>();
     Get.offAllNamed(Routes.LOGIN);
   }
 }

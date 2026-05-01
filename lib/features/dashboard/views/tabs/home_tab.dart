@@ -5,6 +5,7 @@ import '../widgets/home/dashboard_header.dart';
 import '../widgets/home/digital_id/digital_id_card.dart';
 import '../widgets/home/history_section.dart';
 import '../widgets/home/service_menu.dart';
+import '../../../surat/controllers/surat_controller.dart';
 
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
@@ -17,7 +18,7 @@ class HomeTab extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () async {
         controller.loadUserData();
-        await controller.fetchHistory();
+        await Get.find<SuratController>().fetchHistory();
       },
       child: SafeArea(
         child: SingleChildScrollView(
