@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/dashboard/views/widgets/home/skeleton_history_item.dart';
 import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../../../data/models/surat_model.dart';
@@ -42,12 +43,13 @@ class HistorySection extends StatelessWidget {
 
         // Body List (Obx)
         Obx(() {
-          // UBAH: Menggunakan suratC
+          // UBAH BAGIAN INI: Menggunakan Skeleton Loading
           if (suratC.isLoadingHistory.value) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: CircularProgressIndicator(),
+            return Column(
+              // Generate 3 skeleton agar terlihat penuh sambil menunggu data
+              children: List.generate(
+                3,
+                (index) => const SkeletonHistoryItem(),
               ),
             );
           }
@@ -57,7 +59,6 @@ class HistorySection extends StatelessWidget {
           }
 
           return Column(
-            // UBAH: Tambahkan .take(3) agar hanya menampilkan maksimal 3 history
             children: suratC.historySurat.take(3).map((surat) {
               return _buildHistoryItem(surat);
             }).toList(),

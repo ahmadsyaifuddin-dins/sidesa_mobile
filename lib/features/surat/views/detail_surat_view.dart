@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../data/models/surat_model.dart';
 import 'package:open_file/open_file.dart';
+import '../../../data/models/surat_model.dart';
 import '../data/surat_repository.dart';
 import '../controllers/surat_controller.dart';
 
@@ -10,40 +10,6 @@ class DetailSuratView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SuratModel? currentSurat;
-
-    if (Get.arguments is SuratModel) {
-      // 1. Jika dibuka normal dari List Surat
-      currentSurat = Get.arguments as SuratModel;
-    } else if (Get.arguments != null) {
-      // 2. Jika dibuka via Notifikasi FCM (arguments berupa String ID)
-      final String argId = Get.arguments.toString();
-      try {
-        // ASUMSI: Mas Dins memiliki SuratController yang menyimpan listSurat
-        // Jika Controller-nya bernama lain, silakan sesuaikan tipe Get.find()-nya.
-        final controller = Get.find<SuratController>();
-        currentSurat = controller.historySurat.firstWhere(
-          (item) => item.id.toString() == argId,
-        );
-      } catch (e) {
-        currentSurat = null; // Jika ID gagal ditemukan di memori
-      }
-    }
-
-    // --- FALLBACK UI JIKA DATA KOSONG ---
-    if (currentSurat == null) {
-      return Scaffold(
-        backgroundColor: Colors.grey[50],
-        appBar: AppBar(title: const Text("Detail Permohonan")),
-        body: const Center(
-          child: Text(
-            "Data surat tidak ditemukan.",
-            style: TextStyle(color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -52,203 +18,241 @@ class DetailSuratView extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Header Status
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    _getIconStatus(currentSurat.status),
-                    size: 50,
-                    color: currentSurat.statusColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    currentSurat.status.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: currentSurat.statusColor,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Diajukan pada ${currentSurat.tanggalFormatted}",
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
+      // BUNGKUS SELURUH BODY DENGAN Obx AGAR REAKTIF
+      body: Obx(() {
+        // --- LOGIC REAKTIF & DEEP LINKING ---
+        SuratModel? currentSurat;
+        final suratC = Get.find<SuratController>();
 
-            // Jika DITOLAK, Munculkan Alasannya
-            if (currentSurat.status == 'ditolak' &&
-                currentSurat.keteranganOperator != null)
+        if (Get.arguments is SuratModel) {
+          // 1. Jika dibuka normal dari List Surat, kita tetap cari di memori agar Reaktif
+          final SuratModel argSurat = Get.arguments as SuratModel;
+          try {
+            currentSurat = suratC.historySurat.firstWhere(
+              (item) => item.id == argSurat.id,
+            );
+          } catch (e) {
+            currentSurat = argSurat; // Fallback jika tidak ketemu di memori
+          }
+        } else if (Get.arguments != null) {
+          // 2. Jika dibuka via Notifikasi FCM (arguments berupa String ID)
+          final String argId = Get.arguments.toString();
+          try {
+            currentSurat = suratC.historySurat.firstWhere(
+              (item) => item.id.toString() == argId,
+            );
+          } catch (e) {
+            currentSurat = null;
+          }
+        }
+
+        // --- FALLBACK UI JIKA DATA KOSONG ---
+        if (currentSurat == null) {
+          return const Center(
+            child: Text(
+              "Data surat tidak ditemukan / sedang memuat...",
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        // --- RENDER UI UTAMA ---
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Header Status
               Container(
-                margin: const EdgeInsets.only(top: 20),
                 width: double.infinity,
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.red[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red[200]!),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey[200]!),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Alasan Penolakan:",
+                    Icon(
+                      _getIconStatus(currentSurat.status),
+                      size: 50,
+                      color: currentSurat.statusColor,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      currentSurat.status.toUpperCase(),
                       style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: currentSurat.statusColor,
                       ),
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      currentSurat.keteranganOperator!,
-                      style: TextStyle(color: Colors.red[900]),
+                      "Diajukan pada ${currentSurat.tanggalFormatted}",
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
               ),
 
-            const SizedBox(height: 25),
-
-            // 2. Informasi Surat
-            const Text(
-              "Informasi Surat",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
-              child: Column(
-                children: [
-                  _rowDetail("Jenis Surat", currentSurat.namaSurat),
-                  const Divider(height: 20),
-                  _rowDetail(
-                    "Keperluan",
-                    currentSurat.keteranganPemohon ?? "-",
+              // Jika DITOLAK, Munculkan Alasannya
+              if (currentSurat.status == 'ditolak' &&
+                  currentSurat.keteranganOperator != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.red[200]!),
                   ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Alasan Penolakan:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        currentSurat.keteranganOperator!,
+                        style: TextStyle(color: Colors.red[900]),
+                      ),
+                    ],
+                  ),
+                ),
 
-                  // Tampilkan Data Form Dinamis (Nama Usaha, dll)
-                  if (currentSurat.dataForm != null) ...[
-                    const Divider(height: 20),
-                    ...currentSurat.dataForm!.entries.map((entry) {
-                      String label = entry.key
-                          .replaceAll('_', ' ')
-                          .toUpperCase();
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _rowDetail(label, entry.value.toString()),
-                      );
-                    }).toList(),
-                  ],
-                ],
+              const SizedBox(height: 25),
+
+              // 2. Informasi Surat
+              const Text(
+                "Informasi Surat",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-            ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Column(
+                  children: [
+                    _rowDetail("Jenis Surat", currentSurat.namaSurat),
+                    const Divider(height: 20),
+                    _rowDetail(
+                      "Keperluan",
+                      currentSurat.keteranganPemohon ?? "-",
+                    ),
 
-            const SizedBox(height: 30),
+                    // Tampilkan Data Form Dinamis
+                    if (currentSurat.dataForm != null) ...[
+                      const Divider(height: 20),
+                      ...currentSurat.dataForm!.entries.map((entry) {
+                        String label = entry.key
+                            .replaceAll('_', ' ')
+                            .toUpperCase();
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _rowDetail(label, entry.value.toString()),
+                        );
+                      }).toList(),
+                    ],
+                  ],
+                ),
+              ),
 
-            // 3. Tombol Aksi (Jika Selesai)
-            if (currentSurat.status == 'selesai' &&
-                currentSurat.fileHasil != null)
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    try {
-                      Get.snackbar(
-                        "Mengunduh...",
-                        "Menyimpan ke folder Download...",
-                        backgroundColor: Colors.blue[100],
-                        duration: const Duration(seconds: 2),
-                      );
+              const SizedBox(height: 30),
 
-                      final repo = SuratRepository();
-
-                      // 1. Ambil URL & Tentukan Ekstensi (Prioritas DOCX)
-                      String urlFile = currentSurat!.fileHasil!;
-                      String extension = "docx";
-
-                      if (urlFile.endsWith(".pdf"))
-                        extension = "pdf";
-                      else if (urlFile.endsWith(".doc"))
-                        extension = "doc";
-
-                      final fileName =
-                          "Surat_${currentSurat!.jenisSurat}_${currentSurat!.uuid.substring(0, 5)}.$extension";
-
-                      // 3. Download
-                      final path = await repo.downloadFile(urlFile, fileName);
-
-                      if (path != null) {
+              // 3. Tombol Aksi (Jika Selesai)
+              if (currentSurat.status == 'selesai' &&
+                  currentSurat.fileHasil != null)
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      try {
                         Get.snackbar(
-                          "Download Berhasil!",
-                          "Tersimpan di: Folder Download HP.\nMembuka file...",
-                          backgroundColor: Colors.green[100],
-                          duration: const Duration(seconds: 4),
-                          snackPosition: SnackPosition.BOTTOM,
+                          "Mengunduh...",
+                          "Menyimpan ke folder Download...",
+                          backgroundColor: Colors.blue[100],
+                          duration: const Duration(seconds: 2),
                         );
 
-                        await Future.delayed(const Duration(seconds: 1));
-                        await OpenFile.open(path);
-                      } else {
+                        final repo = SuratRepository();
+
+                        String urlFile = currentSurat!.fileHasil!;
+                        String extension = "docx";
+
+                        if (urlFile.endsWith(".pdf"))
+                          extension = "pdf";
+                        else if (urlFile.endsWith(".doc"))
+                          extension = "doc";
+
+                        final fileName =
+                            "Surat_${currentSurat!.jenisSurat}_${currentSurat!.uuid.substring(0, 5)}.$extension";
+
+                        final path = await repo.downloadFile(urlFile, fileName);
+
+                        if (path != null) {
+                          Get.snackbar(
+                            "Download Berhasil!",
+                            "Tersimpan di: Folder Download HP.\nMembuka file...",
+                            backgroundColor: Colors.green[100],
+                            duration: const Duration(seconds: 4),
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+
+                          await Future.delayed(const Duration(seconds: 1));
+                          await OpenFile.open(path);
+                        } else {
+                          Get.snackbar(
+                            "Gagal",
+                            "File tidak dapat disimpan. Cek izin penyimpanan.",
+                            backgroundColor: Colors.red[100],
+                          );
+                        }
+                      } catch (e) {
                         Get.snackbar(
-                          "Gagal",
-                          "File tidak dapat disimpan. Cek izin penyimpanan.",
+                          "Error",
+                          "Terjadi kesalahan: $e",
                           backgroundColor: Colors.red[100],
                         );
                       }
-                    } catch (e) {
-                      Get.snackbar(
-                        "Error",
-                        "Terjadi kesalahan: $e",
-                        backgroundColor: Colors.red[100],
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.description_rounded),
-                  label: const Text("UNDUH DOKUMEN (WORD)"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+                    },
+                    icon: const Icon(Icons.description_rounded),
+                    label: const Text("UNDUH DOKUMEN (WORD)"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ),
-              ),
 
-            // Tombol Batalkan (Jika masih Pending)
-            if (currentSurat.status == 'pending')
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    Get.snackbar("Info", "Fitur pembatalan belum tersedia");
-                  },
-                  child: const Text(
-                    "Batalkan Permohonan",
-                    style: TextStyle(color: Colors.red),
+              // Tombol Batalkan (Jika masih Pending)
+              if (currentSurat.status == 'pending')
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Get.snackbar("Info", "Fitur pembatalan belum tersedia");
+                    },
+                    child: const Text(
+                      "Batalkan Permohonan",
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

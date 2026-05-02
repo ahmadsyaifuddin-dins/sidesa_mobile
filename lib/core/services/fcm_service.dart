@@ -4,6 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/routes/app_routes.dart';
+import '../../features/aduan/controllers/aduan_controller.dart';
+import '../../features/surat/controllers/surat_controller.dart';
 
 class FcmService extends GetxService {
   static final FirebaseMessaging _fcm = FirebaseMessaging.instance;
@@ -26,7 +28,7 @@ class FcmService extends GetxService {
 
   Future<void> _initLocalNotif() async {
     const AndroidInitializationSettings androidInit =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_notif');
     const InitializationSettings initSettings = InitializationSettings(
       android: androidInit,
     );
@@ -45,6 +47,7 @@ class FcmService extends GetxService {
   void _listenFCM() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) _showLocalNotif(message);
+      _refreshDataSilently();
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -71,6 +74,7 @@ class FcmService extends GetxService {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
+          icon: '@drawable/ic_notif',
         );
 
     // FIX: Menggunakan named parameters untuk id, title, body, dan notificationDetails
@@ -83,18 +87,32 @@ class FcmService extends GetxService {
     );
   }
 
+  static void _refreshDataSilently() {
+    if (Get.isRegistered<AduanController>())
+      Get.find<AduanController>().fetchRiwayatAduan();
+    if (Get.isRegistered<SuratController>())
+      Get.find<SuratController>().fetchHistory();
+  }
+
   static void _handleRouting(Map<String, dynamic> data) {
     try {
+      // 1. Tarik data terbaru di background
+      _refreshDataSilently();
+
       final type = data['type'];
       final id = data['id'];
 
       if (type == null || id == null) return;
 
-      if (type == 'aduan') {
-        Get.toNamed(Routes.DETAIL_ADUAN, arguments: id.toString());
-      } else if (type == 'surat') {
-        Get.toNamed(Routes.DETAIL_SURAT, arguments: id.toString());
-      }
+      // 2. FIX: Beri jeda 400 milidetik agar Navigator GetX tidak glitch
+      // saat aplikasi baru saja "bangun" dari background.
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (type == 'aduan') {
+          Get.toNamed(Routes.DETAIL_ADUAN, arguments: id.toString());
+        } else if (type == 'surat') {
+          Get.toNamed(Routes.DETAIL_SURAT, arguments: id.toString());
+        }
+      });
     } catch (e) {
       debugPrint("Routing Error: $e");
     }
