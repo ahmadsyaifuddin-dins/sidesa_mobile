@@ -94,7 +94,7 @@ class FcmService extends GetxService {
       Get.find<SuratController>().fetchHistory();
   }
 
-  static void _handleRouting(Map<String, dynamic> data) {
+  static void _handleRouting(Map<String, dynamic> data) async {
     try {
       // 1. Tarik data terbaru di background
       _refreshDataSilently();
@@ -104,15 +104,26 @@ class FcmService extends GetxService {
 
       if (type == null || id == null) return;
 
-      // 2. FIX: Beri jeda 400 milidetik agar Navigator GetX tidak glitch
-      // saat aplikasi baru saja "bangun" dari background.
-      Future.delayed(const Duration(milliseconds: 400), () {
-        if (type == 'aduan') {
+      // 2. SMART WAITING (Menunggu Splash Screen / Auth Selesai)
+      // Kita cek setiap 200ms apakah posisi saat ini SUDAH di Dashboard.
+      // Maksimal percobaan 25 kali (sekitar 5 detik) agar tidak infinite loop.
+      int attempts = 0;
+      while (Get.currentRoute != Routes.DASHBOARD && attempts < 25) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        attempts++;
+      }
+
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      if (type == 'aduan') {
+        if (Get.currentRoute != Routes.DETAIL_ADUAN) {
           Get.toNamed(Routes.DETAIL_ADUAN, arguments: id.toString());
-        } else if (type == 'surat') {
+        }
+      } else if (type == 'surat') {
+        if (Get.currentRoute != Routes.DETAIL_SURAT) {
           Get.toNamed(Routes.DETAIL_SURAT, arguments: id.toString());
         }
-      });
+      }
     } catch (e) {
       debugPrint("Routing Error: $e");
     }
