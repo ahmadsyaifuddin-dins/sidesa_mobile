@@ -32,7 +32,7 @@ class DashboardView extends StatelessWidget {
       // BOTTOM NAV BAR BARU DENGAN WATER DROP EFFECT
       bottomNavigationBar: Obx(
         () => WaterDropNavBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blue[50]!,
           waterDropColor: Colors.blue[800]!, // Warna tetesan air (sesuaikan dengan tema SIDESA)
           selectedIndex: controller.tabIndex.value,
           onItemSelected: (index) {
