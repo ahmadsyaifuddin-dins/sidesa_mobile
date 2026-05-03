@@ -15,10 +15,21 @@ class SnackbarHelper {
       snackPosition: SnackPosition.TOP, 
       margin: const EdgeInsets.only(top: 16),
       duration: Duration(milliseconds: (duration * 1000).toInt()),
-      messageText: AwesomeSnackbarContent(
-        title: title,
-        message: message,
-        contentType: contentType,
+      
+      // TAMBAHAN GETX UNTUK FITUR CLOSE
+      isDismissible: true, // Mengizinkan swipe untuk menutup
+      dismissDirection: DismissDirection.horizontal, // Arah swipe ke samping
+      onTap: (snack) {
+        Get.closeCurrentSnackbar(); // Menutup snackbar saat seluruh area di-tap
+      },
+
+      // MEMATIKAN TOMBOL X BAWAAN PACKAGE AGAR TIDAK BENTROK
+      messageText: IgnorePointer(
+        child: AwesomeSnackbarContent(
+          title: title,
+          message: message,
+          contentType: contentType,
+        ),
       ),
     );
   }
