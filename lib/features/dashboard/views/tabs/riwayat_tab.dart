@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/dashboard/views/tabs/widgets/skeleton_riwayat_card.dart';
 import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../../../data/models/surat_model.dart';
@@ -74,13 +75,18 @@ class _RiwayatTabState extends State<RiwayatTab> {
           // 2. LIST SURAT
           Expanded(
             child: Obx(() {
-              // UBAH: Gunakan suratC
               if (suratC.isLoadingHistory.value) {
-                return const Center(child: CircularProgressIndicator());
+                // Tampilkan 5 skeleton sebagai placeholder saat loading
+                return ListView.builder(
+                  padding: const EdgeInsets.all(20),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return const SkeletonRiwayatCard();
+                  },
+                );
               }
 
               // Logic Filter Data
-              // UBAH: Gunakan suratC
               List<SuratModel> dataTampil = suratC.historySurat.where((surat) {
                 if (filterStatus == 'Semua') return true;
                 return surat.status.toLowerCase() == filterStatus.toLowerCase();
