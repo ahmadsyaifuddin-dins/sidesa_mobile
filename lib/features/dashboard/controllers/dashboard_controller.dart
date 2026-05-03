@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../../../core/config/api_config.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
@@ -78,11 +79,9 @@ class DashboardController extends GetxController {
         }
       }
     } catch (e) {
-      Get.snackbar(
-        "Informasi",
-        "Gagal memuat profil terbaru.",
-        backgroundColor: Colors.orange[100],
-        snackPosition: SnackPosition.BOTTOM,
+      SnackbarHelper.info(
+        title: "Informasi",
+        message: "Gagal memuat profil terbaru.",
       );
     }
   }

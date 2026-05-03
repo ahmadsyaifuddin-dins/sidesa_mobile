@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../data/chat_model.dart';
 import '../data/chat_repository.dart';
 
@@ -51,7 +52,10 @@ class ChatController extends GetxController {
       
       _scrollToBottom();
     } catch (e) {
-      Get.snackbar("Error", "Gagal memuat riwayat chat", backgroundColor: Colors.red[100]);
+      SnackbarHelper.error(
+        title: "Gagal memuat riwayat chat",
+        message: e.toString().replaceAll("Exception: ", ""),
+      );
     } finally {
       isLoadingHistory.value = false;
     }
@@ -86,9 +90,18 @@ class ChatController extends GetxController {
       await _repo.clearHistory();
       messages.clear();
       messages.add(ChatMessage(text: "Riwayat obrolan telah dibersihkan. Ada yang bisa saya bantu lagi?", isUser: false));
-      Get.snackbar("Sukses", "Riwayat obrolan berhasil dihapus", backgroundColor: Colors.green[100]);
+      
+      // Menggunakan helper tipe Success
+      SnackbarHelper.success(
+        title: "Sukses", 
+        message: "Riwayat obrolan berhasil dihapus"
+      );
     } catch (e) {
-      Get.snackbar("Error", "Gagal membersihkan riwayat", backgroundColor: Colors.red[100]);
+      // Menggunakan helper tipe Error
+      SnackbarHelper.error(
+        title: "Error", 
+        message: "Gagal membersihkan riwayat"
+      );
     }
   }
 

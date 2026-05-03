@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../data/scanner_repository.dart';
 
 class ScannerController extends GetxController {
@@ -50,12 +51,10 @@ class ScannerController extends GetxController {
 
         await _prosesVerifikasi(nik);
       } else {
-        Get.snackbar(
-          "QR Tidak Valid",
-          "Mohon scan QR Code dari Kartu Warga Digital SIDESA.",
-          backgroundColor: Colors.orange[100],
-          snackPosition: SnackPosition.BOTTOM,
-        );
+         SnackbarHelper.warning(
+         title: "QR Tidak Valid",
+         message: "Mohon scan QR Code dari Kartu Warga Digital SIDESA.",
+      );
       }
     }
   }
@@ -74,11 +73,9 @@ class ScannerController extends GetxController {
       _showResultBottomSheet(dataWarga);
     } catch (e) {
       Get.back(); // Tutup loading dialog
-      Get.snackbar(
-        "Verifikasi Gagal",
-        e.toString().replaceAll("Exception: ", ""),
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
+      SnackbarHelper.error(
+        title: "Verifikasi Gagal",
+        message: e.toString().replaceAll("Exception: ", ""),
       );
 
       // Nyalakan kamera lagi jika gagal

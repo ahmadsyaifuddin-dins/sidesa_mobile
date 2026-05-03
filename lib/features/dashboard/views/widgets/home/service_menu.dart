@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sidesa_mobile/features/aduan/views/aduan_view.dart';
 import 'package:sidesa_mobile/features/chat/views/chat_view.dart';
@@ -43,19 +44,15 @@ class ServiceMenu extends StatelessWidget {
         try {
           // LaunchMode.externalApplication akan memaksa buka di Chrome/Browser HP
           if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-            Get.snackbar(
-              "Gagal",
-              "Tidak dapat membuka browser",
-              backgroundColor: Colors.red[100],
-              colorText: Colors.red[900],
+            SnackbarHelper.error(
+            title: "Gagal",
+            message: "Tidak dapat membuka browser",
             );
           }
         } catch (e) {
-          Get.snackbar(
-            "Error",
-            "Gagal membuka link: $e",
-            backgroundColor: Colors.red[100],
-            colorText: Colors.red[900],
+          SnackbarHelper.error(
+            title: "Error",
+            message: "Gagal membuka link: $e",
           );
         }
       },

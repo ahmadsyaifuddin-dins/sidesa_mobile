@@ -1,9 +1,12 @@
+// Asumsi Lokasi: lib/features/dashboard/controllers/edit_profile_controller.dart
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../auth/data/auth_repository.dart';
 import 'dashboard_controller.dart';
+import '../../../core/utils/snackbar_helper.dart'; 
 
 class EditProfileController extends GetxController {
   final AuthRepository _authRepo = AuthRepository();
@@ -69,18 +72,18 @@ class EditProfileController extends GetxController {
       await _dashboardC.fetchUserProfile();
 
       Get.back(); // Tutup halaman edit
-      Get.snackbar(
-        "Berhasil",
-        "Profil Anda berhasil diperbarui!",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      
+      // Menggunakan helper SIDESA yang baru
+      SnackbarHelper.success(
+        title: "Berhasil",
+        message: "Profil Anda berhasil diperbarui!",
       );
+      
     } catch (e) {
-      Get.snackbar(
-        "Gagal",
-        e.toString().replaceAll("Exception: ", ""),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      // Menggunakan helper SIDESA yang baru
+      SnackbarHelper.error(
+        title: "Gagal",
+        message: e.toString().replaceAll("Exception: ", ""),
       );
     } finally {
       isLoading.value = false;

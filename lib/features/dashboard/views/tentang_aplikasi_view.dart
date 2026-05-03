@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TentangAplikasiView extends StatelessWidget {
@@ -9,13 +10,9 @@ class TentangAplikasiView extends StatelessWidget {
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      Get.snackbar(
-        "Error",
-        "Tidak dapat membuka tautan",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
+      SnackbarHelper.error(
+        title: "Gagal",
+        message: "Tidak dapat membuka tautan",
       );
     }
   }

@@ -3,10 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/config/api_config.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import '../../../core/utils/snackbar_helper.dart'; // Import helper SIDESA
 
 class AuthController extends GetxController {
   final AuthRepository _repo = AuthRepository();
@@ -20,11 +22,10 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     if (emailC.text.isEmpty || passwordC.text.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Email dan Password harus diisi",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      // Menggunakan tipe Warning untuk validasi input
+      SnackbarHelper.warning(
+        title: "Peringatan",
+        message: "Email dan Password harus diisi",
       );
       return;
     }
@@ -44,20 +45,18 @@ class AuthController extends GetxController {
         print("❌ Gagal mendapatkan FCM Token: $e");
       }
 
-      Get.snackbar(
-        "Berhasil",
-        "Halo, ${user.name}!",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      // Menggunakan tipe Success saat berhasil login
+      SnackbarHelper.success(
+        title: "Berhasil",
+        message: "Halo, ${user.name}!",
       );
       Get.offAllNamed(Routes.DASHBOARD);
     } catch (e) {
       String msg = e.toString().replaceAll("Exception: ", "");
-      Get.snackbar(
-        "Gagal Masuk",
-        msg,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      // Menggunakan tipe Error saat login ditolak/salah
+      SnackbarHelper.error(
+        title: "Gagal Masuk",
+        message: msg,
       );
     } finally {
       isLoading.value = false;
@@ -69,6 +68,7 @@ class AuthController extends GetxController {
     final currentIP = Hive.box(
       'settings',
     ).get('server_ip', defaultValue: "192.168.0.28");
+    
     final TextEditingController ipController = TextEditingController(
       text: currentIP,
     );
@@ -105,17 +105,14 @@ class AuthController extends GetxController {
       cancelTextColor: Colors.blue.shade700,
       onConfirm: () async {
         if (ipController.text.isNotEmpty) {
-          await ApiConfig.setIP(
-            ipController.text,
-          ); // Simpan ke Hive via ApiConfig
+          await ApiConfig.setIP(ipController.text); // Simpan ke Hive via ApiConfig
           Get.back(); // Tutup dialog
-          Get.snackbar(
-            "Config Updated",
-            "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
-            backgroundColor: Colors.blue.shade900,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 4),
+          
+          // Menggunakan tipe Info untuk pemberitahuan update sistem
+          SnackbarHelper.info(
+            title: "Config Updated",
+            message: "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
+            duration: 4.0, // Durasi agak lama agar user sempat baca
           );
         }
       },

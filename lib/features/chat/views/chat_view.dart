@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../controllers/chat_controller.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -226,12 +227,10 @@ class ChatView extends StatelessWidget {
                 // Buka di browser HP
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } catch (e) {
-                Get.snackbar(
-                  "Gagal",
-                  "Tidak dapat membuka tautan",
-                  backgroundColor: Colors.red[100],
-                  colorText: Colors.red[900],
-                );
+                SnackbarHelper.error(
+                title: "Gagal",
+                message: "Tidak dapat membuka tautan",
+              );
               }
             }
           },

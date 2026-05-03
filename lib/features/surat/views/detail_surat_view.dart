@@ -1,6 +1,9 @@
+// Lokasi: lib/features/surat/views/detail_surat_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart'; // Pastikan path helper ini benar
 import '../../../data/models/surat_model.dart';
 import '../data/surat_repository.dart';
 import '../controllers/surat_controller.dart';
@@ -179,11 +182,11 @@ class DetailSuratView extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () async {
                       try {
-                        Get.snackbar(
-                          "Mengunduh...",
-                          "Menyimpan ke folder Download...",
-                          backgroundColor: Colors.blue[100],
-                          duration: const Duration(seconds: 2),
+                        // UPDATE: Snackbar Info Download
+                        SnackbarHelper.info(
+                          title: "Mengunduh...",
+                          message: "Menyimpan ke folder Download...",
+                          duration: 2.0,
                         );
 
                         final repo = SuratRepository();
@@ -191,10 +194,11 @@ class DetailSuratView extends StatelessWidget {
                         String urlFile = currentSurat!.fileHasil!;
                         String extension = "docx";
 
-                        if (urlFile.endsWith(".pdf"))
+                        if (urlFile.endsWith(".pdf")) {
                           extension = "pdf";
-                        else if (urlFile.endsWith(".doc"))
+                        } else if (urlFile.endsWith(".doc")) {
                           extension = "doc";
+                        }
 
                         final fileName =
                             "Surat_${currentSurat!.jenisSurat}_${currentSurat!.uuid.substring(0, 5)}.$extension";
@@ -202,28 +206,27 @@ class DetailSuratView extends StatelessWidget {
                         final path = await repo.downloadFile(urlFile, fileName);
 
                         if (path != null) {
-                          Get.snackbar(
-                            "Download Berhasil!",
-                            "Tersimpan di: Folder Download HP.\nMembuka file...",
-                            backgroundColor: Colors.green[100],
-                            duration: const Duration(seconds: 4),
-                            snackPosition: SnackPosition.BOTTOM,
+                          // UPDATE: Snackbar Berhasil Download
+                          SnackbarHelper.success(
+                            title: "Download Berhasil!",
+                            message: "Tersimpan di: Folder Download HP.\nMembuka file...",
+                            duration: 4.0,
                           );
 
                           await Future.delayed(const Duration(seconds: 1));
                           await OpenFile.open(path);
                         } else {
-                          Get.snackbar(
-                            "Gagal",
-                            "File tidak dapat disimpan. Cek izin penyimpanan.",
-                            backgroundColor: Colors.red[100],
+                          // UPDATE: Snackbar Gagal Simpan File
+                          SnackbarHelper.error(
+                            title: "Gagal",
+                            message: "File tidak dapat disimpan. Cek izin penyimpanan.",
                           );
                         }
                       } catch (e) {
-                        Get.snackbar(
-                          "Error",
-                          "Terjadi kesalahan: $e",
-                          backgroundColor: Colors.red[100],
+                        // UPDATE: Snackbar Tangkap Error
+                        SnackbarHelper.error(
+                          title: "Error",
+                          message: "Terjadi kesalahan: $e",
                         );
                       }
                     },
@@ -241,7 +244,11 @@ class DetailSuratView extends StatelessWidget {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      Get.snackbar("Info", "Fitur pembatalan belum tersedia");
+                      // UPDATE: Snackbar Info Fitur Belum Tersedia
+                      SnackbarHelper.info(
+                        title: "Info",
+                        message: "Fitur pembatalan belum tersedia",
+                      );
                     },
                     child: const Text(
                       "Batalkan Permohonan",

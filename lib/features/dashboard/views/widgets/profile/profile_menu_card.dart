@@ -1,8 +1,11 @@
+// Lokasi: lib/features/dashboard/views/widgets/profile_menu_card.dart (Sesuaikan jika letak foldernya berbeda)
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
 import 'package:sidesa_mobile/features/dashboard/views/edit_profile_view.dart';
 import 'package:sidesa_mobile/features/dashboard/views/tentang_aplikasi_view.dart';
+import '../../../../../core/utils/snackbar_helper.dart'; 
 
 class ProfileMenuCard extends StatelessWidget {
   const ProfileMenuCard({super.key});
@@ -157,14 +160,15 @@ class ProfileMenuCard extends StatelessWidget {
                             if (currentPassC.text.isEmpty ||
                                 newPassC.text.isEmpty ||
                                 confirmPassC.text.isEmpty) {
-                              Get.snackbar(
-                                "Error",
-                                "Semua kolom harus diisi!",
-                                backgroundColor: Colors.red,
-                                colorText: Colors.white,
+                              
+                              // Menggunakan helper tipe Warning
+                              SnackbarHelper.warning(
+                                title: "Peringatan",
+                                message: "Semua kolom harus diisi!",
                               );
                               return;
                             }
+                            
                             isLoading.value = true;
                             try {
                               await authRepo.changePassword(
@@ -172,23 +176,21 @@ class ProfileMenuCard extends StatelessWidget {
                                 newPassC.text,
                                 confirmPassC.text,
                               );
-                              Get.back();
-                              Get.snackbar(
-                                "Berhasil",
-                                "Password akun Anda berhasil diperbarui.",
-                                backgroundColor: Colors.green,
-                                colorText: Colors.white,
+                              
+                              Get.back(); // Tutup bottom sheet
+                              
+                              // Menggunakan helper tipe Success
+                              SnackbarHelper.success(
+                                title: "Berhasil",
+                                message: "Password akun Anda berhasil diperbarui.",
                               );
                             } catch (e) {
-                              String msg = e.toString().replaceAll(
-                                "Exception: ",
-                                "",
-                              );
-                              Get.snackbar(
-                                "Gagal",
-                                msg,
-                                backgroundColor: Colors.red,
-                                colorText: Colors.white,
+                              String msg = e.toString().replaceAll("Exception: ", "");
+                              
+                              // Menggunakan helper tipe Error
+                              SnackbarHelper.error(
+                                title: "Gagal",
+                                message: msg,
                               );
                             } finally {
                               isLoading.value = false;

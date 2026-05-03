@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 // Menggunakan package import agar path lebih rapi dan menghindari error
 import 'package:sidesa_mobile/core/config/api_config.dart';
@@ -108,24 +109,21 @@ void showQrBottomSheet(BuildContext context, DashboardController controller) {
                       url,
                       mode: LaunchMode.externalApplication,
                     )) {
-                      Get.snackbar(
-                        "Gagal",
-                        "Tidak dapat membuka browser",
-                        backgroundColor: Colors.red[100],
+                      SnackbarHelper.error(
+                        title: "Gagal",
+                        message: "Tidak dapat membuka browser",
                       );
                     }
                   } catch (e) {
-                    Get.snackbar(
-                      "Error",
-                      "Gagal membuka link: $e",
-                      backgroundColor: Colors.red[100],
+                    SnackbarHelper.error(
+                      title: "Error",
+                      message: "Gagal membuka link: $e",
                     );
                   }
                 } else {
-                  Get.snackbar(
-                    "Info",
-                    "Data NIK tidak valid",
-                    backgroundColor: Colors.orange[100],
+                  SnackbarHelper.info(
+                    title: "Info",
+                    message: "Data NIK tidak valid",
                   );
                 }
               },

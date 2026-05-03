@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 // Sesuaikan import path ini dengan struktur folder Mas Dins
 import '../data/surat_repository.dart';
 import '../../../data/models/surat_model.dart';
@@ -24,11 +25,9 @@ class SuratController extends GetxController {
       var list = await _suratRepo.getRiwayatSurat();
       historySurat.assignAll(list);
     } catch (e) {
-      Get.snackbar(
-        "Informasi",
-        "Gagal memuat riwayat surat. Periksa koneksi internet Anda.",
-        backgroundColor: Colors.orange[100],
-        snackPosition: SnackPosition.BOTTOM,
+      SnackbarHelper.warning(
+        title: "Informasi",
+        message: "Gagal memuat riwayat surat. Periksa koneksi internet Anda.",
       );
     } finally {
       isLoadingHistory.value = false;
