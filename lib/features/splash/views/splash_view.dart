@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart'; // 1. IMPORT SPINKIT DI SINI
+import 'package:flutter_spinkit/flutter_spinkit.dart'; 
 import '../controllers/splash_controller.dart';
 
 class SplashView extends StatelessWidget {
@@ -8,29 +8,46 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Put Controller biar logic jalan (misal: delay 3 detik lalu ke Dashboard/Login)
     Get.put(SplashController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo SIDESA yang baru (Daun Digital)
-            Image.asset(
-              'assets/SIDESA_MOBILE.png',
-              width: 160,
-              height: 160,
-              fit: BoxFit.contain,
+            // UBAH BAGIAN INI: Membungkus Logo dengan Animasi Bawaan Flutter
+            TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 1500), // Durasi 1.5 detik
+              curve: Curves.easeOutBack, // Efek memantul halus di akhir
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: Opacity(
+                    // Memastikan nilai opacity tidak lebih dari 1.0 atau kurang dari 0.0
+                    opacity: value.clamp(0.0, 1.0), 
+                    child: child,
+                  ),
+                );
+              },
+              child: Image.asset(
+                'assets/SIDESA_MOBILE.png',
+                width: 160, 
+                height: 160,
+                fit: BoxFit.contain,
+              ),
             ),
+            
             const SizedBox(height: 24),
+            
+            // Teks SIDESA Mobile dan Subtitle-nya
             const Text(
               "SIDESA Mobile",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                color: Colors.blue, 
                 letterSpacing: 2,
               ),
             ),
@@ -40,10 +57,11 @@ class SplashView extends StatelessWidget {
               style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 50),
-
-            const SpinKitThreeBounce(
-              color: Colors.blue, // Sesuaikan dengan warna primer SIDESA
-              size: 25.0, // Ukurannya dibuat pas, tidak terlalu besar/kecil
+            
+            // Animasi Loading Spinkit
+            const SpinKitDancingSquare(
+              color: Colors.blue, 
+              size: 50.0, 
             ),
           ],
         ),

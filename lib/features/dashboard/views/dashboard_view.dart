@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 import '../controllers/dashboard_controller.dart';
 
 // Import Tabs
@@ -23,34 +24,32 @@ class DashboardView extends StatelessWidget {
           children: const [
             HomeTab(), // Index 0
             RiwayatTab(), // Index 1
-            ProfileTab(), // Index 2 (Sudah bersih, hanya 3 children)
+            ProfileTab(), // Index 2
           ],
         ),
       ),
 
-      // BOTTOM NAV
+      // BOTTOM NAV BAR BARU DENGAN WATER DROP EFFECT
       bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
+        () => WaterDropNavBar(
           backgroundColor: Colors.white,
-          selectedItemColor: Colors.blue[800],
-          unselectedItemColor: Colors.grey,
-          currentIndex: controller.tabIndex.value,
-          type: BottomNavigationBarType.fixed,
-          onTap: (index) {
+          waterDropColor: Colors.blue[800]!, // Warna tetesan air (sesuaikan dengan tema SIDESA)
+          selectedIndex: controller.tabIndex.value,
+          onItemSelected: (index) {
             controller.changeTab(index);
           },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: "Beranda",
+          barItems: [
+            BarItem(
+              filledIcon: Icons.home_rounded,
+              outlinedIcon: Icons.home_outlined,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history_rounded),
-              label: "Riwayat",
+            BarItem(
+              filledIcon: Icons.history_rounded,
+              outlinedIcon: Icons.history, 
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: "Profil",
+            BarItem(
+              filledIcon: Icons.person_rounded,
+              outlinedIcon: Icons.person_outline_rounded,
             ),
           ],
         ),

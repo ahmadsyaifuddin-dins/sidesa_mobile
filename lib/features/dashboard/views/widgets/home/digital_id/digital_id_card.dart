@@ -62,7 +62,7 @@ class DigitalIdCard extends StatelessWidget {
                     children: [
                       // Dibungkus Flexible agar jika layar sangat kecil, teks tidak error
                       const Flexible(
-                        flex: 1,
+                        flex: 2,
                         child: Text(
                           "SIDESA Mobile",
                           style: TextStyle(
