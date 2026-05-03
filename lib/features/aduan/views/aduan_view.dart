@@ -26,7 +26,10 @@ class AduanView extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.to(() => const BuatAduanView()),
+        onPressed: () {
+          controller.resetForm(); // Bersihkan memori inputan lama dulu
+          Get.to(() => const BuatAduanView()); // Baru navigasi ke form
+        },
         backgroundColor: Colors.blue[700],
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(

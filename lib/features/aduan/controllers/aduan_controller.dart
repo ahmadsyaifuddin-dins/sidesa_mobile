@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/aduan_model.dart';
 import '../data/aduan_repository.dart';
+import '../../../core/utils/snackbar_helper.dart'; 
 
 class AduanController extends GetxController {
   final AduanRepository _repo = AduanRepository();
@@ -50,8 +51,10 @@ class AduanController extends GetxController {
       final data = await _repo.getRiwayatAduan();
       listAduan.value = data;
     } catch (e) {
-      Get.snackbar("Error", e.toString().replaceAll("Exception: ", ""), 
-          backgroundColor: Colors.red[100]);
+      SnackbarHelper.error(
+        title: "Error", 
+        message: e.toString().replaceAll("Exception: ", "")
+      );
     } finally {
       isFetching.value = false;
     }
@@ -68,15 +71,20 @@ class AduanController extends GetxController {
         foto.value = File(pickedFile.path);
       }
     } catch (e) {
-      Get.snackbar("Error", "Gagal mengambil foto", backgroundColor: Colors.red[100]);
+      SnackbarHelper.error(
+        title: "Error", 
+        message: "Gagal mengambil foto"
+      );
     }
   }
 
   // --- FUNGSI KIRIM ADUAN BARU ---
   Future<void> kirimAduan() async {
     if (judulC.text.isEmpty || deskripsiC.text.isEmpty) {
-      Get.snackbar("Peringatan", "Judul dan Deskripsi wajib diisi!", 
-          backgroundColor: Colors.orange[100]);
+      SnackbarHelper.warning(
+        title: "Peringatan", 
+        message: "Judul dan Deskripsi wajib diisi!"
+      );
       return;
     }
 
@@ -92,15 +100,20 @@ class AduanController extends GetxController {
       );
 
       Get.back(); // Tutup halaman form
-      Get.snackbar("Berhasil", "Aduan Anda berhasil dikirim", 
-          backgroundColor: Colors.green[100]);
+      SnackbarHelper.success(
+        title: "Berhasil", 
+        message: "Aduan Anda berhasil dikirim"
+      );
       
-      _resetForm();
+      resetForm();
       fetchRiwayatAduan();
       
     } catch (e) {
-      Get.snackbar("Gagal", e.toString().replaceAll("Exception: ", ""), 
-          backgroundColor: Colors.red[100], duration: const Duration(seconds: 4));
+      SnackbarHelper.error(
+        title: "Gagal", 
+        message: e.toString().replaceAll("Exception: ", ""),
+        duration: 4.0 // Custom durasi khusus untuk error ini
+      );
     } finally {
       isLoading.value = false;
     }
@@ -119,7 +132,10 @@ class AduanController extends GetxController {
   // --- FUNGSI SIMPAN EDIT ADUAN ---
   Future<void> simpanEditAduan(int id) async {
     if (judulC.text.isEmpty || deskripsiC.text.isEmpty) {
-      Get.snackbar("Peringatan", "Judul dan Deskripsi wajib diisi!", backgroundColor: Colors.orange[100]);
+      SnackbarHelper.warning(
+        title: "Peringatan", 
+        message: "Judul dan Deskripsi wajib diisi!"
+      );
       return;
     }
 
@@ -137,12 +153,18 @@ class AduanController extends GetxController {
 
       Get.back(); // Tutup halaman form edit
       Get.back(); // Tutup halaman detail (kembali ke list)
-      Get.snackbar("Berhasil", "Aduan berhasil diperbarui", backgroundColor: Colors.green[100]);
+      SnackbarHelper.success(
+        title: "Berhasil", 
+        message: "Aduan berhasil diperbarui"
+      );
       
-      _resetForm();
+      resetForm();
       fetchRiwayatAduan(); // Refresh list terbaru
     } catch (e) {
-      Get.snackbar("Gagal", e.toString().replaceAll("Exception: ", ""), backgroundColor: Colors.red[100]);
+      SnackbarHelper.error(
+        title: "Gagal", 
+        message: e.toString().replaceAll("Exception: ", "")
+      );
     } finally {
       isLoading.value = false;
     }
@@ -159,16 +181,22 @@ class AduanController extends GetxController {
       Get.back(); // Tutup loading
       Get.back(); // Tutup halaman detail 
       
-      Get.snackbar("Berhasil", "Aduan berhasil dihapus.", backgroundColor: Colors.green[100]);
+      SnackbarHelper.success(
+        title: "Berhasil", 
+        message: "Aduan berhasil dihapus."
+      );
       fetchRiwayatAduan(); // Refresh list aduan
     } catch (e) {
       Get.back(); // Tutup loading
-      Get.snackbar("Gagal", e.toString().replaceAll("Exception: ", ""), backgroundColor: Colors.red[100]);
+      SnackbarHelper.error(
+        title: "Gagal", 
+        message: e.toString().replaceAll("Exception: ", "")
+      );
     }
   }
 
   // --- FUNGSI RESET FORM ---
-  void _resetForm() {
+  void resetForm() {
     judulC.clear();
     deskripsiC.clear();
     kategori.value = 'Infrastruktur';
