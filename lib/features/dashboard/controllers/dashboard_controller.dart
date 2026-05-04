@@ -56,27 +56,23 @@ class DashboardController extends GetxController {
 
   Future<void> fetchUserProfile() async {
     try {
-      final data = await _authRepo.getRawProfile();
-      final userData = data['user'];
-      final wargaData = data['warga'];
+      // Panggil getProfile() yang sudah rapi melewati UserModel
+      final user = await _authRepo.getProfile();
 
-      if (userData != null) {
-        userAvatar.value = userData['avatar'] != null
-            ? '${ApiConfig.baseHost}/${userData['avatar']}'
-            : '';
-      }
+      // Gunakan baseHost untuk memanggil URL Public[cite: 4]
+      userAvatar.value = user.avatar != null
+          ? '${ApiConfig.baseHost}/${user.avatar}'
+          : '';
 
-      if (wargaData != null) {
-        userJenisKelamin.value = wargaData['jenis_kelamin'] ?? '-';
-        userNoTelp.value = wargaData['nomor_telepon'] ?? '-';
-        userAlamat.value = wargaData['alamat'] ?? '-';
+      userJenisKelamin.value = user.jenisKelamin ?? '-';
+      userNoTelp.value = user.nomorTelepon ?? '-';
+      userAlamat.value = user.alamat ?? '-';
 
-        if (wargaData['tanggal_lahir'] != null) {
-          DateTime parsedDate = DateTime.parse(wargaData['tanggal_lahir']);
-          userTanggalLahir.value = DateFormat('dd-MM-yyyy').format(parsedDate);
-        } else {
-          userTanggalLahir.value = '-';
-        }
+      if (user.tanggalLahir != null) {
+        DateTime parsedDate = DateTime.parse(user.tanggalLahir!);
+        userTanggalLahir.value = DateFormat('dd-MM-yyyy').format(parsedDate);
+      } else {
+        userTanggalLahir.value = '-';
       }
     } catch (e) {
       SnackbarHelper.info(

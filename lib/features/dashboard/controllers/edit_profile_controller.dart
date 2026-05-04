@@ -1,5 +1,3 @@
-// Asumsi Lokasi: lib/features/dashboard/controllers/edit_profile_controller.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -73,14 +71,14 @@ class EditProfileController extends GetxController {
 
       Get.back(); // Tutup halaman edit
       
-      // Menggunakan helper SIDESA yang baru
+      // Menggunakan helper SIDESA
       SnackbarHelper.success(
         title: "Berhasil",
         message: "Profil Anda berhasil diperbarui!",
       );
       
     } catch (e) {
-      // Menggunakan helper SIDESA yang baru
+      // Menggunakan helper SIDESA
       SnackbarHelper.error(
         title: "Gagal",
         message: e.toString().replaceAll("Exception: ", ""),

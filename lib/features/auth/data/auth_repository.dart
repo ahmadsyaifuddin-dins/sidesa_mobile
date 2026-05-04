@@ -61,42 +61,30 @@ class AuthRepository {
           },
         ),
       );
-      return UserModel.fromJson(response.data);
+
+      // PERBAIKAN: Menyamakan struktur JSON agar cocok dengan UserModel.fromJson
+      // Jika API Laravel tidak membungkusnya dengan 'data', kita bungkus secara manual di sini.
+      Map<String, dynamic> jsonData = response.data;
+      if (!jsonData.containsKey('data')) {
+        jsonData = {'data': response.data};
+      }
+
+      return UserModel.fromJson(jsonData);
     } catch (e) {
       throw Exception("Gagal memuat profil: $e");
     }
   }
 
-  // 3. Get Raw Profile (Untuk Dashboard & Kependudukan)
-  Future<Map<String, dynamic>> getRawProfile() async {
-    try {
-      String? token = await _storage.read(key: 'auth_token');
-      if (token == null) throw Exception("Token tidak ditemukan.");
-
-      final response = await _dio.get(
-        ApiConfig.user,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        ),
-      );
-      return response.data;
-    } catch (e) {
-      throw Exception("Gagal memuat detail profil: $e");
-    }
-  }
-
-  // 4. Update Profile (No. Telp & Avatar via FormData)
+  // 3. Update Profile (No. Telp & Avatar via FormData)
   Future<void> updateProfile({String? noTelp, File? avatar}) async {
     try {
       String? token = await _storage.read(key: 'auth_token');
       if (token == null) throw Exception("Sesi habis, silakan login ulang.");
 
       Map<String, dynamic> dataMap = {};
-      if (noTelp != null && noTelp.isNotEmpty)
+      if (noTelp != null && noTelp.isNotEmpty) {
         dataMap['nomor_telepon'] = noTelp;
+      }
       if (avatar != null) {
         dataMap['avatar'] = await MultipartFile.fromFile(
           avatar.path,
@@ -125,7 +113,7 @@ class AuthRepository {
     }
   }
 
-  // 5. Send FCM Token
+  // 4. Send FCM Token
   Future<void> sendFcmToken(String fcmToken) async {
     try {
       String? token = await _storage.read(key: 'auth_token');
@@ -147,7 +135,7 @@ class AuthRepository {
     }
   }
 
-  // 6. Change Password
+  // 5. Change Password
   Future<void> changePassword(
     String current,
     String newPass,
@@ -180,7 +168,7 @@ class AuthRepository {
     }
   }
 
-  // 7. Logout
+  // 6. Logout
   Future<void> logout() async {
     await _storage.delete(key: 'auth_token');
     await _storage.delete(key: 'user_name');
