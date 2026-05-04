@@ -30,20 +30,20 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    // Tangkap wrapper 'data' utama dari respon API Laravel
-    final dataMap = json['data'];
-    final userData = dataMap['user'];
+    final dataMap = json['data'] ?? json; 
+    final userData = dataMap['user'] ?? dataMap; // Fallback jika objectnya langsung user
     final wargaData = dataMap['warga'];
     final token = dataMap['access_token'];
 
     return UserModel(
-      id: userData['id'],
-      name: userData['name'],
-      email: userData['email'],
-      role: userData['role'],
+      id: userData['id'] ?? 0,
+      name: userData['name'] ?? 'Warga',
       
-      // Ambil avatar dari data user
-      avatar: userData['avatar'], 
+      // FIX UTAMA: Beri fallback string kosong agar tidak error 'Null is not subtype of String'
+      email: userData['email'] ?? '', 
+      role: userData['role'] ?? 'warga',
+      
+      avatar: userData['profile_photo_path'] ?? userData['avatar'], 
       
       // Handle null safety dari tabel warga
       nik: wargaData != null ? wargaData['nik'] : null,

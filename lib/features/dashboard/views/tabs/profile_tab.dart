@@ -1,3 +1,4 @@
+// Lokasi: lib/features/dashboard/views/tabs/profile_tab.dart
 import 'package:flutter/material.dart';
 import '../widgets/profile/profile_header.dart';
 import '../widgets/profile/profile_info_card.dart';
@@ -21,7 +22,7 @@ class ProfileTab extends StatelessWidget {
             ProfileMenuCard(),
             SizedBox(height: 30),
             ProfileLogoutButton(),
-            SizedBox(height: 40),
+            SizedBox(height: 130), 
           ],
         ),
       ),

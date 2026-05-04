@@ -17,3 +17,11 @@ Build APK (Android) Release:
 - flutter build apk --release
 
 Cek hasilnya di folder: build/app/outputs/flutter-apk/app-release.apk
+
+via wifi adb/nirkabel, example:
+- adb pair 192.168.0.5:44556
+
+ohiya jangan lupa ketika running backend
+
+- php artisan serve --host=0.0.0.0 --port=8000 (tab 1)
+- php artisan reverb:start (tab 2)

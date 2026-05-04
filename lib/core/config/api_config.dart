@@ -9,6 +9,11 @@ class ApiConfig {
   static String get updateProfile => "$baseUrl/user/update-profile";
   static String cekIdentitas(String nik) => "$baseUrl/identitas-warga/$nik";
 
+  // --- FITUR SOSMED & DM SIDESA ---
+  static String get posts => "$baseUrl/posts";
+  static String comments(int postId) => "$baseUrl/posts/$postId/comments";
+  static String get messages => "$baseUrl/messages";
+
   // Helper untuk mengambil URL tanpa '/api' agar bisa dipakai untuk gambar public
   static String get baseHost => baseUrl.replaceAll('/api', '');
 

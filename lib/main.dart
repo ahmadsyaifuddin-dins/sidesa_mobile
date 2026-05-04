@@ -5,8 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart'; // Wajib ditambahkan
 import 'firebase_options.dart';
 import 'routes/app_pages.dart';
-import 'core/services/fcm_service.dart'; // Pastikan path ini sesuai dengan folder Mas Dins
-
+import 'core/services/fcm_service.dart';
+import 'core/services/pusher_service.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Sekadar inisialisasi minimal agar Firebase tahu ada pesan masuk
@@ -31,7 +31,7 @@ void main() async {
 
   // 4. Jalankan Service FCM kita secara asinkron (untuk Foreground Notif)
   await Get.putAsync(() => FcmService().init());
-
+  await Get.putAsync(() => PusherService().init());
   runApp(const MyApp());
 }
 
