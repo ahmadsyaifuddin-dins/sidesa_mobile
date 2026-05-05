@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/repositories/social_repository.dart';
 import '../../../core/services/pusher_service.dart';
-import '../../../core/utils/snackbar_helper.dart'; // Gunakan helper andalan kita
+import '../../../core/utils/snackbar_helper.dart';
 
 class TimelineController extends GetxController {
   final SocialRepository _repo = SocialRepository();
-  // Mengambil instance Pusher yang sudah berjalan di background
+  final AuthRepository _authRepo = AuthRepository(); // Untuk ambil data user login
   final PusherService _pusher = Get.find<PusherService>(); 
   final ScrollController scrollController = ScrollController();
 
@@ -16,16 +17,27 @@ class TimelineController extends GetxController {
   var isPaginating = false.obs;
   var currentPage = 1;
   var hasMoreData = true.obs;
+  
+  var currentUserId = 0.obs; 
 
   @override
   void onInit() {
     super.onInit();
+    _fetchCurrentUser();
     fetchPosts();
     setupScrollListener();
     listenToNewPosts();
   }
 
-  // Mendengarkan saat user men-scroll ke paling bawah
+  Future<void> _fetchCurrentUser() async {
+    try {
+      final user = await _authRepo.getProfile();
+      currentUserId.value = user.id;
+    } catch (e) {
+      print("Gagal mengambil data user login: $e");
+    }
+  }
+
   void setupScrollListener() {
     scrollController.addListener(() {
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
@@ -34,7 +46,6 @@ class TimelineController extends GetxController {
     });
   }
 
-  // Memuat data pertama kali
   Future<void> fetchPosts() async {
     try {
       isLoading.value = true;
@@ -56,7 +67,6 @@ class TimelineController extends GetxController {
     }
   }
 
-  // Memuat halaman selanjutnya (Infinite Scroll)
   Future<void> loadMorePosts() async {
     if (isPaginating.value || !hasMoreData.value) return;
 
@@ -82,12 +92,54 @@ class TimelineController extends GetxController {
     }
   }
 
-  // Pull to refresh
   Future<void> refreshTimeline() async {
     await fetchPosts();
   }
 
-  // TELINGA WEBSOCKET: Menangkap postingan baru secara Real-time
+  // --- FITUR EDIT POSTINGAN ---
+  Future<bool> updatePostData(int postId, String newContent) async {
+    try {
+      // 1. Tembak API
+      await _repo.updatePost(postId, newContent);
+      
+      // 2. Update UI secara lokal
+      int index = posts.indexWhere((p) => p.id == postId);
+      if (index != -1) {
+        var oldPost = posts[index];
+        posts[index] = PostModel(
+          id: oldPost.id,
+          userId: oldPost.userId,
+          type: oldPost.type,
+          content: newContent, 
+          attachment: oldPost.attachment,
+          isPinned: oldPost.isPinned,
+          commentsCount: oldPost.commentsCount,
+          createdAt: oldPost.createdAt,
+          user: oldPost.user,
+        );
+      }
+      return true; // Berikan sinyal BERHASIL
+    } catch (e) {
+      SnackbarHelper.error(title: "Gagal Edit", message: e.toString());
+      return false; // Berikan sinyal GAGAL
+    }
+  }
+
+  // --- FITUR HAPUS POSTINGAN ---
+  Future<void> deletePostData(int postId) async {
+    try {
+      // 1. Tembak API
+      await _repo.deletePost(postId);
+      
+      // 2. Hapus langsung dari list layar (Smooth UX)
+      posts.removeWhere((p) => p.id == postId);
+      
+      SnackbarHelper.success(title: "Berhasil", message: "Aspirasi telah dihapus permanen.");
+    } catch (e) {
+      SnackbarHelper.error(title: "Gagal Hapus", message: e.toString());
+    }
+  }
+
   void listenToNewPosts() {
     _pusher.subscribeToPrivateChannel(
       channelName: 'timeline',
@@ -95,7 +147,6 @@ class TimelineController extends GetxController {
       onEvent: (data) {
         if (data['post'] != null) {
           final newPost = PostModel.fromJson(data['post']);
-          // Menyelipkan postingan baru di urutan teratas secara otomatis!
           posts.insert(0, newPost);
         }
       }
@@ -105,7 +156,7 @@ class TimelineController extends GetxController {
   @override
   void onClose() {
     scrollController.dispose();
-    _pusher.unsubscribe('timeline'); // Putus koneksi agar hemat RAM
+    _pusher.unsubscribe('timeline'); 
     super.onClose();
   }
 }

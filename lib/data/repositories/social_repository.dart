@@ -116,4 +116,28 @@ class SocialRepository {
       throw Exception('Gagal mengirim pesan');
     }
   }
+
+  Future<void> updatePost(int postId, String newContent) async {
+    try {
+      final options = await _getOptions();
+      final response = await _dio.put("${ApiConfig.posts}/$postId", data: {'content': newContent}, options: options);
+      if (response.statusCode != 200 || response.data['success'] != true) {
+        throw Exception(response.data['message']);
+      }
+    } catch (e) {
+      throw Exception('Gagal mengedit postingan');
+    }
+  }
+
+  Future<void> deletePost(int postId) async {
+    try {
+      final options = await _getOptions();
+      final response = await _dio.delete("${ApiConfig.posts}/$postId", options: options);
+      if (response.statusCode != 200 || response.data['success'] != true) {
+        throw Exception(response.data['message']);
+      }
+    } catch (e) {
+      throw Exception('Gagal menghapus postingan');
+    }
+  }
 }

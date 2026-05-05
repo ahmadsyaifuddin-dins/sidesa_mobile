@@ -19,7 +19,9 @@ Build APK (Android) Release:
 Cek hasilnya di folder: build/app/outputs/flutter-apk/app-release.apk
 
 via wifi adb/nirkabel, example:
-- adb pair 192.168.0.5:44556
+- adb pair 192.168.0.5:41127
+kalau belum kedetect coba
+- adb connect 192.168.0.5:38133
 
 ohiya jangan lupa ketika running backend
 

@@ -7,14 +7,24 @@ import '../../../core/config/api_config.dart';
 
 class PostCard extends StatelessWidget {
   final PostModel post;
+  final int currentUserId; 
   final VoidCallback onCommentTap;
+  final VoidCallback onEdit;   
+  final VoidCallback onDelete; 
 
-  const PostCard({super.key, required this.post, required this.onCommentTap});
+  const PostCard({
+    super.key, 
+    required this.post, 
+    required this.currentUserId,
+    required this.onCommentTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Penanda apakah ini pengumuman resmi dari kantor desa
     final bool isOfficial = post.type == 'pengumuman' || post.isPinned;
+    final bool isMine = post.user?.id == currentUserId; 
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -37,7 +47,7 @@ class PostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- HEADER: Avatar & Nama ---
+          // --- HEADER: Avatar, Nama, & TOMBOL 3 TITIK ---
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,24 +55,12 @@ class PostCard extends StatelessWidget {
                 child: (post.user?.avatar != null && post.user!.avatar!.isNotEmpty)
                     ? Image.network(
                         post.user!.avatar!.startsWith('http')
-                            ? post.user!.avatar! // Jika dari Google Login (URL penuh)
-                            : "${ApiConfig.baseHost}/${post.user!.avatar}", // Old school URL (tanpa /storage/)
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Jika gambar gagal diload dari server, tampilkan ikon default
-                          return Container(
-                            width: 40, height: 40, color: Colors.grey.shade200,
-                            child: const Icon(Icons.person, color: Colors.grey),
-                          );
-                        },
+                            ? post.user!.avatar! 
+                            : "${ApiConfig.baseHost}/${post.user!.avatar}", // Tanpa /storage/
+                        width: 40, height: 40, fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
                       )
-                    : Container(
-                        // Jika user memang belum punya foto profil
-                        width: 40, height: 40, color: Colors.grey.shade200,
-                        child: const Icon(Icons.person, color: Colors.grey),
-                      ),
+                    : Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -71,34 +69,22 @@ class PostCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          post.user?.name ?? 'Warga Desa',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                        if (isOfficial) ...[
-                          const SizedBox(width: 4),
-                          const Icon(Icons.verified, color: Colors.blue, size: 16),
-                        ]
+                        Text(post.user?.name ?? 'Warga Desa', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        if (isOfficial) ...[const SizedBox(width: 4), const Icon(Icons.verified, color: Colors.blue, size: 16)]
                       ],
                     ),
-                    Text(
-                      _formatDate(post.createdAt), // Helper format waktu
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                    ),
+                    Text(_formatDate(post.createdAt), style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
                   ],
                 ),
               ),
-              // Badge Pengumuman
-              if (isOfficial)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    "📌 Pengumuman",
-                    style: TextStyle(color: Colors.blue, fontSize: 10, fontWeight: FontWeight.bold),
+              
+              // TOMBOL 3 TITIK (HANYA MUNCUL JIKA POSTINGAN MILIKNYA)
+              if (isMine)
+                InkWell(
+                  onTap: () => _showPostMenu(context),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Icon(Icons.more_horiz, color: Colors.grey),
                   ),
                 ),
             ],
@@ -106,58 +92,39 @@ class PostCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           // --- BODY: Isi Postingan ---
-          Text(
-            post.content,
-            style: const TextStyle(fontSize: 14, height: 1.4),
-          ),
-
-          // --- ATTACHMENT: Gambar (Jika Ada) ---
+          Text(post.content, style: const TextStyle(fontSize: 14, height: 1.4)),
+          
+          // --- ATTACHMENT: Gambar ---
           if (post.attachment != null) ...[
             const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                "${ApiConfig.baseHost}/${post.attachment}", // Old school URL (tanpa /storage/)
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => 
-                    Container(height: 150, color: Colors.grey.shade200, child: const Icon(Icons.broken_image)),
+            GestureDetector(
+              onTap: () => _showFullScreenImage(context, "${ApiConfig.baseHost}/${post.attachment}"),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  "${ApiConfig.baseHost}/${post.attachment}", 
+                  width: double.infinity, fit: BoxFit.cover, 
+                  errorBuilder: (context, error, stackTrace) => Container(height: 150, color: Colors.grey.shade200, child: const Icon(Icons.broken_image))
+                ),
               ),
             ),
           ],
-
+          
           const SizedBox(height: 16),
           const Divider(height: 1, thickness: 1),
           const SizedBox(height: 12),
-
+          
           // --- FOOTER: Tombol Aksi ---
           Row(
             children: [
               InkWell(
                 onTap: onCommentTap,
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Row(
-                    children: [
-                      Icon(Icons.chat_bubble_outline, size: 20, color: Colors.grey.shade600),
-                      const SizedBox(width: 6),
-                      Text(
-                        "${post.commentsCount} Komentar",
-                        style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
+                child: Row(children: [Icon(Icons.chat_bubble_outline, size: 20, color: Colors.grey.shade600), const SizedBox(width: 6), Text("${post.commentsCount} Komentar", style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w500))]),
               ),
               const Spacer(),
-              // Tombol DM Langsung ke pembuat postingan (Opsional)
               if (post.user?.role == 'warga')
                 IconButton(
-                  onPressed: () {
-                    // Nanti kita arahkan ke Chat DM Room
-                    Get.snackbar("Info", "Fitur DM akan segera disambungkan");
-                  },
+                  onPressed: () => Get.snackbar("Info", "Fitur DM akan segera disambungkan"),
                   icon: const Icon(Icons.send_rounded, size: 20, color: Colors.blue),
                   visualDensity: VisualDensity.compact,
                   tooltip: "Kirim Pesan Privat",
@@ -169,7 +136,52 @@ class PostCard extends StatelessWidget {
     );
   }
 
-  // Fungsi sederhana untuk memformat string tanggal dari Laravel
+  // --- MENU BOTTOM SHEET (LOGIKA 15 MENIT) ---
+  void _showPostMenu(BuildContext context) {
+    final postDate = DateTime.parse(post.createdAt).toLocal();
+    final difference = DateTime.now().difference(postDate).inMinutes;
+    final bool canEdit = difference <= 15; // Cek apakah masih dalam batas 15 menit
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10))),
+            
+            // TOMBOL EDIT (DISABLED JIKA WAKTU HABIS)
+            ListTile(
+              leading: Icon(Icons.edit_rounded, color: canEdit ? Colors.blue.shade700 : Colors.grey.shade400),
+              title: Text("Edit Postingan", style: TextStyle(fontWeight: FontWeight.bold, color: canEdit ? Colors.black87 : Colors.grey.shade400)),
+              subtitle: canEdit 
+                  ? Text("Tersisa ${15 - difference} menit lagi") 
+                  : Text("Waktu edit telah habis (Maks 15 menit)", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+              onTap: canEdit ? () {
+                Get.back(); // Tutup menu
+                onEdit();   // Panggil fungsi edit
+              } : null,
+            ),
+            
+            // TOMBOL HAPUS (SELALU BISA)
+            ListTile(
+              leading: const Icon(Icons.delete_rounded, color: Colors.red),
+              title: const Text("Hapus Postingan", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+              onTap: () {
+                Get.back(); // Tutup menu
+                onDelete(); // Panggil fungsi hapus
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _formatDate(String dateString) {
     if (dateString.isEmpty) return 'Baru saja';
     try {
@@ -178,5 +190,33 @@ class PostCard extends StatelessWidget {
     } catch (e) {
       return dateString;
     }
+  }
+
+  void _showFullScreenImage(BuildContext context, String imageUrl) {
+    Get.to(
+      () => Scaffold(
+        backgroundColor: Colors.black, // Latar belakang hitam khas galeri
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          iconTheme: const IconThemeData(color: Colors.white),
+          elevation: 0,
+        ),
+        body: Center(
+          child: InteractiveViewer(
+            panEnabled: true, // Bisa digeser-geser saat di-zoom
+            minScale: 0.5,
+            maxScale: 4.0, // Batas maksimal zoom
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+        ),
+      ),
+      fullscreenDialog: true,
+      transition: Transition.fadeIn, // Animasi elegan ala galeri foto
+    );
   }
 }
