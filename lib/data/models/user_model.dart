@@ -14,6 +14,8 @@ class UserModel {
   
   final String? token;
 
+  final String createdAt;
+
   UserModel({
     required this.id,
     required this.name,
@@ -27,6 +29,7 @@ class UserModel {
     this.tanggalLahir,
     this.avatar,
     this.token,
+    required this.createdAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +57,7 @@ class UserModel {
       tanggalLahir: wargaData != null ? wargaData['tanggal_lahir'] : null,
       
       token: token,
+      createdAt: userData['created_at'] ?? '',
     );
   }
 }

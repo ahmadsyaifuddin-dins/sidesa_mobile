@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/routes/app_routes.dart';
 import '../../../data/models/post_model.dart';
 import '../../../core/config/api_config.dart';
 
@@ -51,33 +52,49 @@ class PostCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipOval(
-                child: (post.user?.avatar != null && post.user!.avatar!.isNotEmpty)
-                    ? Image.network(
-                        post.user!.avatar!.startsWith('http')
-                            ? post.user!.avatar! 
-                            : "${ApiConfig.baseHost}/${post.user!.avatar}", // Tanpa /storage/
-                        width: 40, height: 40, fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
-                      )
-                    : Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
+              // 1. BUNGKUS FOTO DENGAN GESTURE DETECTOR
+              GestureDetector(
+                onTap: () {
+                  if (post.user != null) {
+                    Get.toNamed(Routes.USER_PROFILE, arguments: post.user);
+                  }
+                },
+                child: ClipOval(
+                  child: (post.user?.avatar != null && post.user!.avatar!.isNotEmpty)
+                      ? Image.network(
+                          post.user!.avatar!.startsWith('http')
+                              ? post.user!.avatar!
+                              : "${ApiConfig.baseHost}/${post.user!.avatar}", 
+                          width: 40, height: 40, fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
+                        )
+                      : Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(post.user?.name ?? 'Warga Desa', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                        if (isOfficial) ...[const SizedBox(width: 4), const Icon(Icons.verified, color: Colors.blue, size: 16)]
-                      ],
+                    // 2. BUNGKUS NAMA DENGAN GESTURE DETECTOR
+                    GestureDetector(
+                      onTap: () {
+                        if (post.user != null) {
+                          Get.toNamed(Routes.USER_PROFILE, arguments: post.user);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Text(post.user?.name ?? 'Warga Desa', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                          if (isOfficial) ...[const SizedBox(width: 4), const Icon(Icons.verified, color: Colors.blue, size: 16)]
+                        ],
+                      ),
                     ),
                     Text(_formatDate(post.createdAt), style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
                   ],
                 ),
               ),
-              
+             
               // TOMBOL 3 TITIK (HANYA MUNCUL JIKA POSTINGAN MILIKNYA)
               if (isMine)
                 InkWell(
@@ -122,9 +139,11 @@ class PostCard extends StatelessWidget {
                 child: Row(children: [Icon(Icons.chat_bubble_outline, size: 20, color: Colors.grey.shade600), const SizedBox(width: 6), Text("${post.commentsCount} Komentar", style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w500))]),
               ),
               const Spacer(),
-              if (post.user?.role == 'warga')
+              if (post.user != null && post.user?.role == 'warga')
                 IconButton(
-                  onPressed: () => Get.snackbar("Info", "Fitur DM akan segera disambungkan"),
+                  onPressed: () {
+                    Get.toNamed(Routes.CHAT_ROOM, arguments: post.user);
+                  },
                   icon: const Icon(Icons.send_rounded, size: 20, color: Colors.blue),
                   visualDensity: VisualDensity.compact,
                   tooltip: "Kirim Pesan Privat",
@@ -136,7 +155,7 @@ class PostCard extends StatelessWidget {
     );
   }
 
-  // --- MENU BOTTOM SHEET (LOGIKA 15 MENIT) ---
+  // --- MENU BOTTOM Color.fromARGB(255, 19, 22, 24)KA 15 MENIT) ---
   void _showPostMenu(BuildContext context) {
     final postDate = DateTime.parse(post.createdAt).toLocal();
     final difference = DateTime.now().difference(postDate).inMinutes;

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/message/message/views/inbox_view.dart';
 import '../controllers/dashboard_controller.dart';
 
 // Import Tabs
@@ -31,8 +32,7 @@ class DashboardView extends StatelessWidget {
             const RiwayatTab(),    // Index 1
             const TimelineView(),  // Index 2 (Ini halaman Forum SIDESA kita)
             
-            // Placeholder sementara untuk halaman Chat DM nanti
-            Container(color: Colors.white, child: const Center(child: Text("Halaman Chat DM (Segera)"))), // Index 3
+            const InboxView(),     // Index 3 
             
             const ProfileTab(),    // Index 4
           ],

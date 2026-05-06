@@ -110,7 +110,7 @@ class TimelineView extends StatelessWidget {
                 currentUserId: controller.currentUserId.value, 
                 
                 onCommentTap: () {
-                  Get.snackbar("Komentar", "Membuka halaman komentar untuk postingan: ${post.content}");
+                  Get.toNamed(Routes.POST_DETAIL, arguments: post);
                 },
                 onEdit: () {
                   Get.to(

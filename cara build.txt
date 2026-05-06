@@ -15,7 +15,6 @@ Perintah ini secara otomatis akan mencari file APK yang sudah Anda build di fold
 Jika tujuannya membuat FILE APK (untuk dikirim ke orang lain)
 Build APK (Android) Release:
 - flutter build apk --release
-
 Cek hasilnya di folder: build/app/outputs/flutter-apk/app-release.apk
 
 via wifi adb/nirkabel, example:
