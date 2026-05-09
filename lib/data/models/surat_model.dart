@@ -98,6 +98,8 @@ class SuratModel {
         return Colors.orange;
       case 'diproses':
         return Colors.blue;
+      case 'menunggu_validasi':
+        return Colors.purple;
       case 'selesai':
         return Colors.green;
       case 'ditolak':

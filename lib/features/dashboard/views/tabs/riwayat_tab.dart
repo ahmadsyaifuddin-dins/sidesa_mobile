@@ -14,9 +14,8 @@ class RiwayatTab extends StatefulWidget {
 }
 
 class _RiwayatTabState extends State<RiwayatTab> {
-  // Filter Lokal (Semua, Pending, Selesai, Ditolak)
   String filterStatus = 'Semua';
-  final List<String> filters = ['Semua', 'Pending', 'Selesai', 'Ditolak'];
+  final List<String> filters = ['Semua', 'Pending', 'Diproses', 'Menunggu Validasi', 'Selesai', 'Ditolak'];
 
   @override
   Widget build(BuildContext context) {

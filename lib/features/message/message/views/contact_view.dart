@@ -9,6 +9,20 @@ import '../../../../core/config/api_config.dart';
 class ContactView extends StatelessWidget {
   const ContactView({super.key});
 
+  Map<String, dynamic> _getRoleFormat(String role) {
+    switch (role.toLowerCase()) {
+      case 'pimpinan':
+        return {'text': 'Kepala Desa', 'color': Colors.purple.shade700}; // Warna ungu elegan buat Kades
+      case 'operator':
+        return {'text': 'Operator Desa', 'color': Colors.teal.shade700}; // Warna teal buat Operator
+      case 'rt':
+        return {'text': 'Ketua RT', 'color': Colors.orange.shade700}; // Warna orange buat RT
+      case 'warga':
+      default:
+        return {'text': 'Warga', 'color': Colors.blue.shade600}; // Biru standar buat warga
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ContactController());
@@ -29,7 +43,7 @@ class ContactView extends StatelessWidget {
               onChanged: controller.searchContact,
               style: const TextStyle(color: Colors.black87),
               decoration: InputDecoration(
-                hintText: "Cari nama warga...",
+                hintText: "Cari nama warga atau perangkat...",
                 hintStyle: TextStyle(color: Colors.grey.shade500),
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 filled: true,
@@ -59,6 +73,9 @@ class ContactView extends StatelessWidget {
           itemCount: controller.filteredContacts.length,
           itemBuilder: (context, index) {
             final user = controller.filteredContacts[index];
+            
+            // Panggil fungsi format role di sini
+            final roleFormat = _getRoleFormat(user.role);
 
             return ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -75,9 +92,14 @@ class ContactView extends StatelessWidget {
                     : _fallbackAvatar(),
               ),
               title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              
               subtitle: Text(
-                user.role == 'admin' ? 'Perangkat Desa' : 'Warga', 
-                style: TextStyle(color: user.role == 'admin' ? Colors.blue.shade700 : Colors.grey.shade600, fontSize: 13)
+                roleFormat['text'], 
+                style: TextStyle(
+                  color: roleFormat['color'], 
+                  fontSize: 13,
+                  fontWeight: user.role == 'warga' ? FontWeight.normal : FontWeight.w600 
+                )
               ),
             );
           },
