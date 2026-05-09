@@ -15,6 +15,7 @@ class UserModel {
   final String? token;
 
   final String createdAt;
+  String? lastSeenAt;
 
   UserModel({
     required this.id,
@@ -30,6 +31,7 @@ class UserModel {
     this.avatar,
     this.token,
     required this.createdAt,
+    this.lastSeenAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class UserModel {
       
       token: token,
       createdAt: userData['created_at'] ?? '',
+      lastSeenAt: userData['last_seen_at'],
     );
   }
 }

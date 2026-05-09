@@ -1,6 +1,7 @@
 // Lokasi: lib/core/services/pusher_service.dart
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dart_pusher_channels/dart_pusher_channels.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -10,7 +11,7 @@ import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
 import 'package:sidesa_mobile/features/message/controllers/inbox_controller.dart';
 import '../config/api_config.dart';
 
-class PusherService extends GetxService {
+class PusherService extends GetxService with WidgetsBindingObserver {
   late PusherChannelsClient pusher;
   final _storage = const FlutterSecureStorage();
   final String _reverbAppKey = "cqz8bkfmz42ckehd1iej";
@@ -21,14 +22,21 @@ class PusherService extends GetxService {
   final RxSet<int> onlineUserIds = <int>{}.obs;
   final RxInt userTypingToMe = 0.obs;
 
-  // 👇 SISTEM RADAR REACTIVE BARU (GetX Event Bus) 👇
+  // SISTEM RADAR REACTIVE BARU (GetX Event Bus)
   final Rx<MessageModel?> incomingMessage = Rx<MessageModel?>(null);
   final Rx<List<int>> readMessageIds = Rx<List<int>>([]);
   final Rx<List<int>> deliveredMessageIds = Rx<List<int>>([]);
 
-  // 👇 MEMORI PENCEGAH RACE CONDITION (Bug Centang 1) 👇
+  // MEMORI PENCEGAH RACE CONDITION (Bug Centang 1)
   final Set<int> confirmedReadIds = {};
   final Set<int> confirmedDeliveredIds = {};
+
+  // 1. PASANG CCTV DI onInit
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addObserver(this); // Mengaktifkan detektor layar saat aplikasi dibuka
+  }
 
   Future<PusherService> init() async {
     try {
@@ -61,17 +69,17 @@ class PusherService extends GetxService {
     try {
       final user = await AuthRepository().getProfile();
       final channelName = 'chat.${user.id}';
-      
-      // 📡 1. RADAR PESAN MASUK 
+     
+      // 📡 1. RADAR PESAN MASUK
       subscribeToPrivateChannel(
         channelName: channelName,
         eventName: 'App\\Events\\MessageSent',
         onEvent: (data) {
           if (data['message'] != null) {
             final msg = MessageModel.fromJson(data['message']);
-            incomingMessage.value = msg; // 👈 Pemicu Otomatis ChatRoom
+            incomingMessage.value = msg; // Pemicu Otomatis ChatRoom
             incomingMessage.refresh();
-            
+           
             // Lapor Delivered ke Server
             try { MessageRepository().markAsDelivered(msg.senderId); } catch (e) {}
             if (Get.isRegistered<InboxController>()) Get.find<InboxController>().fetchInbox();
@@ -87,7 +95,7 @@ class PusherService extends GetxService {
           if (data['message_ids'] != null) {
             List<int> ids = (data['message_ids'] as List).map((e) => int.parse(e.toString())).toList();
             confirmedReadIds.addAll(ids); // Simpan di memori anti-bug
-            readMessageIds.value = ids; // 👈 Pemicu Otomatis ChatRoom
+            readMessageIds.value = ids; // Pemicu Otomatis ChatRoom
             readMessageIds.refresh();
             if (Get.isRegistered<InboxController>()) Get.find<InboxController>().fetchInbox();
           }
@@ -102,7 +110,7 @@ class PusherService extends GetxService {
           if (data['message_ids'] != null) {
             List<int> ids = (data['message_ids'] as List).map((e) => int.parse(e.toString())).toList();
             confirmedDeliveredIds.addAll(ids); // Simpan di memori anti-bug
-            deliveredMessageIds.value = ids; // 👈 Pemicu Otomatis ChatRoom
+            deliveredMessageIds.value = ids; // Pemicu Otomatis ChatRoom
             deliveredMessageIds.refresh();
             if (Get.isRegistered<InboxController>()) Get.find<InboxController>().fetchInbox();
           }
@@ -130,7 +138,7 @@ class PusherService extends GetxService {
       if (event.data != null) onEvent(jsonDecode(event.data!));
     });
   }
-  
+ 
   Future<void> _joinPresenceChannel() async {
     String? token = await _storage.read(key: 'auth_token');
     if (token == null) return;
@@ -194,8 +202,20 @@ class PusherService extends GetxService {
     }
   }
 
+  // 2. FUNGSI AJAIB: MENDETEKSI PERUBAHAN LAYAR
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Jika aplikasi di-minimize (paused) atau ditutup (detached)
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      // Lapor ke Laravel kalau user ini sedang offline sekarang!
+      MessageRepository().updateLastSeen();
+    }
+  }
+
   @override
   void onClose() {
+    // 3. CABUT CCTV SAAT SERVICE MATI
+    WidgetsBinding.instance.removeObserver(this); 
     pusher.disconnect();
     super.onClose();
   }

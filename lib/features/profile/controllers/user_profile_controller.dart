@@ -19,7 +19,13 @@ class UserProfileController extends GetxController {
     
     // Pantau terus secara real-time
     ever(_pusherService.onlineUserIds, (Set<int> onlineIds) {
-      isOnline.value = onlineIds.contains(user.id);
+      bool isCurrentlyOnline = onlineIds.contains(user.id);
+      
+      if (isOnline.value == true && isCurrentlyOnline == false) {
+        user.lastSeenAt = DateTime.now().toString(); 
+      }
+      
+      isOnline.value = isCurrentlyOnline;
     });
   }
 
@@ -32,6 +38,27 @@ class UserProfileController extends GetxController {
       return "${date.day} ${months[date.month]} ${date.year}";
     } catch (e) {
       return 'Tidak diketahui';
+    }
+  }
+
+  String getLastSeen() {
+    if (user.lastSeenAt == null || user.lastSeenAt!.isEmpty) return 'Belum diketahui';
+    try {
+      final date = DateTime.parse(user.lastSeenAt!).toLocal();
+      final now = DateTime.now();
+      final diff = now.difference(date);
+
+      final timeStr = "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+
+      if (diff.inDays == 0 && now.day == date.day) {
+        return "Hari ini pukul $timeStr";
+      } else if (diff.inDays == 1 || (diff.inDays == 0 && now.day != date.day)) {
+        return "Kemarin pukul $timeStr";
+      } else {
+        return "${date.day}/${date.month}/${date.year} pukul $timeStr";
+      }
+    } catch (e) {
+      return 'Belum diketahui';
     }
   }
 }

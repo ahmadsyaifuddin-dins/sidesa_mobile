@@ -95,4 +95,11 @@ class MessageRepository {
       await _dio.post("${ApiConfig.baseHost}/api/messages/mark-delivered", data: formData, options: options);
     } catch (e) {}
   }
+
+  Future<void> updateLastSeen() async {
+    try {
+      final options = await _getOptions();
+      await _dio.post("${ApiConfig.baseHost}/api/users/last-seen", options: options);
+    } catch (e) {}
+  }
 }

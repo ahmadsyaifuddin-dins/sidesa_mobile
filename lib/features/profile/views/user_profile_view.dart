@@ -45,27 +45,36 @@ class UserProfileView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 10, height: 10,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: controller.isOnline.value ? Colors.green : Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      controller.isOnline.value ? "Sedang Online" : "Sedang Offline",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: controller.isOnline.value ? Colors.green : Colors.grey.shade600,
-                        fontWeight: FontWeight.w500
-                      ),
-                    ),
-                  ],
-                )),
+                Obx(() {
+                  if (controller.isOnline.value) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(width: 10, height: 10, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.green)),
+                        const SizedBox(width: 6),
+                        const Text("Sedang Online", style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.w500)),
+                      ],
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(width: 10, height: 10, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.grey)),
+                            const SizedBox(width: 6),
+                            Text("Sedang Offline", style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Terakhir dilihat: ${controller.getLastSeen()}", 
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontStyle: FontStyle.italic)
+                        ),
+                      ],
+                    );
+                  }
+                }),
               ],
             ),
           ),
