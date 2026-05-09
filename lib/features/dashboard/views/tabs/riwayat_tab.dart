@@ -204,13 +204,13 @@ class _RiwayatTabState extends State<RiwayatTab> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          surat.status.toUpperCase(),
-                          style: TextStyle(
-                            color: surat.statusColor,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        surat.status.replaceAll('_', ' ').toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: surat.statusColor, 
                         ),
+                      )
                       ),
                     ],
                   ),

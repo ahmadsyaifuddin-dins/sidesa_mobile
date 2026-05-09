@@ -1,8 +1,10 @@
 // Lokasi: lib/features/surat/views/detail_surat/widgets/tombol_aksi_widget.dart
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
-import 'package:sidesa_mobile/core/utils/snackbar_helper.dart'; 
+import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
+import 'package:sidesa_mobile/features/surat/controllers/surat_controller.dart'; 
 import '../../../../../data/models/surat_model.dart'; 
 import '../../../data/surat_repository.dart'; 
 
@@ -70,20 +72,22 @@ class TombolAksiWidget extends StatelessWidget {
     }
 
     if (surat.status == 'pending') {
+      if (surat.status == 'pending') {
       return Center(
         child: TextButton(
           onPressed: () {
-            SnackbarHelper.info(
-              title: "Info",
-              message: "Fitur pembatalan belum tersedia",
-            );
+            // Panggil Controller menggunakan Get.find
+            final suratC = Get.find<SuratController>();
+            // Eksekusi fungsi pembatalan dengan mengirimkan ID Surat
+            suratC.batalkanPermohonan(surat.id!);
           },
           child: const Text(
             "Batalkan Permohonan",
-            style: TextStyle(color: Colors.red),
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ),
         ),
       );
+    }
     }
 
     return const SizedBox.shrink();

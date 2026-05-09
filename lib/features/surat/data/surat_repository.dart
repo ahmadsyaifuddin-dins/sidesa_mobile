@@ -110,4 +110,30 @@ class SuratRepository {
       return null;
     }
   }
+
+  Future<bool> batalkanSurat(int id) async {
+    try {
+      String? token = await _storage.read(key: 'auth_token');
+      
+      final response = await _dio.delete(
+        "$_endpoint/$id", // Menembak /api/surat/{id}
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      return response.statusCode == 200;
+    } on DioException catch (e) {
+      // Menangkap pesan error dari backend jika status bukan pending
+      if (e.response != null && e.response?.data != null) {
+        throw Exception(e.response?.data['message'] ?? "Gagal membatalkan surat");
+      }
+      throw Exception("Gangguan koneksi ke server SIDESA");
+    } catch (e) {
+      throw Exception("Terjadi kesalahan sistem: $e");
+    }
+  }
 }

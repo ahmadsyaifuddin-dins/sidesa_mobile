@@ -150,13 +150,13 @@ class HistorySection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                surat.status.toUpperCase(),
+                surat.status.replaceAll('_', ' ').toUpperCase(),
                 style: TextStyle(
-                  color: surat.statusColor,
-                  fontSize: 9,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold,
+                  color: surat.statusColor, 
                 ),
-              ),
+              )
             ),
           ],
         ),
