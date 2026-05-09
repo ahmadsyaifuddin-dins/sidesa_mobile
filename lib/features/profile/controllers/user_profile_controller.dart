@@ -1,6 +1,8 @@
+// Lokasi: lib/features/profile/user_profile_controller.dart
+
 import 'package:get/get.dart';
-import '../../../../core/services/pusher_service.dart';
-import '../../../../data/models/user_model.dart';
+import '../../../core/services/pusher_service.dart';
+import '../../../data/models/user_model.dart';
 
 class UserProfileController extends GetxController {
   late UserModel user;
@@ -11,40 +13,24 @@ class UserProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Menerima data user yang dilempar dari halaman sebelumnya
     user = Get.arguments as UserModel;
     
-    // Cek status online saat ini
     isOnline.value = _pusherService.onlineUserIds.contains(user.id);
     
-    // Pantau terus secara real-time
     ever(_pusherService.onlineUserIds, (Set<int> onlineIds) {
-      bool isCurrentlyOnline = onlineIds.contains(user.id);
-      
-      if (isOnline.value == true && isCurrentlyOnline == false) {
-        user.lastSeenAt = DateTime.now().toString(); 
-      }
-      
-      isOnline.value = isCurrentlyOnline;
+      isOnline.value = onlineIds.contains(user.id);
     });
   }
 
-  // Format tanggal bergabung
-  String getJoinedDate() {
-    if (user.createdAt.isEmpty) return 'Tidak diketahui';
-    try {
-      final date = DateTime.parse(user.createdAt).toLocal();
-      final months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-      return "${date.day} ${months[date.month]} ${date.year}";
-    } catch (e) {
-      return 'Tidak diketahui';
-    }
-  }
-
   String getLastSeen() {
-    if (user.lastSeenAt == null || user.lastSeenAt!.isEmpty) return 'Belum diketahui';
+    String? finalLastSeen = _pusherService.userLastSeenMap[user.id];
+    
+    finalLastSeen ??= user.lastSeenAt;
+
+    if (finalLastSeen == null || finalLastSeen.isEmpty) return 'Belum diketahui';
+    
     try {
-      final date = DateTime.parse(user.lastSeenAt!).toLocal();
+      final date = DateTime.parse(finalLastSeen).toLocal();
       final now = DateTime.now();
       final diff = now.difference(date);
 
@@ -59,6 +45,17 @@ class UserProfileController extends GetxController {
       }
     } catch (e) {
       return 'Belum diketahui';
+    }
+  }
+
+  String getJoinedDate() {
+    if (user.createdAt.isEmpty) return 'Tidak diketahui';
+    try {
+      final date = DateTime.parse(user.createdAt).toLocal();
+      final months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      return "${date.day} ${months[date.month]} ${date.year}";
+    } catch (e) {
+      return 'Tidak diketahui';
     }
   }
 }
