@@ -37,7 +37,8 @@ dependencies:
   awesome_snackbar_content: ^0.1.8
   dart_pusher_channels: ^1.2.3
   flutter_image_compress: ^2.4.0
-
+  awesome_dialog: ^3.3.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

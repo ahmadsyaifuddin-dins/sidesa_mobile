@@ -1,14 +1,13 @@
-// Lokasi: lib/features/auth/controllers/auth_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 import '../data/auth_repository.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/config/api_config.dart';
-import '../../../core/utils/snackbar_helper.dart'; // Import helper SIDESA
+import '../../../core/utils/snackbar_helper.dart';
 
 class AuthController extends GetxController {
   final AuthRepository _repo = AuthRepository();
@@ -22,7 +21,6 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     if (emailC.text.isEmpty || passwordC.text.isEmpty) {
-      // Menggunakan tipe Warning untuk validasi input
       SnackbarHelper.warning(
         title: "Peringatan",
         message: "Email dan Password harus diisi",
@@ -45,7 +43,6 @@ class AuthController extends GetxController {
         print("❌ Gagal mendapatkan FCM Token: $e");
       }
 
-      // Menggunakan tipe Success saat berhasil login
       SnackbarHelper.success(
         title: "Berhasil",
         message: "Halo, ${user.name}!",
@@ -53,7 +50,6 @@ class AuthController extends GetxController {
       Get.offAllNamed(Routes.DASHBOARD);
     } catch (e) {
       String msg = e.toString().replaceAll("Exception: ", "");
-      // Menggunakan tipe Error saat login ditolak/salah
       SnackbarHelper.error(
         title: "Gagal Masuk",
         message: msg,
@@ -64,59 +60,58 @@ class AuthController extends GetxController {
   }
 
   void showChangeIPDialog() {
-    // Ambil IP saat ini dari Hive (atau default jika kosong)
-    final currentIP = Hive.box(
-      'settings',
-    ).get('server_ip', defaultValue: "192.168.0.28");
-    
-    final TextEditingController ipController = TextEditingController(
-      text: currentIP,
-    );
+    final currentIP = Hive.box('settings').get('server_ip', defaultValue: "192.168.0.28");
+    final TextEditingController ipController = TextEditingController(text: currentIP);
 
-    Get.defaultDialog(
-      title: "⚙️ Developer Mode",
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      content: Column(
-        children: [
-          const Text(
-            "Masukkan IP Laptop Server SIDESA:",
-            style: TextStyle(fontSize: 12),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: ipController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(
-              hintText: "Contoh: 192.168.1.10",
-              prefixIcon: const Icon(Icons.wifi, color: Colors.blue),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+    if (Get.context != null) {
+      AwesomeDialog(
+        context: Get.context!,
+        dialogType: DialogType.info,
+        animType: AnimType.bottomSlide,
+        title: "⚙️ Developer Mode",
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
+            children: [
+              const Text(
+                "Masukkan IP Laptop Server SIDESA:",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: ipController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  hintText: "Contoh: 192.168.1.10",
+                  prefixIcon: const Icon(Icons.wifi, color: Colors.blue),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      textConfirm: "SIMPAN",
-      textCancel: "BATAL",
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.blue.shade700,
-      cancelTextColor: Colors.blue.shade700,
-      onConfirm: () async {
-        if (ipController.text.isNotEmpty) {
-          await ApiConfig.setIP(ipController.text); // Simpan ke Hive via ApiConfig
-          Get.back(); // Tutup dialog
-          
-          // Menggunakan tipe Info untuk pemberitahuan update sistem
-          SnackbarHelper.info(
-            title: "Config Updated",
-            message: "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
-            duration: 4.0, // Durasi agak lama agar user sempat baca
-          );
-        }
-      },
-    );
+        ),
+        btnCancelText: "BATAL",
+        btnOkText: "SIMPAN",
+        btnOkColor: Colors.blue.shade700,
+        btnCancelColor: Colors.grey[600],
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          if (ipController.text.isNotEmpty) {
+            await ApiConfig.setIP(ipController.text);
+
+            SnackbarHelper.info(
+              title: "Config Updated",
+              message: "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
+              duration: 4.0,
+            );
+          }
+        },
+      ).show();
+    }
   }
 
   @override
