@@ -1,7 +1,9 @@
 // Lokasi: lib/features/timeline/views/post_detail_view.dart
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/awesome_dialog_helper.dart';
 import '../controllers/comment_controller.dart';
 import '../widgets/post_card.dart';
 import '../widgets/comment_card.dart';
@@ -61,47 +63,53 @@ class PostDetailView extends StatelessWidget {
                             currentUserId: controller.currentUserId.value,
                             onReply: (cmt) => controller.setReplyTo(cmt), // Memunculkan keyboard
                             
-                            // 👇 FITUR EDIT KOMENTAR 👇
+                            // FITUR EDIT KOMENTAR
                             onEdit: (cmt, {parentId}) {
-                              TextEditingController editC = TextEditingController(text: cmt.content);
-                              Get.defaultDialog(
-                                title: "Edit Komentar",
-                                content: TextField(
-                                  controller: editC,
-                                  maxLines: 3,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.all(12)
-                                  ),
-                                ),
-                                textConfirm: "Simpan",
-                                textCancel: "Batal",
-                                confirmTextColor: Colors.white,
-                                buttonColor: Colors.blue.shade700,
-                                cancelTextColor: Colors.blue.shade700,
-                                onConfirm: () async {
-                                  Get.back(); // Tutup dialog
-                                  await controller.editCommentData(cmt.id, editC.text.trim(), parentId: parentId);
-                                }
-                              );
-                            },
-
-                            // 👇 FITUR HAPUS KOMENTAR 👇
+                            TextEditingController editC = TextEditingController(text: cmt.content);
+      
+                    if (Get.context != null) {
+                      AwesomeDialog(
+                        context: Get.context!,
+                        dialogType: DialogType.info,
+                        animType: AnimType.bottomSlide,
+                        title: "Edit Komentar",
+                        body: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: TextField(
+                            controller: editC,
+                            maxLines: 3,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.all(12),
+                            ),
+                          ),
+                        ),
+                        btnCancelText: "Batal",
+                        btnOkText: "Simpan",
+                        btnOkColor: Colors.blue.shade700,
+                        btnCancelColor: Colors.grey[600],
+                        btnCancelOnPress: () {},
+                        btnOkOnPress: () async {
+                          if (editC.text.trim().isNotEmpty) {
+                            await controller.editCommentData(cmt.id, editC.text.trim(), parentId: parentId);
+                          }
+                        },
+                      ).show();
+                    }
+                  },
+                            // FITUR HAPUS KOMENTAR
                             onDelete: (id, {parentId}) {
-                              Get.defaultDialog(
-                                title: "Hapus Komentar",
-                                middleText: "Yakin ingin menghapus komentar ini secara permanen?",
-                                textConfirm: "Hapus",
-                                textCancel: "Batal",
-                                confirmTextColor: Colors.white,
-                                buttonColor: Colors.red,
-                                cancelTextColor: Colors.red,
-                                onConfirm: () {
-                                  Get.back();
-                                  controller.deleteCommentData(id, parentId: parentId);
-                                }
-                              );
-                            },
+                            AwesomeDialogHelper.showConfirm(
+                              title: "Hapus Komentar",
+                              desc: "Yakin ingin menghapus komentar ini secara permanen?",
+                              dialogType: DialogType.error,
+                              btnOkText: "Hapus",
+                              btnCancelText: "Batal",
+                              btnOkOnPress: () {
+                                controller.deleteCommentData(id, parentId: parentId);
+                              },
+                            );
+                          },
                           );
                         }).toList(),
                       ),

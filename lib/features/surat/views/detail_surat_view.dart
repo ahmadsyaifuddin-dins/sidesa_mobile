@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/surat/views/detail_surat/widgets/workflow_status_widget.dart';
 
 // Import Controller & Model
 import '../../../data/models/surat_model.dart';
@@ -67,6 +68,7 @@ class DetailSuratView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              WorkflowStatusWidget(surat: currentSurat),
               StatusHeaderWidget(surat: currentSurat),
               
               if (currentSurat.status == 'ditolak' && currentSurat.keteranganOperator != null)

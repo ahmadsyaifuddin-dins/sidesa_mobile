@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
@@ -11,52 +12,55 @@ class ServiceMenu extends StatelessWidget {
 
   // FUNGSI POP-UP & BUKA BROWSER
   Future<void> _bukaLayananSuratWeb() async {
-    Get.defaultDialog(
-      title: "Login ke Web SIDESA",
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      content: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: Text(
-          "Anda akan diarahkan ke Web SIDESA untuk mengajukan surat.\n\nSilakan login menggunakan:\n• NIK Anda\n• Password (Tanggal Lahir)",
-          textAlign: TextAlign.center,
-          style: TextStyle(height: 1.5),
+    // Kita gunakan Get.context! bawaan GetX agar tidak perlu passing BuildContext
+    if (Get.context != null) {
+      AwesomeDialog(
+        context: Get.context!,
+        dialogType: DialogType.info, // Memberikan icon 'i' biru sebagai informasi
+        animType: AnimType.bottomSlide,
+        title: "Login ke Web SIDESA",
+        body: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: Text(
+            "Anda akan diarahkan ke Web SIDESA untuk mengajukan surat.\n\nSilakan login menggunakan:\n• NIK Anda\n• Password (Tanggal Lahir)",
+            textAlign: TextAlign.center,
+            style: TextStyle(height: 1.5, fontSize: 14),
+          ),
         ),
-      ),
-      textConfirm: "Lanjutkan",
-      textCancel: "Batal",
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.blue[700],
-      cancelTextColor: Colors.blue[700],
+        btnCancelText: "Batal",
+        btnOkText: "Lanjutkan",
+        btnOkColor: Colors.blue[700],
+        btnCancelColor: Colors.grey[600],
+        btnCancelOnPress: () {}, // Otomatis menutup dialog tanpa aksi tambahan
+        btnOkOnPress: () async {
 
-      onConfirm: () async {
-        Get.back(); // Tutup dialog pop-up
+          // 1. Ambil IP dari Hive (Default sesuai komputermu: 192.168.0.28)
+          final box = Hive.box('settings');
+          final String dynamicIP = box.get(
+            'server_ip',
+            defaultValue: '192.168.0.28',
+          );
 
-        // 1. Ambil IP dari Hive (Default sesuai komputermu: 192.168.0.28)
-        final box = Hive.box('settings');
-        final String dynamicIP = box.get(
-          'server_ip',
-          defaultValue: '192.168.0.28',
-        );
+          // 2. Gabungkan IP ke dalam URL layanan surat
+          final Uri url = Uri.parse('http://$dynamicIP:8000/layanan-surat/buat');
 
-        // 2. Gabungkan IP ke dalam URL layanan surat
-        final Uri url = Uri.parse('http://$dynamicIP:8000/layanan-surat/buat');
-
-        try {
-          // LaunchMode.externalApplication akan memaksa buka di Chrome/Browser HP
-          if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          try {
+            // LaunchMode.externalApplication akan memaksa buka di Chrome/Browser bawaan HP
+            if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+              SnackbarHelper.error(
+                title: "Gagal",
+                message: "Tidak dapat membuka browser",
+              );
+            }
+          } catch (e) {
             SnackbarHelper.error(
-            title: "Gagal",
-            message: "Tidak dapat membuka browser",
+              title: "Error",
+              message: "Gagal membuka link: $e",
             );
           }
-        } catch (e) {
-          SnackbarHelper.error(
-            title: "Error",
-            message: "Gagal membuka link: $e",
-          );
-        }
-      },
-    );
+        },
+      ).show();
+    }
   }
 
   @override

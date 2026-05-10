@@ -1,7 +1,9 @@
 // Lokasi: lib/features/timeline/views/timeline_view.dart
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/awesome_dialog_helper.dart';
 import 'package:sidesa_mobile/features/timeline/views/edit_post_view.dart';
 import '../controllers/timeline_controller.dart';
 import '../widgets/timeline_skeleton.dart';
@@ -120,19 +122,17 @@ class TimelineView extends StatelessWidget {
                   );
                 },
                 onDelete: () {
-                  Get.defaultDialog(
-                    title: "Hapus Postingan",
-                    middleText: "Yakin ingin menghapus aspirasi ini secara permanen?",
-                    textConfirm: "Hapus",
-                    confirmTextColor: Colors.white,
-                    buttonColor: Colors.red,
-                    onConfirm: () async {
-                      Get.back(); // Tutup dialog
-                      // Panggil fungsi delete asli
-                      await controller.deletePostData(post.id); 
-                    }
-                  );
-                },
+                AwesomeDialogHelper.showConfirm(
+                  title: "Hapus Postingan",
+                  desc: "Yakin ingin menghapus aspirasi ini secara permanen?",
+                  dialogType: DialogType.error,
+                  btnOkText: "Hapus",
+                  btnCancelText: "Batal",
+                  btnOkOnPress: () async {
+                    await controller.deletePostData(post.id); 
+                  },
+                );
+              },
               );
             },
           ),

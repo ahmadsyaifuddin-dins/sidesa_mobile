@@ -1,5 +1,7 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/awesome_dialog_helper.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../controllers/chat_controller.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -43,25 +45,24 @@ class ChatView extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 1,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep, color: Colors.red),
-            tooltip: "Bersihkan Riwayat",
-            onPressed: () {
-              Get.defaultDialog(
-                title: "Hapus Obrolan?",
-                middleText: "Riwayat chat ini akan dihapus dari layar Anda.",
-                textConfirm: "Hapus",
-                textCancel: "Batal",
-                confirmTextColor: Colors.white,
-                buttonColor: Colors.red,
-                onConfirm: () {
-                  Get.back();
-                  controller.clearChat();
-                },
-              );
-            },
-          ),
-        ],
+        IconButton(
+          icon: const Icon(Icons.delete_sweep, color: Colors.red),
+          tooltip: "Bersihkan Riwayat",
+          onPressed: () {
+            AwesomeDialogHelper.showConfirm(
+              title: "Hapus Obrolan?",
+              desc: "Riwayat chat ini akan dihapus dari layar Anda.",
+              dialogType: DialogType.error,
+              btnOkText: "Hapus",
+              btnCancelText: "Batal",
+              btnOkOnPress: () {
+                // Get.back() dihapus karena dialog otomatis tertutup
+                controller.clearChat();
+              },
+            );
+          },
+        ),
+      ],
       ),
       body: Column(
         children: [

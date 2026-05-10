@@ -1,5 +1,7 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/core/utils/awesome_dialog_helper.dart';
 import '../controllers/aduan_controller.dart';
 import '../data/aduan_model.dart';
 import 'edit_aduan_view.dart';
@@ -231,17 +233,13 @@ class DetailAduanView extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          Get.defaultDialog(
+                          AwesomeDialogHelper.showConfirm(
                             title: "Hapus Aduan",
-                            middleText:
-                                "Yakin ingin membatalkan dan menghapus aduan ini?",
-                            textConfirm: "Ya, Hapus",
-                            textCancel: "Kembali",
-                            confirmTextColor: Colors.white,
-                            buttonColor: Colors.red,
-                            cancelTextColor: Colors.black,
-                            onConfirm: () =>
-                                aduanC.hapusAduan(currentAduan!.id),
+                            desc: "Yakin ingin membatalkan dan menghapus aduan ini?",
+                            dialogType: DialogType.error, // Pakai error agar tombol merah (danger)
+                            btnOkText: "Ya, Hapus",
+                            btnCancelText: "Kembali",
+                            btnOkOnPress: () => aduanC.hapusAduan(currentAduan!.id),
                           );
                         },
                         icon: const Icon(
