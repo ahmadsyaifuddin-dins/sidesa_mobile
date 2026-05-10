@@ -12,53 +12,137 @@ class ServiceMenu extends StatelessWidget {
 
   // FUNGSI POP-UP & BUKA BROWSER
   Future<void> _bukaLayananSuratWeb() async {
-    // Kita gunakan Get.context! bawaan GetX agar tidak perlu passing BuildContext
     if (Get.context != null) {
       AwesomeDialog(
         context: Get.context!,
-        dialogType: DialogType.info, // Memberikan icon 'i' biru sebagai informasi
+        dialogType: DialogType.question, // Icon tanda tanya (Pilihan)
         animType: AnimType.bottomSlide,
-        title: "Login ke Web SIDESA",
-        body: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Text(
-            "Anda akan diarahkan ke Web SIDESA untuk mengajukan surat.\n\nSilakan login menggunakan:\n• NIK Anda\n• Password (Tanggal Lahir)",
-            textAlign: TextAlign.center,
-            style: TextStyle(height: 1.5, fontSize: 14),
+        title: "Pilih Metode Pengajuan",
+        // Menggunakan custom body agar kita bisa buat 2 tombol besar
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+          child: Column(
+            children: [
+              const Text(
+                "Pilih platform untuk mengajukan surat Anda hari ini:",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 20),
+              
+              // OPSI 1: VIA APLIKASI (NATIVE)
+              InkWell(
+                onTap: () {
+                  Get.back(); // Tutup dialog
+                  Get.toNamed('/buat-surat'); // Arahkan ke halaman native
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    border: Border.all(color: Colors.blue[200]!),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(color: Colors.blue[100], shape: BoxShape.circle),
+                        child: Icon(Icons.phone_android_rounded, color: Colors.blue[700], size: 28),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Via Aplikasi (Cepat)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.blue[900])),
+                            const SizedBox(height: 5),
+                            Text.rich(
+                              TextSpan(
+                                text: "Sangat cocok untuk surat umum (seperti ",
+                                style: TextStyle(fontSize: 12, color: Colors.blue[800], height: 1.3),
+                                children: const [
+                                  TextSpan(text: "SKU, SKTM, Kelahiran, dll", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: ") karena formnya jauh lebih "),
+                                  TextSpan(text: "simpel dan praktis.", style: TextStyle(fontStyle: FontStyle.italic)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 12),
+
+              // OPSI 2: VIA WEBSITE (LENGKAP)
+              InkWell(
+                onTap: () async {
+                  Get.back(); // Tutup dialog
+                  
+                  // Logic buka browser lama kamu
+                  final box = Hive.box('settings');
+                  final String dynamicIP = box.get('server_ip', defaultValue: '192.168.0.28');
+                  final Uri url = Uri.parse('http://$dynamicIP:8000/layanan-surat/buat');
+                  
+                  try {
+                    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                      SnackbarHelper.error(title: "Gagal", message: "Tidak dapat membuka browser");
+                    }
+                  } catch (e) {
+                    SnackbarHelper.error(title: "Error", message: "Gagal membuka link: $e");
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    border: Border.all(color: Colors.orange[200]!),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(color: Colors.orange[100], shape: BoxShape.circle),
+                        child: Icon(Icons.language_rounded, color: Colors.orange[700], size: 28),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Via Website (Lengkap)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.orange[900])),
+                            const SizedBox(height: 5),
+                            Text.rich(
+                              TextSpan(
+                                text: "Pilih opsi ini jika surat yang Anda cari ",
+                                style: TextStyle(fontSize: 12, color: Colors.orange[800], height: 1.3),
+                                children: const [
+                                  TextSpan(text: "tidak tersedia", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: " di aplikasi, atau membutuhkan upload dokumen yang "),
+                                  TextSpan(text: "sangat banyak.", style: TextStyle(fontStyle: FontStyle.italic)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         btnCancelText: "Batal",
-        btnOkText: "Lanjutkan",
-        btnOkColor: Colors.blue[700],
-        btnCancelColor: Colors.grey[600],
-        btnCancelOnPress: () {}, // Otomatis menutup dialog tanpa aksi tambahan
-        btnOkOnPress: () async {
-
-          // 1. Ambil IP dari Hive (Default sesuai komputermu: 192.168.0.28)
-          final box = Hive.box('settings');
-          final String dynamicIP = box.get(
-            'server_ip',
-            defaultValue: '192.168.0.28',
-          );
-
-          // 2. Gabungkan IP ke dalam URL layanan surat
-          final Uri url = Uri.parse('http://$dynamicIP:8000/layanan-surat/buat');
-
-          try {
-            // LaunchMode.externalApplication akan memaksa buka di Chrome/Browser bawaan HP
-            if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-              SnackbarHelper.error(
-                title: "Gagal",
-                message: "Tidak dapat membuka browser",
-              );
-            }
-          } catch (e) {
-            SnackbarHelper.error(
-              title: "Error",
-              message: "Gagal membuka link: $e",
-            );
-          }
-        },
+        btnCancelColor: Colors.grey[400],
+        btnCancelOnPress: () {}, 
       ).show();
     }
   }

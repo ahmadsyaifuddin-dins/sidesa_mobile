@@ -19,44 +19,49 @@ class SuratRepository {
     required String jenisSurat,
     required String keterangan,
     required Map<String, dynamic> dataForm,
-    XFile? lampiran, 
+    required List<XFile> lampiranList, // UBAH: Menerima banyak file
   }) async {
     try {
       String? token = await _storage.read(key: 'auth_token');
       FormData formData = FormData.fromMap({
           "jenis_surat": jenisSurat,
           "keterangan": keterangan,
-          "data_form": jsonEncode(dataForm), 
+          "data_form": jsonEncode(dataForm),
       });
 
-      // Jika ada file, masukkan ke FormData
-      if (lampiran != null) {
-        formData.files.add(MapEntry(
-          "lampiran", // Key harus sama dengan di Controller Laravel ($request->file('lampiran'))
-          await MultipartFile.fromFile(
-            lampiran.path, 
-            filename: "upload_${DateTime.now().millisecondsSinceEpoch}.jpg" // Nama file unik
-          ),
-        ));
+      // UBAH: Looping untuk setiap file yang dipilih warga
+      if (lampiranList.isNotEmpty) {
+        for (var file in lampiranList) {
+          formData.files.add(MapEntry(
+            "lampiran[]", // WAJIB pakai [] agar dibaca array oleh Laravel
+            await MultipartFile.fromFile(
+              file.path,
+              filename: "upload_${DateTime.now().millisecondsSinceEpoch}_${file.name}",
+            ),
+          ));
+        }
       }
       
       final response = await _dio.post(
         _endpoint,
-        data: formData, // Kirim FormData
+        data: formData,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
             'Accept': 'application/json',
-            // 'Content-Type': 'multipart/form-data', // Dio otomatis set ini
           },
-          // Tambah timeout biar gak error kalau upload agak lama (misal sinyal lemot)
-          sendTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 60), // Diperpanjang karena upload banyak file
         ),
       );
 
       return response.statusCode == 201 || response.statusCode == 200;
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        throw Exception(e.response?.data['message'] ?? "Gagal mengirim surat.");
+      }
+      throw Exception("Gangguan koneksi ke server SIDESA");
     } catch (e) {
-      throw Exception("Gagal mengirim surat: $e");
+      throw Exception("Terjadi kesalahan sistem: $e");
     }
   }
 

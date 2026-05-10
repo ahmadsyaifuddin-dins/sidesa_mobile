@@ -9,4 +9,5 @@ abstract class Routes {
   static const CONTACT = '/contact';
   static const CHAT_ROOM = '/chat-room';
   static const USER_PROFILE = '/user-profile';
+  static const BUAT_SURAT = '/buat-surat'; 
 }
