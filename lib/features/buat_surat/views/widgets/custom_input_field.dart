@@ -1,17 +1,26 @@
-import 'package:flutter/material.dart';
+// Lokasi: lib/features/buat_surat/views/widgets/custom_input_field.dart
 
-class CustomInputField extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+
+class CustomInputField extends StatefulWidget {
   final String label;
   final String hint;
   final bool isTextArea;
   final TextInputType keyboardType;
   final Function(String)? onChanged;
   
-  // TAMBAHAN UNTUK DATE/TIME PICKER
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? suffixIcon;
   final TextEditingController? controller;
+
+  // --- KEKUATAN BARU ---
+  final int? maxLength; 
+  final bool isCurrency; 
+  final List<TextInputFormatter>? inputFormatters; 
+  final bool showCounter; // Untuk menampilkan counter di dalam field
 
   const CustomInputField({
     super.key,
@@ -24,33 +33,112 @@ class CustomInputField extends StatelessWidget {
     this.onTap,
     this.suffixIcon,
     this.controller,
+    this.maxLength,
+    this.isCurrency = false,
+    this.inputFormatters,
+    this.showCounter = false, // Default false agar field lain tidak muncul counter
   });
 
   @override
+  State<CustomInputField> createState() => _CustomInputFieldState();
+}
+
+class _CustomInputFieldState extends State<CustomInputField> {
+  late TextEditingController _internalController;
+  int _charCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Gunakan controller dari luar jika ada, jika tidak buat baru
+    _internalController = widget.controller ?? TextEditingController();
+    _charCount = _internalController.text.length;
+
+    // Listener untuk menghitung jumlah karakter secara realtime
+    _internalController.addListener(() {
+      if (mounted) {
+        setState(() {
+          _charCount = _internalController.text.length;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Hanya buang controller jika kita yang membuatnya secara internal
+    if (widget.controller == null) {
+      _internalController.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Logika cerdas untuk Suffix (Icon / Counter)
+    Widget? buildSuffix() {
+      if (widget.suffixIcon != null) return widget.suffixIcon;
+      
+      // Jika fitur showCounter aktif dan ada batas maxLength
+      if (widget.maxLength != null && widget.showCounter) {
+        bool isFull = _charCount == widget.maxLength;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 14.0),
+          child: Text(
+            '$_charCount/${widget.maxLength}',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              // Berubah hijau jika sudah mencapai target, abu-abu jika belum
+              color: isFull ? Colors.green[600] : Colors.grey[400],
+            ),
+          ),
+        );
+      }
+      return null;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
+            widget.label,
             style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13),
           ),
           const SizedBox(height: 6),
           TextFormField(
-            controller: controller,
-            onChanged: onChanged,
-            maxLines: isTextArea ? 3 : 1,
-            keyboardType: keyboardType,
-            readOnly: readOnly, // Jika true, keyboard HP tidak akan muncul
-            onTap: onTap, // Menjalankan fungsi saat field diklik
+            controller: _internalController,
+            maxLines: widget.isTextArea ? 3 : 1,
+            keyboardType: widget.keyboardType,
+            readOnly: widget.readOnly,
+            onTap: widget.onTap,
+            maxLength: widget.maxLength, 
+            
+            inputFormatters: [
+              if (widget.inputFormatters != null) ...widget.inputFormatters!,
+              if (widget.isCurrency) CurrencyInputFormatter(), 
+            ],
+
+            onChanged: (value) {
+              if (widget.onChanged != null) {
+                if (widget.isCurrency) {
+                  String cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+                  widget.onChanged!(cleanValue);
+                } else {
+                  widget.onChanged!(value);
+                }
+              }
+            },
+            
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: widget.hint,
               hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
               filled: true,
               fillColor: Colors.grey[50],
-              suffixIcon: suffixIcon,
+              suffixIcon: buildSuffix(), // <-- Panggil custom suffix di sini
+              counterText: "", // <-- Wajib kosong agar counter bawaan di bawah garis menghilang
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -64,6 +152,22 @@ class CustomInputField extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// FORMATTER RUPIAH (Tetap sama seperti sebelumnya)
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) return newValue.copyWith(text: '');
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.isEmpty) return newValue.copyWith(text: '');
+    final formatter = NumberFormat('#,###', 'id_ID');
+    String formattedString = formatter.format(int.parse(digitsOnly));
+    return newValue.copyWith(
+      text: formattedString,
+      selection: TextSelection.collapsed(offset: formattedString.length),
     );
   }
 }

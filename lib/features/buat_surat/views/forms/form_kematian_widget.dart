@@ -1,6 +1,7 @@
 // Lokasi: lib/features/buat_surat/views/forms/form_kematian_widget.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/buat_surat_controller.dart';
@@ -45,8 +46,11 @@ class FormKematianWidget extends StatelessWidget {
 
         CustomInputField(
           label: "NIK Almarhum",
-          hint: "16 Digit NIK",
+          hint: "Masukkan 16 digit NIK",
           keyboardType: TextInputType.number,
+          maxLength: 16,
+          showCounter: true,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           onChanged: (val) => controller.updateForm('nik_almarhum', val),
         ),
 

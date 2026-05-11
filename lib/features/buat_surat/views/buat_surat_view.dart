@@ -9,7 +9,6 @@ import 'package:sidesa_mobile/features/buat_surat/views/forms/form_skck_widget.d
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_sktm_widget.dart';
 import '../controllers/buat_surat_controller.dart';
 import 'forms/form_sku_widget.dart';
-// import 'forms/form_sktm_widget.dart'; // Nanti di-uncomment kalau file-nya sudah dibuat
 
 class BuatSuratView extends StatelessWidget {
   const BuatSuratView({super.key});

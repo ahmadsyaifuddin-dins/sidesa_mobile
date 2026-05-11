@@ -66,14 +66,16 @@ class FormPenghasilanWidget extends StatelessWidget {
 
         CustomInputField(
           label: "Rata-rata Penghasilan (Per Bulan)",
-          hint: "Contoh: 2500000 (Isi angka saja)",
+          hint: "Contoh: 2.500.000",
           keyboardType: TextInputType.number,
+          isCurrency: true,
           suffixIcon: const Padding(
             padding: EdgeInsets.all(14.0),
             child: Text("Rp", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
           ),
           onChanged: (val) => controller.updateForm('jumlah_penghasilan', val),
         ),
+
         const Padding(
           padding: EdgeInsets.only(bottom: 16),
           child: Text(
