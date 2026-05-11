@@ -11,7 +11,7 @@ import '../controllers/surat_controller.dart';
 // Import Widget Modular
 import 'detail_surat/widgets/status_header_widget.dart';
 import 'detail_surat/widgets/alasan_penolakan_widget.dart';
-import 'detail_surat/widgets/informasi_surat_widget.dart';
+import 'detail_surat/widgets/informasi_surat/informasi_surat_widget.dart';
 import 'detail_surat/widgets/tombol_aksi_widget.dart';
 
 class DetailSuratView extends StatelessWidget {
