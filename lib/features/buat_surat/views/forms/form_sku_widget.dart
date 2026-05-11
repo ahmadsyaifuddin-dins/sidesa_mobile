@@ -1,8 +1,10 @@
+// Lokasi: lib/features/buat_surat/views/forms/form_sku_widget.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/buat_surat_controller.dart';
 import '../widgets/custom_input_field.dart';
-import '../widgets/custom_file_upload.dart'; // Jangan lupa diimport!
+import '../widgets/custom_file_upload.dart'; 
 
 class FormSkuWidget extends StatelessWidget {
   const FormSkuWidget({super.key});
@@ -29,23 +31,26 @@ class FormSkuWidget extends StatelessWidget {
           ],
         ),
         const Divider(height: 30),
-        
+       
         CustomInputField(
           label: "Nama Usaha",
           hint: "Contoh: Warung Sembako Berkah",
+          initialValue: controller.formData['nama_usaha']?.toString(),
           onChanged: (val) => controller.updateForm('nama_usaha', val),
         ),
-        
+       
         CustomInputField(
           label: "Jenis Usaha",
           hint: "Contoh: Perdagangan, Jasa, Kuliner",
+          initialValue: controller.formData['jenis_usaha']?.toString(),
           onChanged: (val) => controller.updateForm('jenis_usaha', val),
         ),
-        
+       
         CustomInputField(
           label: "Alamat Lokasi Usaha",
           hint: "Masukkan alamat lengkap tempat usaha...",
           isTextArea: true,
+          initialValue: controller.formData['alamat_usaha']?.toString(),
           onChanged: (val) => controller.updateForm('alamat_usaha', val),
         ),
 
@@ -53,7 +58,6 @@ class FormSkuWidget extends StatelessWidget {
         const Text("Lampiran Wajib", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
         const SizedBox(height: 10),
 
-        // MENGGUNAKAN WIDGET CUSTOM FILE UPLOAD KITA
         const CustomFileUpload(
           label: "Foto Tempat Usaha/Produk",
           fileKey: "foto_usaha",

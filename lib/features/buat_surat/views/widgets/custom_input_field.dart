@@ -20,7 +20,8 @@ class CustomInputField extends StatefulWidget {
   final int? maxLength; 
   final bool isCurrency; 
   final List<TextInputFormatter>? inputFormatters; 
-  final bool showCounter; // Untuk menampilkan counter di dalam field
+  final bool showCounter;
+  final String? initialValue;
 
   const CustomInputField({
     super.key,
@@ -37,6 +38,7 @@ class CustomInputField extends StatefulWidget {
     this.isCurrency = false,
     this.inputFormatters,
     this.showCounter = false, // Default false agar field lain tidak muncul counter
+    this.initialValue,
   });
 
   @override
@@ -51,7 +53,19 @@ class _CustomInputFieldState extends State<CustomInputField> {
   void initState() {
     super.initState();
     // Gunakan controller dari luar jika ada, jika tidak buat baru
-    _internalController = widget.controller ?? TextEditingController();
+    String startingText = widget.initialValue ?? '';
+
+    // Jika ini inputan uang dan ada nilai awalnya dari DB, format ke ribuan dulu
+    if (widget.isCurrency && startingText.isNotEmpty) {
+      try {
+        final formatter = NumberFormat('#,###', 'id_ID');
+        startingText = formatter.format(int.parse(startingText));
+      } catch (e) {
+        // Abaikan jika bukan angka
+      }
+    }
+
+    _internalController = widget.controller ?? TextEditingController(text: startingText);
     _charCount = _internalController.text.length;
 
     // Listener untuk menghitung jumlah karakter secara realtime

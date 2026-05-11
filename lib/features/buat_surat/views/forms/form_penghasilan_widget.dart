@@ -61,14 +61,16 @@ class FormPenghasilanWidget extends StatelessWidget {
         CustomInputField(
           label: "Sumber Penghasilan / Usaha",
           hint: "Contoh: Bertani, Berdagang Sembako, dll",
+          initialValue: controller.formData['sumber_penghasilan']?.toString(), 
           onChanged: (val) => controller.updateForm('sumber_penghasilan', val),
         ),
 
         CustomInputField(
           label: "Rata-rata Penghasilan (Per Bulan)",
-          hint: "Contoh: 2.500.000",
+          hint: "Contoh: 2500000 (Isi angka saja)",
           keyboardType: TextInputType.number,
           isCurrency: true,
+          initialValue: controller.formData['jumlah_penghasilan']?.toString(), 
           suffixIcon: const Padding(
             padding: EdgeInsets.all(14.0),
             child: Text("Rp", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
@@ -88,6 +90,7 @@ class FormPenghasilanWidget extends StatelessWidget {
           label: "Keperluan Pengajuan",
           hint: "Contoh: Persyaratan Beasiswa KIP Kuliah Anak",
           isTextArea: true,
+          initialValue: controller.formData['keperluan']?.toString(), 
           onChanged: (val) => controller.updateForm('keperluan', val),
         ),
 

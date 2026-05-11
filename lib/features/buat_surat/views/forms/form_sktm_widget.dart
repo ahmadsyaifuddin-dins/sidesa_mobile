@@ -31,19 +31,19 @@ class FormSktmWidget extends StatelessWidget {
           ],
         ),
         const Divider(height: 30),
-        
+       
         CustomInputField(
           label: "Keperluan Surat",
           hint: "Contoh: Persyaratan Beasiswa Sekolah",
           isTextArea: true,
+          initialValue: controller.formData['keperluan']?.toString(),
           onChanged: (val) => controller.updateForm('keperluan', val),
         ),
-        
+       
         const SizedBox(height: 10),
         const Text("Lampiran Wajib", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
         const SizedBox(height: 10),
 
-        // MENGGUNAKAN WIDGET CUSTOM FILE UPLOAD UNTUK 5 SLOT
         const CustomFileUpload(
           label: "Foto Rumah (Depan)",
           fileKey: "foto_rumah_depan",

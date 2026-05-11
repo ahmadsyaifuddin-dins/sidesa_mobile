@@ -21,7 +21,10 @@ class BuatSuratView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Pengajuan Surat Baru", style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Obx(() => Text(
+          controller.isEditMode.value ? "Edit Pengajuan Surat" : "Pengajuan Surat Baru", 
+          style: const TextStyle(fontWeight: FontWeight.w600)
+        )),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -99,10 +102,14 @@ class BuatSuratView extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton.icon(
                         onPressed: controller.isLoading.value ? null : () => controller.submitSurat(),
-                        icon: controller.isLoading.value 
+                        icon: controller.isLoading.value
                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                             : const Icon(Icons.send_rounded),
-                        label: Text(controller.isLoading.value ? "Mengirim..." : "Kirim Pengajuan"),
+                        label: Obx(() => Text(
+                          controller.isLoading.value 
+                            ? "Menyimpan..." 
+                            : (controller.isEditMode.value ? "Simpan Perubahan" : "Kirim Pengajuan")
+                        )),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[700],
                           foregroundColor: Colors.white,

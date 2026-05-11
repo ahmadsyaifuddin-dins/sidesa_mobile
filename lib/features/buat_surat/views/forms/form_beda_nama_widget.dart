@@ -67,11 +67,13 @@ class FormBedaNamaWidget extends StatelessWidget {
               CustomInputField(
                 label: "Jenis Dokumen 1",
                 hint: "Contoh: KARTU TANDA PENDUDUK (KTP)",
+                initialValue: controller.formData['dokumen_satu']?.toString(), // TAMBAHAN
                 onChanged: (val) => controller.updateForm('dokumen_satu', val),
               ),
               CustomInputField(
                 label: "Nama Tertulis di Dokumen 1",
                 hint: "Nama sesuai dokumen di atas",
+                initialValue: controller.formData['nama_satu']?.toString(), // TAMBAHAN
                 onChanged: (val) => controller.updateForm('nama_satu', val),
               ),
             ],
@@ -95,11 +97,13 @@ class FormBedaNamaWidget extends StatelessWidget {
               CustomInputField(
                 label: "Jenis Dokumen 2",
                 hint: "Contoh: IJAZAH SMA / SERTIFIKAT TANAH",
+                initialValue: controller.formData['dokumen_dua']?.toString(), // TAMBAHAN
                 onChanged: (val) => controller.updateForm('dokumen_dua', val),
               ),
               CustomInputField(
                 label: "Nama Tertulis di Dokumen 2",
                 hint: "Nama sesuai dokumen di atas",
+                initialValue: controller.formData['nama_dua']?.toString(), // TAMBAHAN
                 onChanged: (val) => controller.updateForm('nama_dua', val),
               ),
             ],
@@ -111,6 +115,7 @@ class FormBedaNamaWidget extends StatelessWidget {
           label: "Keperluan Surat",
           hint: "Contoh: Perbaikan data Perbankan / Revisi Ijazah",
           isTextArea: true,
+          initialValue: controller.formData['keperluan']?.toString(), // TAMBAHAN
           onChanged: (val) => controller.updateForm('keperluan', val),
         ),
 

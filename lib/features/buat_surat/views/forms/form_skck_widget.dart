@@ -19,7 +19,7 @@ class FormSkckWidget extends StatelessWidget {
         // --- BANNER INFORMASI ---
         Container(
           padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(bottom: 20), 
+          margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
             color: Colors.amber[50],
             border: Border.all(color: Colors.amber[200]!),
@@ -61,6 +61,7 @@ class FormSkckWidget extends StatelessWidget {
         CustomInputField(
           label: "Tujuan Instansi",
           hint: "Contoh: KAPOLSEK KEC. ANJIR MUARA",
+          initialValue: controller.formData['tujuan_instansi']?.toString(),
           onChanged: (val) => controller.updateForm('tujuan_instansi', val),
         ),
 
@@ -68,6 +69,7 @@ class FormSkckWidget extends StatelessWidget {
           label: "Keperluan Membuat SKCK",
           hint: "Contoh: Melamar Pekerjaan, Syarat PPPK",
           isTextArea: true,
+          initialValue: controller.formData['keperluan']?.toString(),
           onChanged: (val) => controller.updateForm('keperluan', val),
         ),
 

@@ -16,10 +16,10 @@ class FormKematianWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
 
-    // Controller untuk field tanggal/jam
-    final tglLahirController = TextEditingController(text: controller.formData['tanggal_lahir_almarhum']);
-    final tglMeninggalController = TextEditingController(text: controller.formData['tanggal_meninggal']);
-    final jamMeninggalController = TextEditingController(text: controller.formData['jam_meninggal']);
+    // Controller untuk field tanggal/jam (Inisialisasi dengan data lama jika ada)
+    final tglLahirController = TextEditingController(text: controller.formData['tanggal_lahir_almarhum']?.toString());
+    final tglMeninggalController = TextEditingController(text: controller.formData['tanggal_meninggal']?.toString());
+    final jamMeninggalController = TextEditingController(text: controller.formData['jam_meninggal']?.toString());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,6 +41,7 @@ class FormKematianWidget extends StatelessWidget {
         CustomInputField(
           label: "Nama Lengkap Almarhum",
           hint: "Sesuai KTP/KK",
+          initialValue: controller.formData['nama_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('nama_almarhum', val),
         ),
 
@@ -51,6 +52,7 @@ class FormKematianWidget extends StatelessWidget {
           maxLength: 16,
           showCounter: true,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          initialValue: controller.formData['nik_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('nik_almarhum', val),
         ),
 
@@ -58,13 +60,14 @@ class FormKematianWidget extends StatelessWidget {
           label: "Jenis Kelamin",
           hint: "-- Pilih --",
           items: const ["LAKI-LAKI", "PEREMPUAN"],
-          value: controller.formData['jenis_kelamin_almarhum'],
+          value: controller.formData['jenis_kelamin_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('jenis_kelamin_almarhum', val),
         ),
 
         CustomInputField(
           label: "Tempat Lahir",
           hint: "Nama Kota/Kabupaten",
+          initialValue: controller.formData['tempat_lahir_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('tempat_lahir_almarhum', val),
         ),
 
@@ -93,7 +96,7 @@ class FormKematianWidget extends StatelessWidget {
           label: "Agama",
           hint: "-- Pilih --",
           items: const ["ISLAM", "KRISTEN", "KATOLIK", "HINDU", "BUDDHA", "KONGHUCU"],
-          value: controller.formData['agama_almarhum'],
+          value: controller.formData['agama_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('agama_almarhum', val),
         ),
 
@@ -101,6 +104,7 @@ class FormKematianWidget extends StatelessWidget {
           label: "Alamat Terakhir",
           hint: "Masukkan alamat lengkap...",
           isTextArea: true,
+          initialValue: controller.formData['alamat_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('alamat_almarhum', val),
         ),
 
@@ -150,18 +154,21 @@ class FormKematianWidget extends StatelessWidget {
         CustomInputField(
           label: "Tempat Meninggal",
           hint: "Contoh: RSUD Ulin / Rumah",
+          initialValue: controller.formData['tempat_meninggal']?.toString(),
           onChanged: (val) => controller.updateForm('tempat_meninggal', val),
         ),
 
         CustomInputField(
           label: "Penyebab Kematian",
           hint: "Contoh: Sakit / Kecelakaan",
+          initialValue: controller.formData['penyebab_kematian']?.toString(),
           onChanged: (val) => controller.updateForm('penyebab_kematian', val),
         ),
 
         CustomInputField(
           label: "Dimakamkan Di",
           hint: "Nama Tempat Pemakaman",
+          initialValue: controller.formData['tempat_pemakaman']?.toString(),
           onChanged: (val) => controller.updateForm('tempat_pemakaman', val),
         ),
 

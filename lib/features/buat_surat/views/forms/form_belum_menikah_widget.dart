@@ -17,7 +17,7 @@ class FormBelumMenikahWidget extends StatelessWidget {
     final box = Hive.box('settings');
     final String dynamicIP = box.get('server_ip', defaultValue: '192.168.0.28');
     final Uri url = Uri.parse('http://$dynamicIP:8000/template_download/format_pernyataan_belum_menikah.docx');
-    
+   
     try {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
         SnackbarHelper.error(title: "Gagal", message: "Tidak dapat membuka browser untuk mengunduh.");
@@ -73,6 +73,7 @@ class FormBelumMenikahWidget extends StatelessWidget {
           label: "Keperluan Surat",
           hint: "Contoh: Persyaratan pendaftaran TNI/Polri, Persyaratan nikah, dll",
           isTextArea: true,
+          initialValue: controller.formData['keperluan']?.toString(),
           onChanged: (val) => controller.updateForm('keperluan', val),
         ),
 
@@ -123,13 +124,13 @@ class FormBelumMenikahWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        
+       
         // Slot Upload
         const CustomFileUpload(
           label: "", // Dikosongkan karena labelnya sudah ditaruh di Row atas
           fileKey: "surat_pernyataan",
         ),
-        
+       
         // Warning Teks
         Text.rich(
           TextSpan(
