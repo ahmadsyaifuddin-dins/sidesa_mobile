@@ -33,7 +33,6 @@ class AppPages {
       transition: Transition.rightToLeft, 
     ),
     GetPage(name: Routes.DETAIL_ADUAN, page: () => const DetailAduanView()),
-    // (Note: Aku hapus 1 baris DetailAduanView yang double di sini)
     
     GetPage(name: Routes.DETAIL_SURAT, page: () => const DetailSuratView()),
     

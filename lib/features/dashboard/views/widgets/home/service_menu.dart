@@ -4,6 +4,7 @@ import 'package:sidesa_mobile/features/aduan/views/aduan_view.dart';
 import 'package:sidesa_mobile/features/chat/views/chat_view.dart';
 import 'package:sidesa_mobile/features/dashboard/views/widgets/home/service_menu/service_menu_item.dart';
 import 'package:sidesa_mobile/features/dashboard/views/widgets/home/service_menu/surat_dialog_helper.dart';
+import 'package:sidesa_mobile/core/services/activity_logger_service.dart';
 
 class ServiceMenu extends StatelessWidget {
   const ServiceMenu({super.key});
@@ -29,7 +30,10 @@ class ServiceMenu extends StatelessWidget {
                 icon: Icons.mark_email_unread_outlined,
                 label: "Buat Surat",
                 color: Colors.orange,
-                onTap: () => SuratDialogHelper.showPengajuanSurat(),
+                onTap: () {
+                  ActivityLoggerService.log('Menu Layanan: Buat Surat');
+                  SuratDialogHelper.showPengajuanSurat();
+                },
               ),
 
               // 2. ADUAN WARGA
@@ -37,7 +41,10 @@ class ServiceMenu extends StatelessWidget {
                 icon: Icons.campaign_outlined,
                 label: "Aduan",
                 color: Colors.red,
-                onTap: () => Get.to(() => AduanView()),
+                onTap: () {
+                  ActivityLoggerService.log('Menu Layanan: Aduan Warga');
+                  Get.to(() => const AduanView());
+                },
               ),
 
               // 3. SIDESA AI
@@ -45,7 +52,10 @@ class ServiceMenu extends StatelessWidget {
                 icon: Icons.support_agent_outlined,
                 label: "SiDesa AI",
                 color: Colors.teal,
-                onTap: () => Get.to(() => const ChatView()),
+                onTap: () {
+                  ActivityLoggerService.log('Menu Layanan: SiDesa AI Chatbot');
+                  Get.to(() => const ChatView());
+                },
               ),
             ],
           ),

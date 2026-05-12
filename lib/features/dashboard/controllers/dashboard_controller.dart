@@ -9,6 +9,7 @@ import '../../../routes/app_routes.dart';
 import '../../../core/utils/greeting_util.dart';
 import '../../surat/controllers/surat_controller.dart';
 import '../../aduan/controllers/aduan_controller.dart';
+import 'package:sidesa_mobile/core/services/activity_logger_service.dart';
 
 class DashboardController extends GetxController {
   final AuthRepository _authRepo = AuthRepository();
@@ -30,7 +31,27 @@ class DashboardController extends GetxController {
   var tabIndex = 0.obs;
 
   void toggleDataVisibility() => isDataHidden.value = !isDataHidden.value;
-  void changeTab(int index) => tabIndex.value = index;
+  void changeTab(int index) {
+    tabIndex.value = index;
+
+    switch (index) {
+      case 0:
+        ActivityLoggerService.log('Tab: Home Dashboard');
+        break;
+      case 1:
+        ActivityLoggerService.log('Tab: Riwayat Pengajuan');
+        break;
+      case 2:
+        ActivityLoggerService.log('Tab: Forum Komunitas (SIDESA Timeline)');
+        break;
+      case 3:
+        ActivityLoggerService.log('Tab: Inbox / Pesan Masuk');
+        break;
+      case 4:
+        ActivityLoggerService.log('Tab: Profil Pengguna');
+        break;
+    }
+  }
 
   @override
   void onInit() {

@@ -8,7 +8,8 @@ class ApiConfig {
   static String get updateFcm => "$baseUrl/user/update-fcm";
   static String get updateProfile => "$baseUrl/user/update-profile";
   static String cekIdentitas(String nik) => "$baseUrl/identitas-warga/$nik";
-
+  static String get mobileLogs => "$baseUrl/mobile-logs";
+  
   // --- FITUR SOSMED & DM SIDESA ---
   static String get posts => "$baseUrl/posts";
   static String comments(int postId) => "$baseUrl/posts/$postId/comments";
