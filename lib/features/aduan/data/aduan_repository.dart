@@ -11,9 +11,9 @@ class AduanRepository {
   final _storage = const FlutterSecureStorage();
   
   // AMBIL RIWAYAT ADUAN
-  Future<List<AduanModel>> getRiwayatAduan() async {
+  Future<Map<String, dynamic>> getRiwayatAduan() async {
     try {
-      String? token = await _storage.read(key: 'auth_token'); 
+      String? token = await _storage.read(key: 'auth_token');
       
       final response = await _dio.get(
         "${ApiConfig.baseUrl}/aduan",
@@ -27,9 +27,22 @@ class AduanRepository {
 
       if (response.statusCode == 200 && response.data['success']) {
         List data = response.data['data'];
-        return data.map((json) => AduanModel.fromJson(json)).toList();
+        List<AduanModel> listAduan = data.map((json) => AduanModel.fromJson(json)).toList();
+        
+        // Kembalikan Map berisi list aduan dan data kuota dari Laravel
+        return {
+          'list': listAduan,
+          'sisa_kuota_anonim': response.data['sisa_kuota_anonim'] ?? 0,
+          'max_kuota_bulanan': response.data['max_kuota_bulanan'] ?? 1,
+        };
       }
-      return [];
+      
+      // Default return jika data kosong tapi tidak error
+      return {
+        'list': <AduanModel>[],
+        'sisa_kuota_anonim': 0,
+        'max_kuota_bulanan': 1,
+      };
     } catch (e) {
       throw Exception("Gagal mengambil riwayat aduan: $e");
     }

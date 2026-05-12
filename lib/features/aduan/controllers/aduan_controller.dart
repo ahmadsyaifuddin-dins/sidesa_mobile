@@ -17,6 +17,10 @@ class AduanController extends GetxController {
   var isFetching = false.obs;
   var listAduan = <AduanModel>[].obs;
 
+  var sisaKuotaAnonim = 1.obs;
+  var maxKuotaBulanan = 1.obs;
+
+  var fotoUrlLama = ''.obs;
   // --- FORM INPUT ---
   final judulC = TextEditingController();
   final deskripsiC = TextEditingController();
@@ -48,11 +52,17 @@ class AduanController extends GetxController {
   Future<void> fetchRiwayatAduan() async {
     isFetching.value = true;
     try {
-      final data = await _repo.getRiwayatAduan();
-      listAduan.value = data;
+      // Tangkap result berupa Map dari repository
+      final result = await _repo.getRiwayatAduan();
+      
+      // Ekstrak dan masukkan ke variabel reactive masing-masing
+      listAduan.value = result['list'];
+      sisaKuotaAnonim.value = result['sisa_kuota_anonim'];
+      maxKuotaBulanan.value = result['max_kuota_bulanan'];
+      
     } catch (e) {
       SnackbarHelper.error(
-        title: "Error", 
+        title: "Error",
         message: e.toString().replaceAll("Exception: ", "")
       );
     } finally {
@@ -127,6 +137,7 @@ class AduanController extends GetxController {
     prioritas.value = aduan.prioritas; 
     isAnonymous.value = aduan.isAnonymous == 1; // Konversi dari int ke bool
     foto.value = null; // Kosongkan file local agar aman
+    fotoUrlLama.value = aduan.fotoUrl ?? '';
   }
 
   // --- FUNGSI SIMPAN EDIT ADUAN ---
@@ -203,5 +214,6 @@ class AduanController extends GetxController {
     prioritas.value = 'sedang';
     isAnonymous.value = false;
     foto.value = null;
+    fotoUrlLama.value = '';
   }
 }
