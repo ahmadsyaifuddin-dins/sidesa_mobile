@@ -1,3 +1,5 @@
+// Lokasi: lib/features/profile/views/user_profile_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/profile/controllers/user_profile_controller.dart';
@@ -11,6 +13,9 @@ class UserProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(UserProfileController());
     final user = controller.user;
+
+    // Menentukan apakah user adalah Perangkat Desa (untuk Icon Verified)
+    final bool isPerangkatDesa = ['pimpinan', 'operator', 'rt', 'admin', 'developer'].contains(user.role.toLowerCase());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F2F5), // Background abu-abu muda
@@ -39,12 +44,71 @@ class UserProfileView extends StatelessWidget {
                       : _fallbackAvatar(120),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  user.name,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+                
+                // NAMA & ICON VERIFIED
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      user.name,
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (isPerangkatDesa) ...[
+                      const SizedBox(width: 6),
+                      const Icon(Icons.verified, color: Colors.blue, size: 22),
+                    ]
+                  ],
                 ),
                 const SizedBox(height: 8),
+
+                // BADGE LABEL ROLE
+                Builder(
+                  builder: (context) {
+                    String roleName = 'Warga';
+                    Color roleColor = Colors.blue.shade600;
+                    Color bgColor = Colors.blue.shade100;
+
+                    switch (user.role.toLowerCase()) {
+                      case 'pimpinan':
+                        roleName = 'Kepala Desa';
+                        roleColor = Colors.purple.shade700;
+                        bgColor = Colors.purple.shade50;
+                        break;
+                      case 'operator':
+                        roleName = 'Operator Desa';
+                        roleColor = Colors.teal.shade700;
+                        bgColor = Colors.teal.shade50;
+                        break;
+                      case 'rt':
+                        roleName = 'Ketua RT';
+                        roleColor = Colors.orange.shade700;
+                        bgColor = Colors.orange.shade50;
+                        break;
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: roleColor.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                        roleName,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: roleColor,
+                        ),
+                      ),
+                    );
+                  }
+                ),
+                
+                const SizedBox(height: 16),
+
+                // STATUS ONLINE / OFFLINE
                 Obx(() {
                   if (controller.isOnline.value) {
                     return Row(
@@ -68,7 +132,7 @@ class UserProfileView extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Terakhir dilihat: ${controller.getLastSeen()}", 
+                          "Terakhir dilihat: ${controller.getLastSeen()}",
                           style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontStyle: FontStyle.italic)
                         ),
                       ],
@@ -90,7 +154,6 @@ class UserProfileView extends StatelessWidget {
                   title: const Text("Bergabung sejak", style: TextStyle(fontSize: 12, color: Colors.grey)),
                   subtitle: Text(controller.getJoinedDate(), style: const TextStyle(fontSize: 16, color: Colors.black87)),
                 ),
-                // (Kamu bisa tambahkan info lain seperti NIK/Email di sini jika diizinkan public)
               ],
             ),
           ),
@@ -104,8 +167,6 @@ class UserProfileView extends StatelessWidget {
               height: 50,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Jika tombol ditekan, arahkan ke ruang chat!
-                  // Kita pakai offNamedUntil biar gak numpuk halamannya kalau dia buka dari Chat Room
                   Get.offNamedUntil(Routes.CHAT_ROOM, (route) => route.isFirst, arguments: user);
                 },
                 style: ElevatedButton.styleFrom(
