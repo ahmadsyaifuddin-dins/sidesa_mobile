@@ -20,10 +20,10 @@ class LampiranGridWidget extends StatelessWidget {
       case 'sktm': return ['Foto Rumah Depan', 'Foto Rumah Dalam', 'Surat Pernyataan', 'KTP', 'KK'];
       case 'kelahiran': return ['Surat Keterangan Lahir (Bidan)'];
       case 'kematian': return ['KTP Almarhum', 'KK Almarhum'];
-      case 'skck': return ['KTP', 'KK'];
-      case 'penghasilan': return ['KTP', 'KK'];
-      case 'belum_menikah': return ['KTP', 'KK', 'Surat Pernyataan'];
-      case 'beda_nama': return ['KTP', 'KK', 'Dokumen 1', 'Dokumen 2'];
+      case 'pengantar_skck': return ['KTP', 'KK'];
+      case 'keterangan_penghasilan': return ['KTP', 'KK'];
+      case 'belum_pernah_menikah': return ['KTP', 'KK', 'Surat Pernyataan'];
+      case 'keterangan_beda_nama': return ['KTP', 'KK', 'Dokumen 1', 'Dokumen 2'];
       default: return [];
     }
   }

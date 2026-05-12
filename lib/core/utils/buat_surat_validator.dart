@@ -47,27 +47,27 @@ class BuatSuratValidator {
         if (errFileMati != null) return errFileMati;
         break;
 
-      case 'skck':
+      case 'pengantar_skck':
         String? errSkck = _checkTexts(formData, ['tujuan_instansi', 'keperluan']);
         if (errSkck != null) return errSkck;
         String? errFileSkck = _checkFiles(lampiranFiles, ['ktp', 'kk']);
         if (errFileSkck != null) return errFileSkck;
         break;
 
-      case 'penghasilan':
+      case 'keterangan_penghasilan':
         String? errGaji = _checkTexts(formData, ['sumber_penghasilan', 'jumlah_penghasilan', 'keperluan']);
         if (errGaji != null) return errGaji;
         String? errFileGaji = _checkFiles(lampiranFiles, ['ktp', 'kk']);
         if (errFileGaji != null) return errFileGaji;
         break;
 
-      case 'belum_menikah':
+      case 'belum_pernah_menikah':
         if (_isEmpty(formData['keperluan'])) return "Keperluan Surat wajib diisi!";
         String? errFileNikah = _checkFiles(lampiranFiles, ['ktp', 'kk', 'surat_pernyataan']);
         if (errFileNikah != null) return errFileNikah;
         break;
 
-      case 'beda_nama':
+      case 'keterangan_beda_nama':
         String? errBeda = _checkTexts(formData, ['dokumen_satu', 'nama_satu', 'dokumen_dua', 'nama_dua', 'keperluan']);
         if (errBeda != null) return errBeda;
         String? errFileBeda = _checkFiles(lampiranFiles, ['ktp', 'kk', 'bukti_satu', 'bukti_dua']);

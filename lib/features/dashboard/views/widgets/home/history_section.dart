@@ -1,11 +1,13 @@
+// Lokasi: lib/features/dashboard/views/widgets/home/history_section.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/features/dashboard/views/widgets/home/skeleton_history_item.dart';
 import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../../../data/models/surat_model.dart';
-// IMPORT SURAT CONTROLLER
 import '../../../../surat/controllers/surat_controller.dart';
+import '../../../../../core/utils/string_formatter.dart';
 
 class HistorySection extends StatelessWidget {
   const HistorySection({super.key});
@@ -128,7 +130,7 @@ class HistorySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    surat.namaSurat,
+                    StringFormatter.formatJenisSurat(surat.namaSurat), 
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
@@ -154,7 +156,7 @@ class HistorySection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: surat.statusColor, 
+                  color: surat.statusColor,
                 ),
               )
             ),

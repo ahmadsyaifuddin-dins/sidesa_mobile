@@ -59,10 +59,10 @@ class BuatSuratController extends GetxController {
           case 'sktm': expectedKeys = ['foto_rumah_depan', 'foto_rumah_dalam', 'surat_pernyataan', 'ktp', 'kk']; break;
           case 'kelahiran': expectedKeys = ['surat_bidan']; break;
           case 'kematian': expectedKeys = ['ktp_almarhum', 'kk_almarhum']; break;
-          case 'skck': expectedKeys = ['ktp', 'kk']; break;
-          case 'penghasilan': expectedKeys = ['ktp', 'kk']; break;
-          case 'belum_menikah': expectedKeys = ['ktp', 'kk', 'surat_pernyataan']; break;
-          case 'beda_nama': expectedKeys = ['ktp', 'kk', 'bukti_satu', 'bukti_dua']; break;
+          case 'pengantar_skck': expectedKeys = ['ktp', 'kk']; break;
+          case 'keterangan_penghasilan': expectedKeys = ['ktp', 'kk']; break;
+          case 'belum_pernah_menikah': expectedKeys = ['ktp', 'kk', 'surat_pernyataan']; break;
+          case 'keterangan_beda_nama': expectedKeys = ['ktp', 'kk', 'bukti_satu', 'bukti_dua']; break;
         }
 
         // Pasangkan URL dari database ke masing-masing slot secara berurutan

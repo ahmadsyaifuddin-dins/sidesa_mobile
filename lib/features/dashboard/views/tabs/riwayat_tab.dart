@@ -5,6 +5,7 @@ import 'package:sidesa_mobile/features/surat/views/detail_surat_view.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../../../data/models/surat_model.dart';
 import '../../../surat/controllers/surat_controller.dart';
+import '../../../../../core/utils/string_formatter.dart';
 
 class RiwayatTab extends StatefulWidget {
   const RiwayatTab({super.key});
@@ -179,7 +180,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        surat.namaSurat,
+                        StringFormatter.formatJenisSurat(surat.namaSurat), 
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,

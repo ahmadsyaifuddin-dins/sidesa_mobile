@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../data/models/surat_model.dart';
 import '../../widgets/informasi_surat/detail_baris_widget.dart';
 import '../../widgets/informasi_surat/lampiran_grid_widget.dart';
+import '../../../../../../core/utils/string_formatter.dart';
 
 class InformasiSuratWidget extends StatelessWidget {
   final SuratModel surat;
@@ -30,7 +31,12 @@ class InformasiSuratWidget extends StatelessWidget {
           ),
           child: Column(
             children: [
-              DetailBarisWidget(icon: Icons.assignment_outlined, label: "JENIS SURAT", value: surat.namaSurat),
+              DetailBarisWidget(
+                icon: Icons.assignment_outlined, 
+                label: "JENIS SURAT", 
+                // 2. BUNGKUS VALUE-NYA DENGAN STRING FORMATTER
+                value: StringFormatter.formatJenisSurat(surat.namaSurat ?? surat.jenisSurat), 
+              ),
               const Divider(height: 24),
               DetailBarisWidget(icon: Icons.info_outline, label: "KEPERLUAN", value: surat.keteranganPemohon),
              
