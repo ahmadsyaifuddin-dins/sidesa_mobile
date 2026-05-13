@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:sidesa_mobile/core/services/activity_logger_service.dart';
 import 'package:sidesa_mobile/features/message/controllers/inbox_controller.dart';
 import 'package:sidesa_mobile/routes/app_routes.dart';
 import '../../../../core/config/api_config.dart';
@@ -25,7 +26,13 @@ class InboxView extends StatelessWidget {
         elevation: 0,
         actions: [
           IconButton(
-            onPressed: () => Get.toNamed(Routes.CONTACT),
+            onPressed: () {
+              // 1. Catat aktivitas
+              ActivityLoggerService.log('Fitur: Tambah Kontak / Pesan Baru');
+              
+              // 2. Pindah halaman
+              Get.toNamed(Routes.CONTACT);
+            },
             icon: const Icon(Icons.add_comment_rounded, color: Colors.blue),
             tooltip: 'Kontak Baru',
           ),

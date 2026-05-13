@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:sidesa_mobile/routes/app_routes.dart';
 import '../../controllers/contact_controller.dart';
 import '../../../../core/config/api_config.dart';
+import 'widgets/skeleton_contact_item.dart';
 
 class ContactView extends StatelessWidget {
   const ContactView({super.key});
@@ -60,7 +61,12 @@ class ContactView extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator(color: Colors.blue));
+          return ListView.builder(
+            itemCount: 8, // Tampilkan 8 item bayangan
+            itemBuilder: (context, index) {
+              return const SkeletonContactItem();
+            },
+          );
         }
 
         if (controller.filteredContacts.isEmpty) {

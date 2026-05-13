@@ -7,6 +7,7 @@ import 'package:sidesa_mobile/core/utils/awesome_dialog_helper.dart';
 import '../controllers/comment_controller.dart';
 import '../widgets/post_card.dart';
 import '../widgets/comment_card.dart';
+import '../widgets/skeleton_comment_card.dart';
 
 class PostDetailView extends StatelessWidget {
   const PostDetailView({super.key});
@@ -25,11 +26,33 @@ class PostDetailView extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // BAGIAN ATAS: Postingan dan Daftar Komentar
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator(color: Colors.blue));
+                return ListView(
+                  children: [
+                    // Tetap tampilkan PostCard aslinya (karena biasanya data post dikirim lewat arguments/sudah ada)
+                    PostCard(
+                      post: controller.post,
+                      currentUserId: controller.currentUserId.value,
+                      onCommentTap: () {},
+                      onEdit: () {},
+                      onDelete: () {},
+                    ),
+                    const Divider(thickness: 4, color: Color(0xFFF5F5F5)),
+                    
+                    // Tampilkan 4 Skeleton Komentar sebagai pengganti loading muter
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: List.generate(4, (index) => const Padding(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                          child: SkeletonCommentCard(),
+                        )),
+                      ),
+                    ),
+                  ],
+                );
               }
 
               return ListView(
