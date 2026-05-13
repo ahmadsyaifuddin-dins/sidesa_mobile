@@ -144,20 +144,24 @@ class ChatView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Obx(
-                    () => CircleAvatar(
-                      radius: 24,
-                      backgroundColor: controller.isTyping.value
-                          ? Colors.grey
-                          : Colors.blue[700],
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.send_rounded,
-                          color: Colors.white,
-                        ),
+                  SizedBox(
+                    width: 48, // Kita set ukurannya sama persis seperti radius 24 sebelumnya agar UI tetap presisi
+                    height: 48,
+                    child: Obx(
+                      () => FloatingActionButton(
+                        elevation: 0, // Wajib 0 agar tidak melayang aneh di dalam bar input chat
+                        backgroundColor: controller.isTyping.value
+                            ? Colors.grey
+                            : Colors.blue[700],
+                        shape: const CircleBorder(), // Memastikan bentuknya bulat sempurna
                         onPressed: controller.isTyping.value
                             ? null
                             : () => controller.sendMessage(),
+                        child: const Icon(
+                          Icons.send_rounded,
+                          color: Colors.white,
+                          size: 20, // Menyesuaikan ukuran icon di dalam tombol 48px
+                        ),
                       ),
                     ),
                   ),
@@ -171,7 +175,6 @@ class ChatView extends StatelessWidget {
   }
 
   // Widget BUBBLE CHAT
-  // Widget BUBBLE CHAT (Sudah Support Link Click & Markdown)
   Widget _buildChatBubble(String text, bool isUser) {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
