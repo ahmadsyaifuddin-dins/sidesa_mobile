@@ -15,7 +15,7 @@ class AduanHeaderWidget extends StatelessWidget {
               colors: [Colors.blue, Colors.lightBlueAccent],
             ).createShader(bounds),
             child: const Text(
-              "Sampaikan Aspirasi Anda",
+              "Sampaikan Aduan Anda",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 28,
