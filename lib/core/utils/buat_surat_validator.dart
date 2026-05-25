@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 
 class BuatSuratValidator {
   /// Mengembalikan [String] berisi pesan error jika tidak valid.
-  /// Mengembalikan [null] jika semua data valid.
   static String? validate({
     required String jenisSurat,
     required Map<String, dynamic> formData,
     required Map<String, dynamic> lampiranFiles,
   }) {
     if (jenisSurat.isEmpty) {
-      return "Pilih jenis surat terlebih dahulu!";
+      return "Silakan pilih jenis surat terlebih dahulu.";
     }
 
     switch (jenisSurat) {
@@ -73,6 +72,52 @@ class BuatSuratValidator {
         String? errFileBeda = _checkFiles(lampiranFiles, ['ktp', 'kk', 'bukti_satu', 'bukti_dua']);
         if (errFileBeda != null) return errFileBeda;
         break;
+
+      case 'pengantar_ktp':
+        if (_isEmpty(formData['jenis_permohonan'])) return "Silakan pilih Jenis Permohonan KTP terlebih dahulu.";
+        if (!lampiranFiles.containsKey('kk')) return "Lampiran Kartu Keluarga (KK) wajib diunggah.";
+
+        String jenisKtp = formData['jenis_permohonan'].toString();
+        
+        if (jenisKtp.contains('Hilang') && !lampiranFiles.containsKey('surat_kehilangan')) {
+          return "Lampiran Surat Keterangan Hilang dari Polsek wajib diunggah.";
+        }
+        if (jenisKtp.contains('Rusak') && !lampiranFiles.containsKey('ktp_rusak')) {
+          return "Lampiran Foto Fisik KTP Lama yang Rusak wajib diunggah.";
+        }
+        if (jenisKtp.contains('Perubahan')) {
+          if (!lampiranFiles.containsKey('ktp_lama')) return "Lampiran Foto KTP Lama wajib diunggah.";
+          if (!lampiranFiles.containsKey('bukti_pendukung')) return "Lampiran Bukti Pendukung Perubahan Data wajib diunggah.";
+        }
+        break;
+
+        case 'keterangan_ahli_waris':
+        String? errWaris = _checkTexts(formData, [
+          'nama_almarhum', 'nik_almarhum', 'tempat_lahir_almarhum', 
+          'tanggal_lahir_almarhum', 'tanggal_meninggal', 'tempat_meninggal', 'alamat_almarhum'
+        ]);
+        if (errWaris != null) return errWaris;
+        
+        // Validasi NIK
+        if (formData['nik_almarhum'].toString().length != 16) return "NIK Almarhum harus 16 digit.";
+
+        // Validasi Dynamic List Ahli Waris
+        List<dynamic> listWaris = formData['ahli_waris'] ?? [];
+        if (listWaris.isEmpty) return "Minimal harus ada 1 Ahli Waris yang ditambahkan.";
+        for (int i = 0; i < listWaris.length; i++) {
+          Map<String, dynamic> w = listWaris[i] ?? {};
+          if (_isEmpty(w['nama'])) return "Nama Ahli Waris Ke-${i + 1} belum diisi.";
+          if (_isEmpty(w['jk'])) return "Jenis Kelamin Ahli Waris Ke-${i + 1} belum diisi.";
+          if (_isEmpty(w['umur'])) return "Umur Ahli Waris Ke-${i + 1} belum diisi.";
+          if (_isEmpty(w['hubungan'])) return "Hubungan Ahli Waris Ke-${i + 1} belum diisi.";
+        }
+
+        String? errFileWaris = _checkFiles(lampiranFiles, ['ktp', 'kk', 'surat_kematian']);
+        if (errFileWaris != null) return errFileWaris;
+        break;
+
+      default:
+        return "Jenis surat tidak dikenali oleh sistem.";
     }
 
     // Pengecekan global: Harus ada minimal 1 file (kecuali untuk form yang memang tidak ada lampirannya)

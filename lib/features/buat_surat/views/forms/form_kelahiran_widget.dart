@@ -141,7 +141,7 @@ class FormKelahiranWidget extends StatelessWidget {
 
         const CustomFileUpload(
           label: "Surat Ket. Lahir (Bidan/RS) - Opsional",
-          fileKey: "surat_bidan",
+          fileKey: "surat_bidan", allowDocument: true,
         ),
       ],
     );

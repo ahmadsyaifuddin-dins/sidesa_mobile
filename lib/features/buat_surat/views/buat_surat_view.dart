@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sidesa_mobile/features/buat_surat/views/forms/form_ahli_waris_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_beda_nama_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_belum_menikah_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_kelahiran_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_kematian_widget.dart';
+import 'package:sidesa_mobile/features/buat_surat/views/forms/form_pengantar_ktp_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_penghasilan_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_skck_widget.dart';
 import 'package:sidesa_mobile/features/buat_surat/views/forms/form_sktm_widget.dart';
@@ -58,6 +60,8 @@ class BuatSuratView extends StatelessWidget {
                 _buildSuratOption(controller, id: 'keterangan_penghasilan', title: "Ket. Penghasilan", icon: Icons.payments_rounded, color: Colors.green),
                 _buildSuratOption(controller, id: 'belum_pernah_menikah', title: "Ket. Belum Menikah", icon: Icons.favorite_border_rounded, color: Colors.pink),
                 _buildSuratOption(controller, id: 'keterangan_beda_nama', title: "Ket. Beda Nama", icon: Icons.badge_rounded, color: Colors.orange),
+                _buildSuratOption(controller, id: 'pengantar_ktp', title: "Pengantar KTP", icon: Icons.badge_rounded, color: Colors.blue),
+                _buildSuratOption(controller, id: 'keterangan_ahli_waris', title: "Ahli Waris", icon: Icons.family_restroom_rounded, color: Colors.indigo),
               ],
             ),
             
@@ -93,7 +97,8 @@ class BuatSuratView extends StatelessWidget {
                     if (controller.selectedJenisSurat.value == 'keterangan_penghasilan') const FormPenghasilanWidget(),
                     if (controller.selectedJenisSurat.value == 'belum_pernah_menikah') const FormBelumMenikahWidget(),
                     if (controller.selectedJenisSurat.value == 'keterangan_beda_nama') const FormBedaNamaWidget(),
-
+                    if (controller.selectedJenisSurat.value == 'pengantar_ktp') const FormPengantarKtpWidget(),
+                    if (controller.selectedJenisSurat.value == 'keterangan_ahli_waris') const FormAhliWarisWidget(),
                     const SizedBox(height: 30),
                     
                     // TOMBOL KIRIM

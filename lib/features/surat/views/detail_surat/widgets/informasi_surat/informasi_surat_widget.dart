@@ -1,10 +1,10 @@
 // Lokasi: lib/features/surat/views/detail_surat/widgets/informasi_surat/informasi_surat_widget.dart
 
 import 'package:flutter/material.dart';
-import '../../../../../../../data/models/surat_model.dart';
-import '../../widgets/informasi_surat/detail_baris_widget.dart';
-import '../../widgets/informasi_surat/lampiran_grid_widget.dart';
-import '../../../../../../core/utils/string_formatter.dart';
+import '../../../../../../data/models/surat_model.dart';
+import 'detail_baris_widget.dart';
+import 'lampiran_grid_widget.dart';
+import '../../../../../../core/utils/string_formatter.dart'; 
 
 class InformasiSuratWidget extends StatelessWidget {
   final SuratModel surat;
@@ -34,17 +34,40 @@ class InformasiSuratWidget extends StatelessWidget {
               DetailBarisWidget(
                 icon: Icons.assignment_outlined, 
                 label: "JENIS SURAT", 
-                // 2. BUNGKUS VALUE-NYA DENGAN STRING FORMATTER
                 value: StringFormatter.formatJenisSurat(surat.namaSurat ?? surat.jenisSurat), 
               ),
               const Divider(height: 24),
-              DetailBarisWidget(icon: Icons.info_outline, label: "KEPERLUAN", value: surat.keteranganPemohon),
+              DetailBarisWidget(
+                icon: Icons.info_outline, 
+                label: "KEPERLUAN", 
+                // LOGIKA CERDAS: Jika ada underscore, format jadi rapi. Jika tidak, biarkan asli.
+                value: (surat.keteranganPemohon ?? '').contains('_') 
+                    ? StringFormatter.formatJenisSurat(surat.keteranganPemohon)
+                    : surat.keteranganPemohon
+              ),
              
               // Render Data Form Dinamis
               if (surat.dataForm != null && surat.dataForm!.isNotEmpty) ...[
                 const Divider(height: 24),
                 ...surat.dataForm!.entries.map((entry) {
                   String label = entry.key.replaceAll('_', ' ').toUpperCase();
+                  dynamic rawValue = entry.value;
+
+                  // LOGIKA KHUSUS: BACA FORMAT AHLI WARIS
+                  if (entry.key == 'ahli_waris' && rawValue is List) {
+                    String formattedWaris = "";
+                    for (int i = 0; i < rawValue.length; i++) {
+                      var w = rawValue[i];
+                      if (w is Map) {
+                        // Susun rapi: "1. Alpha (L) - 9 Thn - Anak"
+                        formattedWaris += "${i + 1}. ${w['nama'] ?? '-'} (${w['jk'] ?? '-'}) - ${w['umur'] ?? '0'} Thn - ${w['hubungan'] ?? '-'}";
+                        // Tambahkan enter jika bukan baris terakhir
+                        if (i < rawValue.length - 1) formattedWaris += "\n"; 
+                      }
+                    }
+                    rawValue = formattedWaris; // Timpa value aslinya dengan string yang sudah rapi
+                  }
+
                   bool isUang = entry.key.toLowerCase().contains('penghasilan') || 
                                 entry.key.toLowerCase().contains('biaya') || 
                                 entry.key.toLowerCase().contains('harga') ||
@@ -53,7 +76,7 @@ class InformasiSuratWidget extends StatelessWidget {
                   return DetailBarisWidget(
                     icon: Icons.arrow_right_alt_rounded, 
                     label: label, 
-                    value: entry.value, 
+                    value: rawValue, // Masukkan rawValue yang sudah difilter
                     isCurrency: isUang,
                   );
                 }),

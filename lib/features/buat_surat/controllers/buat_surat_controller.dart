@@ -6,7 +6,9 @@ import '../../../core/utils/snackbar_helper.dart';
 import '../../surat/data/surat_repository.dart';
 import '../../surat/controllers/surat_controller.dart';
 import '../../../core/utils/buat_surat_validator.dart';
-import '../../../data/models/surat_model.dart'; // Wajib import SuratModel
+import '../../../data/models/surat_model.dart';
+import 'package:file_picker/file_picker.dart';
+import '../../../core/utils/string_formatter.dart';
 
 class BuatSuratController extends GetxController {
   final SuratRepository _repo = SuratRepository();
@@ -19,8 +21,8 @@ class BuatSuratController extends GetxController {
   var isLoading = false.obs;
  
   var formData = <String, dynamic>{}.obs;
-  var lampiranFiles = <String, XFile>{}.obs; // Berisi file fisik baru yang dipilih
-  var lampiranLamaUrls = <String, String>{}.obs; // Berisi URL gambar/file lama dari server
+  var lampiranFiles = <String, XFile>{}.obs; 
+  var lampiranLamaUrls = <String, String>{}.obs; 
 
   @override
   void onInit() {
@@ -48,7 +50,7 @@ class BuatSuratController extends GetxController {
         formData['keperluan'] = suratLama.keteranganPemohon;
       }
 
-      // 4. PERBAIKAN: Mapping File Lama Berdasarkan Urutan Pasti (Bukan Tebakan Teks)
+      // 4. Mapping File Lama Berdasarkan Urutan Pasti (Sequential Mapping)
       if (suratLama.fileSyarat != null && suratLama.fileSyarat!.isNotEmpty) {
         List<String> urls = suratLama.fileSyarat!;
         List<String> expectedKeys = [];
@@ -63,6 +65,23 @@ class BuatSuratController extends GetxController {
           case 'keterangan_penghasilan': expectedKeys = ['ktp', 'kk']; break;
           case 'belum_pernah_menikah': expectedKeys = ['ktp', 'kk', 'surat_pernyataan']; break;
           case 'keterangan_beda_nama': expectedKeys = ['ktp', 'kk', 'bukti_satu', 'bukti_dua']; break;
+          case 'pengantar_ktp': 
+            // Cek alasan untuk menentukan jumlah kotak lampiran yang ada
+            String alasan = suratLama.dataForm?['jenis_permohonan'] ?? '';
+            if (alasan.contains('Baru')) {
+              expectedKeys = ['kk', 'akta_kelahiran'];
+            } else if (alasan.contains('Hilang')) {
+              expectedKeys = ['kk', 'surat_kehilangan'];
+            } else if (alasan.contains('Rusak')) {
+              expectedKeys = ['kk', 'ktp_rusak'];
+            } else if (alasan.contains('Perubahan')) {
+              expectedKeys = ['kk', 'ktp_lama', 'bukti_pendukung'];
+            } else {
+              expectedKeys = ['kk'];
+            }
+            break;
+
+            case 'keterangan_ahli_waris': expectedKeys = ['ktp', 'kk', 'surat_kematian']; break;
         }
 
         // Pasangkan URL dari database ke masing-masing slot secara berurutan
@@ -70,7 +89,6 @@ class BuatSuratController extends GetxController {
           if (i < expectedKeys.length) {
             lampiranLamaUrls[expectedKeys[i]] = urls[i];
           } else {
-            // Jaga-jaga jika ada file ekstra
             lampiranLamaUrls['extra_$i'] = urls[i];
           }
         }
@@ -81,7 +99,7 @@ class BuatSuratController extends GetxController {
   void changeSuratType(String type) {
     if (isEditMode.value) {
       SnackbarHelper.warning(title: "Perhatian", message: "Anda tidak bisa mengubah jenis surat saat mengedit.");
-      return; // Kunci jenis surat jika sedang diedit
+      return; 
     }
     selectedJenisSurat.value = type;
     formData.clear();
@@ -101,19 +119,35 @@ class BuatSuratController extends GetxController {
    
     if (image != null) {
       lampiranFiles[key] = image;
-      // Jika user memilih file baru, kita hapus URL lama agar preview berubah jadi file lokal
-      lampiranLamaUrls.remove(key); 
+      lampiranLamaUrls.remove(key); // Hapus preview lama agar diganti yang baru
     }
   }
 
+  // Untuk memilih Gambar ATAU Dokumen (PDF/Word)
+  Future<void> pickDocumentOrImage(String key) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        // Konversi hasil FilePicker menjadi XFile agar kompatibel dengan sistem kita
+        lampiranFiles[key] = XFile(result.files.single.path!);
+        lampiranLamaUrls.remove(key); // Hapus preview lama agar diganti yang baru
+      }
+    } catch (e) {
+      SnackbarHelper.error(title: "Batal", message: "Pemilihan file dibatalkan atau error.");
+    }
+  }
+  
   void removeFile(String key) {
     lampiranFiles.remove(key);
-    lampiranLamaUrls.remove(key); // Hapus juga yang lama jika user menekan tombol silang (X)
+    lampiranLamaUrls.remove(key); 
   }
 
   Future<void> submitSurat() async {
     // Gabungkan file lama dan file baru untuk dikirim ke Validator
-    // Agar validator tidak marah jika file baru kosong TAPI file lama masih ada
     Map<String, dynamic> gabunganLampiran = {};
     gabunganLampiran.addAll(lampiranFiles);
     gabunganLampiran.addAll(lampiranLamaUrls);
@@ -121,7 +155,7 @@ class BuatSuratController extends GetxController {
     String? errorMessage = BuatSuratValidator.validate(
       jenisSurat: selectedJenisSurat.value,
       formData: formData,
-      lampiranFiles: gabunganLampiran, // Kirim gabungan untuk dievaluasi
+      lampiranFiles: gabunganLampiran, 
     );
 
     if (errorMessage != null) {
@@ -133,9 +167,9 @@ class BuatSuratController extends GetxController {
     try {
       List<XFile> filesToSend = lampiranFiles.values.toList();
 
-      // Ambil HANYA NAMA FILE dari URL lama untuk dikirim ke field 'file_lama_yang_dipertahankan'
+      // Ambil string nama file asli dari akhir URL Laravel
       List<String> fileLamaYangDipertahankan = lampiranLamaUrls.values.map((url) {
-        return url.split('/').last; // Mengambil '170123_foto.jpg' dari 'http://.../uploads/syarat/170123_foto.jpg'
+        return url.split('/').last; 
       }).toList();
 
       bool isSuccess;
@@ -144,13 +178,12 @@ class BuatSuratController extends GetxController {
         isSuccess = await _repo.editSurat(
           idSurat: editSuratId!,
           jenisSurat: selectedJenisSurat.value,
-          keterangan: formData['keperluan'] ?? "Pengajuan Surat ${selectedJenisSurat.value.toUpperCase()}",
+          keterangan: formData['keperluan'] ?? "Pengajuan Surat ${StringFormatter.formatJenisSurat(selectedJenisSurat.value)}",
           dataForm: formData,
           lampiranBaruList: filesToSend,
           fileLamaDipertahankan: fileLamaYangDipertahankan,
         );
       } else {
-        // --- PROSES CREATE ---
         isSuccess = await _repo.ajukanSurat(
           jenisSurat: selectedJenisSurat.value,
           keterangan: formData['keperluan'] ?? "Pengajuan Surat ${selectedJenisSurat.value.toUpperCase()}",
@@ -164,7 +197,7 @@ class BuatSuratController extends GetxController {
         Future.delayed(const Duration(milliseconds: 300), () {
           SnackbarHelper.success(
             title: "Berhasil!", 
-            message: isEditMode.value ? "Permohonan berhasil diperbarui." : "Pengajuan surat berhasil dikirim."
+            message: isEditMode.value ? "Permohonan berhasil diperbarui." : "Pengajuan surat berhasil dikirim ke Desa."
           );
         });
         if (Get.isRegistered<SuratController>()) {

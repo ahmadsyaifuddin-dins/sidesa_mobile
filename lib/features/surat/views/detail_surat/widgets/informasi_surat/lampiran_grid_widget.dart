@@ -24,6 +24,8 @@ class LampiranGridWidget extends StatelessWidget {
       case 'keterangan_penghasilan': return ['KTP', 'KK'];
       case 'belum_pernah_menikah': return ['KTP', 'KK', 'Surat Pernyataan'];
       case 'keterangan_beda_nama': return ['KTP', 'KK', 'Dokumen 1', 'Dokumen 2'];
+      case 'pengantar_ktp': return ['Kartu Keluarga (KK)', 'Dokumen 2', 'Dokumen 3']; // Fallback dinamis
+      case 'keterangan_ahli_waris': return ['KTP Pemohon', 'KK', 'Surat Kematian'];
       default: return [];
     }
   }
@@ -99,20 +101,28 @@ class LampiranGridWidget extends StatelessWidget {
           itemCount: lampiranUrls.length,
           itemBuilder: (context, index) {
             String url = lampiranUrls[index];
-            bool isPdf = url.toLowerCase().endsWith('.pdf');
+            String urlLower = url.toLowerCase();
+            
+            // --- LOGIKA DETEKSI FILE ---
+            bool isPdf = urlLower.endsWith('.pdf');
+            bool isWord = urlLower.endsWith('.doc') || urlLower.endsWith('.docx');
+            bool isDocument = isPdf || isWord; // Jika salah satu true, berarti ini dokumen (bukan gambar)
+
             List<String> labels = _getLampiranLabels(jenisSurat);
             String title = index < labels.length ? labels[index] : "Lampiran Tambahan";
 
             return InkWell(
               onTap: () async {
-                if (isPdf) {
+                if (isDocument) {
+                  // BUKA DOKUMEN (PDF/WORD) DI BROWSER / DOWNLOADER
                   final uri = Uri.parse(url);
                   if (await canLaunchUrl(uri)) {
                     await launchUrl(uri, mode: LaunchMode.externalApplication);
                   } else {
-                    SnackbarHelper.error(title: "Gagal", message: "Tidak dapat membuka dokumen PDF");
+                    SnackbarHelper.error(title: "Gagal", message: "Tidak dapat membuka dokumen ini");
                   }
                 } else {
+                  // TAMPILKAN POP-UP ZOOM GAMBAR
                   _showFullScreenImage(context, url, title);
                 }
               },
@@ -127,6 +137,7 @@ class LampiranGridWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // JUDUL LAMPIRAN
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
@@ -136,6 +147,8 @@ class LampiranGridWidget extends StatelessWidget {
                         style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey[700]),
                       ),
                     ),
+                    
+                    // PREVIEW KOTAK TENGAH
                     Expanded(
                       child: Container(
                         color: Colors.grey[50],
@@ -145,25 +158,39 @@ class LampiranGridWidget extends StatelessWidget {
                                 children: [
                                   const Icon(Icons.picture_as_pdf_rounded, color: Colors.red, size: 40),
                                   const SizedBox(height: 8),
-                                  Text("Lihat PDF", style: TextStyle(fontSize: 12, color: Colors.blue[700], fontWeight: FontWeight.bold))
+                                  Text("Dokumen PDF", style: TextStyle(fontSize: 11, color: Colors.blue[700], fontWeight: FontWeight.bold))
                                 ],
                               )
-                            : Image.network(
-                                url,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.grey, size: 40),
-                              ),
+                            : isWord 
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.description_rounded, color: Colors.blue, size: 40),
+                                      const SizedBox(height: 8),
+                                      Text("Dokumen Word", style: TextStyle(fontSize: 11, color: Colors.blue[700], fontWeight: FontWeight.bold))
+                                    ],
+                                  )
+                                : Image.network(
+                                    url,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                                  ),
                       ),
                     ),
+                    
+                    // TOMBOL BAWAH (BUKA/LIHAT)
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(color: Colors.blue[50], borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50], 
+                        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(isPdf ? Icons.open_in_browser : Icons.zoom_in, size: 14, color: Colors.blue[700]),
+                          Icon(isDocument ? Icons.download_rounded : Icons.zoom_in, size: 14, color: Colors.blue[700]),
                           const SizedBox(width: 4),
-                          Text(isPdf ? "Buka File" : "Lihat Gambar", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blue[700])),
+                          Text(isDocument ? "Unduh File" : "Lihat Gambar", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blue[700])),
                         ],
                       ),
                     ),

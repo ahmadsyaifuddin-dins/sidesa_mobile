@@ -8,11 +8,13 @@ import '../../controllers/buat_surat_controller.dart';
 class CustomFileUpload extends StatelessWidget {
   final String label;
   final String fileKey;
+  final bool allowDocument;
 
   const CustomFileUpload({
     super.key,
     required this.label,
     required this.fileKey,
+    this.allowDocument = false,
   });
 
   @override
@@ -36,19 +38,27 @@ class CustomFileUpload extends StatelessWidget {
           Obx(() {
             bool hasNewFile = controller.lampiranFiles.containsKey(fileKey);
             bool hasOldUrl = controller.lampiranLamaUrls.containsKey(fileKey);
-            
+           
             bool isFileAttached = hasNewFile || hasOldUrl;
 
-            // Logika Penamaan
-            String fileName = "Belum ada file dipilih";
+            // --- LOGIKA TEKS DINAMIS ---
+            String fileName = "";
             if (hasNewFile) {
               fileName = controller.lampiranFiles[fileKey]!.name;
             } else if (hasOldUrl) {
               fileName = "Berkas Lama (Tersimpan)";
+            } else {
+              // Jika kosong, bedakan teks petunjuknya!
+              fileName = allowDocument ? "Pilih Dokumen / Foto" : "Pilih Foto dari Galeri";
             }
 
+            // --- LOGIKA IKON DINAMIS ---
+            IconData defaultIcon = allowDocument ? Icons.upload_file_rounded : Icons.add_photo_alternate_rounded;
+
             return InkWell(
-              onTap: () => controller.pickFile(fileKey),
+              onTap: () => allowDocument 
+                  ? controller.pickDocumentOrImage(fileKey) 
+                  : controller.pickFile(fileKey),
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -73,11 +83,11 @@ class CustomFileUpload extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: _buildPreviewBox(hasNewFile, hasOldUrl, fileKey, controller),
+                        child: _buildPreviewBox(hasNewFile, hasOldUrl, fileKey, controller, defaultIcon),
                       ),
                     ),
                     const SizedBox(width: 12),
-                    
+                   
                     // --- NAMA FILE ---
                     Expanded(
                       child: Text(
@@ -91,7 +101,7 @@ class CustomFileUpload extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
+                   
                     // --- TOMBOL SILANG (X) ---
                     if (isFileAttached)
                       GestureDetector(
@@ -112,30 +122,30 @@ class CustomFileUpload extends StatelessWidget {
   }
 
   // --- LOGIKA MENGGAMBAR KOTAK PREVIEW KECIL ---
-  Widget _buildPreviewBox(bool hasNewFile, bool hasOldUrl, String key, BuatSuratController c) {
+  Widget _buildPreviewBox(bool hasNewFile, bool hasOldUrl, String key, BuatSuratController c, IconData defaultIcon) {
     if (hasNewFile) {
       // 1. Jika file baru (Lokal File Path)
-      String path = c.lampiranFiles[key]!.path;
-      if (path.toLowerCase().endsWith('.pdf')) {
-        return const Icon(Icons.picture_as_pdf, color: Colors.red, size: 24);
+      String path = c.lampiranFiles[key]!.path.toLowerCase();
+      if (path.endsWith('.pdf') || path.endsWith('.doc') || path.endsWith('.docx')) {
+        return const Icon(Icons.description_rounded, color: Colors.red, size: 24);
       } else {
-        return Image.file(File(path), fit: BoxFit.cover); // Render gambar lokal
+        return Image.file(File(c.lampiranFiles[key]!.path), fit: BoxFit.cover); // Render gambar lokal
       }
     } else if (hasOldUrl) {
       // 2. Jika file lama (URL dari Server Backend Laravel)
-      String url = c.lampiranLamaUrls[key]!;
-      if (url.toLowerCase().endsWith('.pdf')) {
-        return const Icon(Icons.picture_as_pdf, color: Colors.red, size: 24);
+      String url = c.lampiranLamaUrls[key]!.toLowerCase();
+      if (url.endsWith('.pdf') || url.endsWith('.doc') || url.endsWith('.docx')) {
+        return const Icon(Icons.description_rounded, color: Colors.red, size: 24);
       } else {
         // Render gambar URL
         return Image.network(
-          url, 
+          c.lampiranLamaUrls[key]!,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.grey),
-        ); 
+        );
       }
     }
     // 3. Jika kosong
-    return const Icon(Icons.upload_file, color: Colors.grey, size: 20);
+    return Icon(defaultIcon, color: Colors.grey[400], size: 22);
   }
 }
