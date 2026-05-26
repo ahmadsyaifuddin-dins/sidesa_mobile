@@ -74,16 +74,20 @@ class AuthController extends GetxController {
           child: Column(
             children: [
               const Text(
-                "Masukkan IP Laptop Server SIDESA:",
+                // Mengubah instruksi agar warga/tester tahu bisa pakai URL
+                "Masukkan IP Lokal Wifi / URL Server SIDESA:",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: ipController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                // Mengubah tipe keyboard agar bisa mengetik huruf dan simbol link
+                keyboardType: TextInputType.url, 
                 decoration: InputDecoration(
-                  hintText: "Contoh: 192.168.1.10",
-                  prefixIcon: const Icon(Icons.wifi, color: Colors.blue),
+                  // Menambahkan hint text yang lebih relevan
+                  hintText: "Cth: 192.168.0.28 atau https://ngrok...", 
+                  prefixIcon: const Icon(Icons.link, color: Colors.blue),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -101,11 +105,14 @@ class AuthController extends GetxController {
         btnCancelOnPress: () {},
         btnOkOnPress: () async {
           if (ipController.text.isNotEmpty) {
-            await ApiConfig.setIP(ipController.text);
+            // Mencegah error jika ada spasi yang tidak sengaja tertik/ter-paste
+            String finalInput = ipController.text.trim();
+            
+            await ApiConfig.setIP(finalInput);
 
             SnackbarHelper.info(
               title: "Config Updated",
-              message: "IP Server berhasil diubah ke: ${ipController.text}. Lakukan Hot Restart agar efeknya maksimal.",
+              message: "Server berhasil diubah ke: $finalInput. Lakukan Hot Restart agar efeknya maksimal.",
               duration: 4.0,
             );
           }

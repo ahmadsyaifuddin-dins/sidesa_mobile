@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
+import 'package:sidesa_mobile/core/config/api_config.dart';
 
 class SuratDialogHelper {
   static void showPengajuanSurat() {
@@ -63,9 +64,10 @@ class SuratDialogHelper {
               ),
               onTap: () async {
                 Get.back(); // Tutup dialog
-                final box = Hive.box('settings');
-                final String dynamicIP = box.get('server_ip', defaultValue: '192.168.0.28');
-                final Uri url = Uri.parse('http://$dynamicIP:8000/layanan-surat/buat');
+                
+                // MENGGUNAKAN APICONFIG.WEBURL YANG SUDAH DINAMIS
+                final String urlSurat = '${ApiConfig.webUrl}/layanan-surat/buat';
+                final Uri url = Uri.parse(urlSurat);
 
                 try {
                   if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
