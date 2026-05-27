@@ -1,4 +1,3 @@
-// Lokasi: lib/features/dashboard/views/tabs/profile_tab.dart
 import 'package:flutter/material.dart';
 import '../widgets/profile/profile_header.dart';
 import '../widgets/profile/profile_info_card.dart';
@@ -10,11 +9,11 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
+    return const Scaffold(
+      // HAPUS backgroundColor: Colors.grey[50] agar otomatis ngikutin ThemeConfig
       body: SingleChildScrollView(
         child: Column(
-          children: const [
+          children: [
             ProfileHeader(),
             SizedBox(height: 20),
             ProfileInfoCard(),

@@ -8,6 +8,7 @@ class ProfileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardController>();
+    final theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -36,9 +37,10 @@ class ProfileInfoCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
+                      // Agar warna tombol dinamis di Dark Mode
                       color: controller.isDataHidden.value
-                          ? Colors.blue[50]
-                          : Colors.grey[100],
+                          ? theme.colorScheme.primary.withOpacity(0.1)
+                          : theme.colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -49,8 +51,8 @@ class ProfileInfoCard extends StatelessWidget {
                               : Icons.visibility_outlined,
                           size: 16,
                           color: controller.isDataHidden.value
-                              ? Colors.blue[600]
-                              : Colors.grey[600],
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -61,8 +63,8 @@ class ProfileInfoCard extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: controller.isDataHidden.value
-                                ? Colors.blue[600]
-                                : Colors.grey[600],
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -76,11 +78,11 @@ class ProfileInfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: theme.shadowColor.withOpacity(0.1),
                   blurRadius: 15,
                   spreadRadius: 2,
                   offset: const Offset(0, 5),
@@ -89,13 +91,14 @@ class ProfileInfoCard extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Bagian Avatar Dinamis (Abaikan karena ini sudah pindah ke ProfileHeader, namun aku menyesuaikan desain lama yang ada ikon centangnya)
+                // Bagian Header Card (Icon Centang Hijau)
                 Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.green[50],
+                        // Menggunakan opacity agar di Dark Mode tidak mencolok
+                        color: Colors.green.withOpacity(0.15),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -114,7 +117,7 @@ class ProfileInfoCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              // Color sengaja dihapus agar otomatis hitam/putih
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -122,7 +125,7 @@ class ProfileInfoCard extends StatelessWidget {
                             "Bersumber dari database desa",
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey[500],
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -131,11 +134,16 @@ class ProfileInfoCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Divider(color: Colors.grey[100], thickness: 1.5, height: 0),
+                Divider(
+                  color: theme.colorScheme.outlineVariant,
+                  thickness: 1.5,
+                  height: 0,
+                ),
                 const SizedBox(height: 15),
 
-                // Info Data - Menggunakan parameter tambahan isObscurable
+                // Info Data - SEKARANG SUDAH DITAMBAHKAN PARAMETER 'context'
                 _buildModernInfoRow(
+                  context,
                   Icons.credit_card_outlined,
                   "Nomor Induk Kependudukan",
                   controller.userNik,
@@ -143,6 +151,7 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
+                  context,
                   Icons.person_outline,
                   "Jenis Kelamin",
                   controller.userJenisKelamin,
@@ -150,6 +159,7 @@ class ProfileInfoCard extends StatelessWidget {
                 ), // Jenis kelamin tidak perlu disensor
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
+                  context,
                   Icons.calendar_today_outlined,
                   "Tanggal Lahir",
                   controller.userTanggalLahir,
@@ -157,6 +167,7 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
+                  context,
                   Icons.phone_android_outlined,
                   "No. Telepon",
                   controller.userNoTelp,
@@ -164,6 +175,7 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
+                  context,
                   Icons.location_on_outlined,
                   "Alamat Domisili",
                   controller.userAlamat,
@@ -171,6 +183,7 @@ class ProfileInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 _buildModernInfoRow(
+                  context,
                   Icons.alternate_email_outlined,
                   "Alamat Email",
                   controller.userEmail,
@@ -184,24 +197,26 @@ class ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  // Tambahkan parameter opsional 'isObscurable' dengan default true
+  // Helper Row dinamis yang sudah dilengkapi context
   Widget _buildModernInfoRow(
+    BuildContext context,
     IconData icon,
     String label,
     RxString value, {
     bool isObscurable = true,
   }) {
     final controller = Get.find<DashboardController>();
+    final theme = Theme.of(context);
 
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: theme.colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: Colors.blue[600], size: 22),
+          child: Icon(icon, color: theme.colorScheme.primary, size: 22),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -212,7 +227,7 @@ class ProfileInfoCard extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[500],
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -221,10 +236,11 @@ class ProfileInfoCard extends StatelessWidget {
                 // Logika Sensor Data
                 String displayValue = value.value.isEmpty ? "-" : value.value;
 
-                // Jika isObscurable true, data tidak '-', dan status hidden sedang aktif
-                if (isObscurable &&
+                bool isHidden = isObscurable &&
                     displayValue != "-" &&
-                    controller.isDataHidden.value) {
+                    controller.isDataHidden.value;
+
+                if (isHidden) {
                   // Ganti seluruh karakter dengan bullet/titik sensor
                   displayValue = "••••••••••••";
                 }
@@ -234,15 +250,11 @@ class ProfileInfoCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color:
-                        controller.isDataHidden.value &&
-                            isObscurable &&
-                            value.value != "-"
-                        ? Colors.grey[400]
-                        : Colors.black87,
-                    letterSpacing: controller.isDataHidden.value && isObscurable
-                        ? 2.0
-                        : 0.0, // Beri jarak spasi agar sensor terlihat lebih bagus
+                    // Logika warna dinamis:
+                    color: isHidden
+                        ? theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                        : null,
+                    letterSpacing: isHidden ? 2.0 : 0.0,
                   ),
                 );
               }),

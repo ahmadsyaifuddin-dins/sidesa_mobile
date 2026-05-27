@@ -1,18 +1,22 @@
-// Lokasi: lib/features/dashboard/views/widgets/profile_menu_card.dart (Sesuaikan jika letak foldernya berbeda)
-
+// Lokasi: lib/features/dashboard/views/widgets/profile/profile_menu_card.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/core/services/activity_logger_service.dart';
-import 'package:sidesa_mobile/features/auth/data/auth_repository.dart';
 import 'package:sidesa_mobile/features/dashboard/views/edit_profile_view.dart';
 import 'package:sidesa_mobile/features/dashboard/views/tentang_aplikasi_view.dart';
-import '../../../../../core/utils/snackbar_helper.dart'; 
+
+// --- IMPORT DARI FOLDER PARTIALS ---
+import 'partials/profile_menu_card/profile_menu_tile.dart';
+import 'partials/profile_menu_card/change_password_sheet.dart';
+import 'partials/profile_menu_card/theme_selection_sheet.dart';
 
 class ProfileMenuCard extends StatelessWidget {
   const ProfileMenuCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -25,210 +29,57 @@ class ProfileMenuCard extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: theme.colorScheme.outlineVariant),
             ),
             child: Column(
               children: [
-                _buildMenuTile(Icons.edit_outlined, "Edit Profil", () {
-                  // 1. Catat log Edit Profil
-                  ActivityLoggerService.log('Menu Profil: Edit Profil');
-                  
-                  Get.to(
-                    () => const EditProfileView(),
-                    transition: Transition.rightToLeft,
-                  );
-                }),
+                ProfileMenuTile(
+                  icon: Icons.edit_outlined,
+                  title: "Edit Profil",
+                  onTap: () {
+                    ActivityLoggerService.log('Menu Profil: Edit Profil');
+                    Get.to(() => const EditProfileView(), transition: Transition.rightToLeft);
+                  },
+                ),
                 const Divider(height: 1, indent: 50),
                 
-                _buildMenuTile(Icons.lock_outline, "Ganti Password", () {
-                  // 2. Catat log Ganti Password
-                  ActivityLoggerService.log('Menu Profil: Ganti Password');
-                  
-                  _showChangePasswordSheet(context);
-                }),
+                ProfileMenuTile(
+                  icon: Icons.lock_outline,
+                  title: "Ganti Password",
+                  onTap: () {
+                    ActivityLoggerService.log('Menu Profil: Ganti Password');
+                    // Panggil module dari partials
+                    Get.bottomSheet(ChangePasswordSheet(), isScrollControlled: true);
+                  },
+                ),
+                const Divider(height: 1, indent: 50),
                 
-                _buildMenuTile(Icons.info_outline, "Tentang Aplikasi", () {
-                  // 3. Catat log Tentang Aplikasi
-                  ActivityLoggerService.log('Menu Profil: Tentang Aplikasi');
-                  
-                  Get.to(
-                    () => const TentangAplikasiView(),
-                    transition: Transition.rightToLeft,
-                  );
-                }),
+                ProfileMenuTile(
+                  icon: Icons.dark_mode_outlined,
+                  title: "Tema Aplikasi",
+                  onTap: () {
+                    ActivityLoggerService.log('Menu Profil: Tema Aplikasi');
+                    // Panggil module dari partials
+                    Get.bottomSheet(const ThemeSelectionSheet());
+                  },
+                ),
+                const Divider(height: 1, indent: 50),
+                
+                ProfileMenuTile(
+                  icon: Icons.info_outline,
+                  title: "Tentang Aplikasi",
+                  onTap: () {
+                    ActivityLoggerService.log('Menu Profil: Tentang Aplikasi');
+                    Get.to(() => const TentangAplikasiView(), transition: Transition.rightToLeft);
+                  },
+                ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMenuTile(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: Colors.grey[700], size: 18),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-      ),
-      trailing: const Icon(Icons.chevron_right, size: 18, color: Colors.grey),
-      onTap: onTap,
-    );
-  }
-
-  void _showChangePasswordSheet(BuildContext context) {
-    final currentPassC = TextEditingController();
-    final newPassC = TextEditingController();
-    final confirmPassC = TextEditingController();
-    var isLoading = false.obs;
-    final AuthRepository authRepo = AuthRepository();
-
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Ganti Password",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                "Pastikan password baru Anda kuat dan mudah diingat.",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-              const SizedBox(height: 20),
-
-              TextField(
-                controller: currentPassC,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password Saat Ini",
-                  prefixIcon: const Icon(Icons.lock_clock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-
-              TextField(
-                controller: newPassC,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password Baru",
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-
-              TextField(
-                controller: confirmPassC,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Konfirmasi Password Baru",
-                  prefixIcon: const Icon(Icons.check_circle_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
-
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: Obx(
-                  () => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: isLoading.value
-                        ? null
-                        : () async {
-                            if (currentPassC.text.isEmpty ||
-                                newPassC.text.isEmpty ||
-                                confirmPassC.text.isEmpty) {
-                              
-                              // Menggunakan helper tipe Warning
-                              SnackbarHelper.warning(
-                                title: "Peringatan",
-                                message: "Semua kolom harus diisi!",
-                              );
-                              return;
-                            }
-                            
-                            isLoading.value = true;
-                            try {
-                              await authRepo.changePassword(
-                                currentPassC.text,
-                                newPassC.text,
-                                confirmPassC.text,
-                              );
-                              
-                              Get.back(); // Tutup bottom sheet
-                              
-                              // Menggunakan helper tipe Success
-                              SnackbarHelper.success(
-                                title: "Berhasil",
-                                message: "Password akun Anda berhasil diperbarui.",
-                              );
-                            } catch (e) {
-                              String msg = e.toString().replaceAll("Exception: ", "");
-                              
-                              // Menggunakan helper tipe Error
-                              SnackbarHelper.error(
-                                title: "Gagal",
-                                message: msg,
-                              );
-                            } finally {
-                              isLoading.value = false;
-                            }
-                          },
-                    child: isLoading.value
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            "Simpan Password",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
     );
   }
 }

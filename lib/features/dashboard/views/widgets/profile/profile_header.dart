@@ -1,3 +1,5 @@
+// Lokasi: lib/features/dashboard/views/widgets/profile/profile_header.dart (Sesuaikan jika path berbeda)
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/dashboard_controller.dart';
@@ -8,19 +10,23 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardController>();
+    // Deklarasikan theme di sini agar mudah dipanggil
+    final theme = Theme.of(context);
 
     return Container(
       padding: const EdgeInsets.only(top: 60, bottom: 30),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        // 1. Background putih diubah jadi cardColor
+        color: theme.cardColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            // 2. Bayangan disesuaikan dengan shadowColor tema
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -34,20 +40,21 @@ class ProfileHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.blue.withOpacity(0.2),
+                  // 3. Garis border avatar mengikuti warna primary tema
+                  color: theme.colorScheme.primary.withOpacity(0.2),
                   width: 2,
                 ),
               ),
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.blue[50],
-                // Jika userAvatar tidak kosong, tampilkan gambar dari jaringan
+                // 4. Background avatar memakai primary dengan transparansi
+                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
                 backgroundImage: controller.userAvatar.value.isNotEmpty
                     ? NetworkImage(controller.userAvatar.value)
                     : null,
-                // Jika userAvatar kosong, tampilkan icon default
                 child: controller.userAvatar.value.isEmpty
-                    ? Icon(Icons.person, size: 50, color: Colors.blue[300])
+                    // 5. Icon avatar mengikuti warna primary tema
+                    ? Icon(Icons.person, size: 50, color: theme.colorScheme.primary)
                     : null,
               ),
             );
@@ -59,6 +66,7 @@ class ProfileHeader extends StatelessWidget {
           Obx(
             () => Text(
               controller.userName.value.toUpperCase(),
+              // Teks dibiarkan tanpa 'color' agar otomatis hitam/putih
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -72,9 +80,10 @@ class ProfileHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.green[50],
+              // 6. Label semantic (hijau) menggunakan trik opacity agar cocok di Dark Mode
+              color: Colors.green.withOpacity(0.15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.green[100]!),
+              border: Border.all(color: Colors.green.withOpacity(0.3)),
             ),
             child: const Text(
               "Warga Terverifikasi",
