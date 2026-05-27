@@ -1,14 +1,17 @@
+// Lokasi: lib/features/dashboard/views/widgets/home/dashboard_header.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../controllers/dashboard_controller.dart'; // Sesuaikan path
+import '../../../controllers/dashboard_controller.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Cari controller yang sudah di-put di DashboardView
     final controller = Get.find<DashboardController>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -20,8 +23,8 @@ class DashboardHeader extends StatelessWidget {
               Obx(
                 () => Text(
                   controller.greetingText.value,
-                  style: const TextStyle(
-                    color: Colors.grey,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontStyle: FontStyle.italic,
                   ),
@@ -38,7 +41,16 @@ class DashboardHeader extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
+                    // Jika Dark Mode: Warna Biru Terang + Glow, Light Mode: Biru Tua Standar
+                    color: isDark ? const Color(0xFF81D4FA) : Colors.blue[900],
+                    shadows: isDark
+                        ? [
+                            Shadow(
+                              color: Colors.blue.shade400.withOpacity(0.5),
+                              blurRadius: 10, // Efek berpendar lembut
+                            ),
+                          ]
+                        : null,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -47,14 +59,18 @@ class DashboardHeader extends StatelessWidget {
             ],
           ),
         ),
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.blue[50],
+        
+        // Notification Button dengan background dinamis
+        Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
           child: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.notifications_none,
-              color: Colors.blue,
-              size: 20,
+              color: theme.colorScheme.primary,
+              size: 22,
             ),
             onPressed: () {},
           ),

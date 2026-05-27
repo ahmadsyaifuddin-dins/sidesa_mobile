@@ -1,3 +1,4 @@
+// Lokasi: lib/features/dashboard/views/widgets/home/digital_id/digital_id_card.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -12,22 +13,44 @@ class DigitalIdCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardController>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue.shade800, Colors.blue.shade600],
+          // --- RACIKAN WARNA "NENDANG" & GLOWING ---
+          colors: isDark
+              ? const [
+                  Color(0xFF0A1931), // Deep Space Blue (Sangat Gelap)
+                  Color(0xFF00E5FF), // Neon Cyan (Garis Cahaya / Shine di tengah)
+                  Color(0xFF0D47A1), // Royal Blue (Biru Elegan)
+                ]
+              : [
+                  Colors.blue.shade800, // Light mode asli
+                  Colors.blue.shade600, // Light mode asli
+                ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          // Mengatur titik persebaran cahaya agar presisi menyilang di tengah
+          stops: isDark ? const [0.1, 0.6, 1.0] : null,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
+          isDark
+              ? BoxShadow(
+                  // Efek Glow berpendar warna Cyan di Dark Mode
+                  color: const Color(0xFF00E5FF).withOpacity(0.25), 
+                  blurRadius: 25, 
+                  spreadRadius: 2,
+                  offset: const Offset(0, 10), 
+                )
+              : BoxShadow(
+                  color: Colors.blue.withOpacity(0.4), 
+                  blurRadius: 15, 
+                  offset: const Offset(0, 8), 
+                ),
         ],
       ),
       child: ClipRRect(
@@ -38,36 +61,33 @@ class DigitalIdCard extends StatelessWidget {
               right: -50,
               bottom: -20,
               child: Opacity(
-                opacity: 0.15,
+                opacity: isDark ? 0.25 : 0.15, // Peta NKRI sedikit diterangkan di mode gelap
                 child: Image.asset(
-                  'assets/map_nkri.png', 
+                  'assets/map_nkri.png',
                   width: 350,
                   fit: BoxFit.contain,
-                  color: Colors.white, 
+                  color: Colors.white,
                 ),
               ),
             ),
             
-            // UBAH PADDING: Dikurangi sedikit di sisi kiri-kanan agar aman di layar 320px
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   // --- HEADER KARTU (SIDESA & KARTU WARGA DIGITAL) ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Dibungkus Flexible agar jika layar sangat kecil, teks tidak error
                       const Flexible(
                         flex: 2,
                         child: Text(
                           "SIDESA Mobile",
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.w900, // Extra bold
+                            fontWeight: FontWeight.w900,
                             fontSize: 18,
                             letterSpacing: 2,
                           ),
@@ -75,7 +95,6 @@ class DigitalIdCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Teks menyatu dengan kartu (Tanpa border/container)
                       Flexible(
                         flex: 2,
                         child: Row(
@@ -88,8 +107,7 @@ class DigitalIdCard extends StatelessWidget {
                               child: Text(
                                 "KARTU WARGA DIGITAL",
                                 style: TextStyle(
-                                  // Opacity 85% memberi efek menyatu dengan background
-                                  color: Colors.white.withOpacity(0.85), 
+                                  color: Colors.white.withOpacity(0.85),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
@@ -106,14 +124,13 @@ class DigitalIdCard extends StatelessWidget {
                   const SizedBox(height: 25),
                   
                   // --- DATA WARGA ---
-                  // UBAH: Tambahkan FittedBox agar nama panjang warga aman tidak turun ke bawah
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
                     child: Obx(() => Text(
                       controller.userName.value.toUpperCase(),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.white, // Nama tetap putih solid agar pop-out
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -123,7 +140,7 @@ class DigitalIdCard extends StatelessWidget {
                   Obx(() => Text(
                     controller.userNik.value,
                     style: TextStyle(
-                      color: Colors.blue.shade100,
+                      color: isDark ? const Color(0xFFE0F7FA) : Colors.blue.shade100, // Cyan pudar di Dark Mode
                       fontSize: 16,
                       fontFamily: 'Courier',
                       fontWeight: FontWeight.w600,
@@ -137,20 +154,28 @@ class DigitalIdCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      // Flexible di sini agar teks Desa tidak menabrak QR Code di layar kecil
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               "Desa Anjir Muara Kota Tengah",
-                              style: TextStyle(color: Colors.blue.shade100, fontSize: 12, fontWeight: FontWeight.w500),
-                              overflow: TextOverflow.ellipsis, // Pengaman 320px
+                              style: TextStyle(
+                                color: isDark ? Colors.white.withOpacity(0.9) : Colors.blue.shade100,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
-                            const Text(
+                            Text(
                               "Dokumen Digital Sah",
-                              style: TextStyle(color: Colors.white70, fontSize: 10, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                color: isDark ? const Color(0xFF00E5FF) : Colors.white70, // Neon Cyan di Dark Mode
+                                fontSize: 10, 
+                                fontStyle: FontStyle.italic, 
+                                fontWeight: FontWeight.bold,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
@@ -158,16 +183,25 @@ class DigitalIdCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       GestureDetector(
-                        // Pemanggilan fungsi bottom sheet tetap menggunakan yang lama
                         onTap: () => showQrBottomSheet(context, controller),
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white, // KUNCI: Wajib putih untuk mesin scanner
                             borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))
-                            ]
+                            boxShadow: [
+                              isDark
+                                  ? BoxShadow(
+                                      color: const Color(0xFF00E5FF).withOpacity(0.3), // Glow kecil di bawah QR
+                                      blurRadius: 8, 
+                                      offset: const Offset(0, 2), 
+                                    )
+                                  : const BoxShadow(
+                                      color: Colors.black26, 
+                                      blurRadius: 4, 
+                                      offset: Offset(0, 2), 
+                                    ),
+                            ],
                           ),
                           child: Obx(() {
                             final nik = controller.userNik.value;

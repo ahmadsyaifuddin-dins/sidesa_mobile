@@ -19,92 +19,79 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
+    final theme = Theme.of(context);
 
     return Scaffold(
-      extendBody: true, // PENTING: Agar body bisa memanjang sampai ke balik notch/lengkungan
-      
-      // BODY BERUBAH SESUAI TAB
+      backgroundColor: theme.scaffoldBackgroundColor,
+      extendBody: true, 
+     
       body: Obx(
         () => IndexedStack(
           index: controller.tabIndex.value,
-          children: [
-            const HomeTab(),       // Index 0
-            const RiwayatTab(),    // Index 1
-            const TimelineView(),  // Index 2 (Ini halaman Forum SIDESA kita)
-            
-            const InboxView(),     // Index 3 
-            
-            const ProfileTab(),    // Index 4
+          children: const [
+            HomeTab(),       // Index 0
+            RiwayatTab(),    // Index 1
+            TimelineView(),  // Index 2 
+            InboxView(),     // Index 3
+            ProfileTab(),    // Index 4
           ],
         ),
       ),
 
-      // TOMBOL TENGAH (FORUM SIDESA)
-      floatingActionButton: Obx(
-        () => FloatingActionButton(
-          onPressed: () => controller.changeTab(2), // Arahkan ke Index 2 (Timeline)
-          backgroundColor: controller.tabIndex.value == 2 ? Colors.blue.shade800 : Colors.blue.shade500,
-          elevation: controller.tabIndex.value == 2 ? 0 : 4,
+      // --- DYNAMIC FAB TENGAH ---
+      floatingActionButton: Obx(() {
+        final isForum = controller.tabIndex.value == 2;
+        return FloatingActionButton(
+          heroTag: 'fab_sidesa', // <-- KUNCI RAHASIA MORPHING / EFEK TERBANG!
+          onPressed: () => controller.changeTab(2), 
+          backgroundColor: isForum
+              ? theme.colorScheme.primary
+              : theme.colorScheme.primary.withOpacity(0.8),
+          elevation: isForum ? 0 : 4,
           shape: const CircleBorder(),
-          child: const Icon(Icons.forum_rounded, color: Colors.white, size: 28),
-        ),
-      ),
-      // Atur posisi melayang tepat di tengah navbar
+          // Bikin ikonnya berdenyut mulus saat di-tap
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+            child: Icon(
+              Icons.forum_rounded,
+              key: ValueKey(isForum), 
+              color: Colors.white,
+              size: isForum ? 32 : 28, // Sedikit membesar saat aktif
+            ),
+          ),
+        );
+      }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // BOTTOM NAV BAR DENGAN LENGKUNGAN (NOTCH)
+      // BOTTOM NAV BAR 
       bottomNavigationBar: Obx(
         () => BottomAppBar(
-          color: Colors.blue[50], // Sesuaikan dengan warna bawaan kamu
-          shape: const CircularNotchedRectangle(), // Efek lengkungan seperti di gambar
-          notchMargin: 8.0, // Jarak lengkungan dengan tombol
-          clipBehavior: Clip.antiAlias, 
+          color: theme.colorScheme.surface,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8.0,
+          clipBehavior: Clip.antiAlias,
           child: SizedBox(
-            height: 65, // Ketinggian navbar
+            height: 65,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // KELOMPOK KIRI
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildNavItem(
-                        icon: Icons.home_rounded, 
-                        label: "Home", 
-                        index: 0, 
-                        controller: controller
-                      ),
-                      _buildNavItem(
-                        icon: Icons.history_rounded, 
-                        label: "Riwayat", 
-                        index: 1, 
-                        controller: controller
-                      ),
+                      _buildNavItem(context: context, icon: Icons.home_rounded, label: "Home", index: 0, controller: controller),
+                      _buildNavItem(context: context, icon: Icons.history_rounded, label: "Riwayat", index: 1, controller: controller),
                     ],
                   ),
                 ),
-                
-                // Jarak kosong di tengah untuk memberi ruang pada FloatingActionButton
-                const SizedBox(width: 48), 
-                
-                // KELOMPOK KANAN
+                const SizedBox(width: 48),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildNavItem(
-                        icon: Icons.chat_bubble_rounded, 
-                        label: "Chat", 
-                        index: 3, 
-                        controller: controller
-                      ),
-                      _buildNavItem(
-                        icon: Icons.person_rounded, 
-                        label: "Profil", 
-                        index: 4, 
-                        controller: controller
-                      ),
+                      _buildNavItem(context: context, icon: Icons.chat_bubble_rounded, label: "Chat", index: 3, controller: controller),
+                      _buildNavItem(context: context, icon: Icons.person_rounded, label: "Profil", index: 4, controller: controller),
                     ],
                   ),
                 ),
@@ -116,18 +103,19 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  // WIDGET HELPER UNTUK IKON NAVBAR
   Widget _buildNavItem({
-    required IconData icon, 
-    required String label, 
-    required int index, 
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required int index,
     required DashboardController controller
   }) {
+    final theme = Theme.of(context);
     final isSelected = controller.tabIndex.value == index;
-    
+   
     return InkWell(
       onTap: () => controller.changeTab(index),
-      borderRadius: BorderRadius.circular(50), // Efek ripple membulat saat disentuh
+      borderRadius: BorderRadius.circular(50),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         child: Column(
@@ -136,14 +124,14 @@ class DashboardView extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.blue.shade800 : Colors.grey.shade500,
+              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
               size: 26,
             ),
             const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.blue.shade800 : Colors.grey.shade500,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),

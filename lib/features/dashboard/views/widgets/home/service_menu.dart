@@ -36,14 +36,14 @@ class ServiceMenu extends StatelessWidget {
                 },
               ),
 
-              // 2. ADUAN WARGA
               ServiceMenuItem(
                 icon: Icons.campaign_outlined,
                 label: "Aduan",
                 color: Colors.red,
                 onTap: () {
                   ActivityLoggerService.log('Menu Layanan: Aduan Warga');
-                  Get.to(() => const AduanView());
+                  // KUNCI 1: Gunakan fadeIn agar transisi Hero tidak terganggu slide layar
+                  Get.to(() => const AduanView(), transition: Transition.fadeIn, duration: const Duration(milliseconds: 500));
                 },
               ),
 
@@ -54,7 +54,8 @@ class ServiceMenu extends StatelessWidget {
                 color: Colors.teal,
                 onTap: () {
                   ActivityLoggerService.log('Menu Layanan: SiDesa AI Chatbot');
-                  Get.to(() => const ChatView());
+                  // KUNCI 1: Gunakan fadeIn
+                  Get.to(() => const ChatView(), transition: Transition.fadeIn, duration: const Duration(milliseconds: 500));
                 },
               ),
             ],

@@ -1,3 +1,4 @@
+// Lokasi: lib/features/dashboard/views/widgets/home/skeleton_history_item.dart
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -6,28 +7,33 @@ class SkeletonHistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Background dinamis
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      // Shimmer effect membungkus seluruh layout di dalamnya
+      // Shimmer effect menyesuaikan Light / Dark Mode
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        // Jika dark mode pakai abu-abu gelap, jika light mode pakai abu-abu terang
+        baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+        highlightColor: isDark ? Colors.grey[600]! : Colors.grey[100]!,
         child: Row(
           children: [
             // 1. Placeholder Icon (Lingkaran)
+            // Warna Colors.white di dalam Shimmer hanya sebagai "cetakan" bentuk, aman tidak diubah
             Container(
               width: 36,
               height: 36,

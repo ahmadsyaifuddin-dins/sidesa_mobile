@@ -12,35 +12,52 @@ class AduanView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AduanController());
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           "Aduan Warga",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: Colors.transparent, // Menyatu dengan tema
+        foregroundColor: theme.colorScheme.onSurface, // Teks ikut tema
         elevation: 0,
       ),
-
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          controller.resetForm(); // Bersihkan memori inputan lama dulu
-          Get.to(() => const BuatAduanView()); // Baru navigasi ke form
-        },
-        backgroundColor: Colors.blue[700],
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          "Buat Laporan",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
+      
+      // --- IMPLEMENTASI DYNAMIC FAB (AnimatedSwitcher) ---
+      floatingActionButton: Obx(() {
+        // Logika kapan tombol disembunyikan
+        final isHidden = controller.isFetching.value && controller.listAduan.isEmpty;
+        
+        return AnimatedScale(
+          scale: isHidden ? 0.0 : 1.0,
+          duration: const Duration(milliseconds: 500), // Durasi dipanjangin biar kerasa
+          curve: Curves.easeOutBack, 
+          child: AnimatedOpacity(
+            opacity: isHidden ? 0.0 : 1.0,
+            duration: const Duration(milliseconds: 300),
+            child: FloatingActionButton.extended(
+              heroTag: 'fab_sidesa',
+              onPressed: () {
+                controller.resetForm();
+                Get.to(() => const BuatAduanView());
+              },
+              backgroundColor: theme.colorScheme.primary,
+              icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+              label: Text(
+                "Buat Laporan",
+                style: TextStyle(color: theme.colorScheme.onPrimary, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        );
+      }),
 
       body: Obx(() {
         if (controller.isFetching.value && controller.listAduan.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: theme.colorScheme.primary));
         }
 
         if (controller.listAduan.isEmpty) {
@@ -48,11 +65,11 @@ class AduanView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[300]),
+                Icon(Icons.inbox_outlined, size: 80, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5)),
                 const SizedBox(height: 16),
                 Text(
                   "Belum ada aduan yang Anda kirim.",
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -61,13 +78,12 @@ class AduanView extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () => controller.fetchRiwayatAduan(),
+          color: theme.colorScheme.primary,
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: controller.listAduan.length,
             itemBuilder: (context, index) {
               final aduan = controller.listAduan[index];
-
-              // Cukup panggil custom widget-nya di sini, view jadi sangat bersih!
               return AduanCard(aduan: aduan);
             },
           ),

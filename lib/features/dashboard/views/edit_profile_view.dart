@@ -1,3 +1,4 @@
+// Lokasi: lib/features/dashboard/views/edit_profile_view.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,19 +13,22 @@ class EditProfileView extends StatelessWidget {
     // Inisialisasi controller langsung di View
     final EditProfileController controller = Get.put(EditProfileController());
     final DashboardController dashC = Get.find<DashboardController>();
+    
+    // Ambil referensi tema aktif
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           "Edit Profil",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent, // Transparan agar menyatu dengan background
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           onPressed: () => Get.back(),
         ),
       ),
@@ -43,34 +47,32 @@ class EditProfileView extends StatelessWidget {
                       height: 120,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.blue[100]!, width: 4),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withOpacity(0.2), 
+                          width: 4
+                        ),
                         image: controller.selectedImage.value != null
                             // Jika ada gambar baru yang dipilih dari HP
                             ? DecorationImage(
-                                image: FileImage(
-                                  controller.selectedImage.value!,
-                                ),
+                                image: FileImage(controller.selectedImage.value!),
                                 fit: BoxFit.cover,
                               )
                             : (dashC.userAvatar.value.isNotEmpty
-                                  // Jika tidak ada pilihan baru, tampilkan dari Network (jika ada)
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                        dashC.userAvatar.value,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null),
+                                // Jika tidak ada pilihan baru, tampilkan dari Network (jika ada)
+                                ? DecorationImage(
+                                    image: NetworkImage(dashC.userAvatar.value),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null),
                       ),
-                      child:
-                          controller.selectedImage.value == null &&
+                      child: controller.selectedImage.value == null &&
                               dashC.userAvatar.value.isEmpty
                           ? Icon(
                               Icons.person,
                               size: 60,
-                              color: Colors.blue[300],
+                              color: theme.colorScheme.primary.withOpacity(0.5),
                             )
                           : null,
                     );
@@ -80,13 +82,13 @@ class EditProfileView extends StatelessWidget {
                     onTap: () => controller.pickImage(),
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt,
-                        color: Colors.white,
+                        color: theme.colorScheme.onPrimary,
                         size: 20,
                       ),
                     ),
@@ -95,9 +97,9 @@ class EditProfileView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               "Ubah Foto Profil",
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
             ),
             const SizedBox(height: 40),
 
@@ -108,7 +110,7 @@ class EditProfileView extends StatelessWidget {
                 "Nomor Telepon (WhatsApp)",
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[700],
+                  color: theme.colorScheme.onSurface, // Teks mengikuti kontras tema
                 ),
               ),
             ),
@@ -118,9 +120,10 @@ class EditProfileView extends StatelessWidget {
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 hintText: "Contoh: 081234567890",
-                prefixIcon: Icon(Icons.phone_android, color: Colors.blue[400]),
+                prefixIcon: Icon(Icons.phone_android, color: theme.colorScheme.primary),
                 filled: true,
-                fillColor: Colors.grey[50],
+                // Menggunakan surfaceVariant agar kolom input sedikit berbeda dengan background
+                fillColor: theme.colorScheme.surfaceVariant,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -128,31 +131,31 @@ class EditProfileView extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.blue[400]!, width: 1.5),
+                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // Catatan Peringatan
+            // Catatan Peringatan (Trik Opacity Warna Orange)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange[50],
+                color: Colors.orange.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange[100]!),
+                border: Border.all(color: Colors.orange.withOpacity(0.3)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline, color: Colors.orange[700], size: 20),
+                  const Icon(Icons.info_outline, color: Colors.orange, size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       "Data penting seperti NIK, Nama, dan Alamat hanya dapat diubah oleh Operator Desa demi validitas kependudukan.",
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.orange[800],
+                        color: Colors.orange.shade700, // Shade lebih gelap sedikit agar terbaca di Light Mode
                         height: 1.5,
                       ),
                     ),
@@ -169,8 +172,8 @@ class EditProfileView extends StatelessWidget {
               child: Obx(
                 () => ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -180,11 +183,11 @@ class EditProfileView extends StatelessWidget {
                       ? null
                       : () => controller.saveProfile(),
                   child: controller.isLoading.value
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 24,
                           width: 24,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary,
                             strokeWidth: 2.5,
                           ),
                         )

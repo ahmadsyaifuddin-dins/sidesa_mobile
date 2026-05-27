@@ -1,9 +1,9 @@
+// Lokasi: lib/features/dashboard/views/widgets/home/digital_id/qr_bottom_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
-// Menggunakan package import agar path lebih rapi dan menghindari error
 import 'package:sidesa_mobile/core/config/api_config.dart';
 import 'package:sidesa_mobile/features/dashboard/controllers/dashboard_controller.dart';
 
@@ -14,67 +14,86 @@ void showQrBottomSheet(BuildContext context, DashboardController controller) {
       ? "${ApiConfig.webUrl}/identitas-warga/$nik"
       : "";
 
+  final theme = Theme.of(context);
+
   Get.bottomSheet(
     Container(
       padding: const EdgeInsets.all(24.0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor, // Background sheet mengikuti tema
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Garis Handle (Drag Indicator)
           Container(
             width: 40,
             height: 5,
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: theme.colorScheme.outlineVariant, // Warna abu-abu dinamis
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          const Text(
+          Text(
             "Kartu Warga Digital",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18, 
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 20),
 
+          // --- KOTAK QR CODE (WAJIB TETAP PUTIH) ---
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.white, // Wajib putih demi scanner fisik
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade100, width: 2),
+              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3), width: 2),
             ),
             child: QrImageView(
               data: webUrl.isNotEmpty ? webUrl : "SIDESA_GUEST",
               version: QrVersions.auto,
               size: 180.0,
+              backgroundColor: Colors.white, // Paksa putih
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Colors.black, // Paksa hitam
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: Colors.black, // Paksa hitam
+              ),
             ),
           ),
           const SizedBox(height: 20),
 
+          // --- KOTAK INFO NAMA & NIK ---
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
+              color: theme.colorScheme.primary.withOpacity(0.1), // Biru pudar/transparan
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: [
                 Text(
                   nama.toUpperCase(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "NIK: $nik",
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 14,
                     fontFamily: 'Courier',
                   ),
@@ -84,13 +103,14 @@ void showQrBottomSheet(BuildContext context, DashboardController controller) {
           ),
           const SizedBox(height: 24),
 
+          // --- TOMBOL VERIFIKASI ---
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[700],
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
