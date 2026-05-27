@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // IMPORT HIVE
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
 import '../../../core/config/api_config.dart';
 import '../../auth/data/auth_repository.dart';
@@ -29,40 +30,48 @@ class DashboardController extends GetxController {
 
   var isDataHidden = true.obs;
   var tabIndex = 0.obs;
+  
+  // --- STATE BARU UNTUK HIDE NIK VIA HIVE ---
+  var isNikHidden = true.obs; 
 
   void toggleDataVisibility() => isDataHidden.value = !isDataHidden.value;
+  
+  // --- FUNGSI TOGGLE NIK + SIMPAN KE HIVE ---
+  void toggleNikVisibility() async {
+    isNikHidden.value = !isNikHidden.value;
+    var box = await Hive.openBox('app_settings');
+    await box.put('is_nik_hidden', isNikHidden.value);
+  }
+
   void changeTab(int index) {
     tabIndex.value = index;
-
     switch (index) {
-      case 0:
-        ActivityLoggerService.log('Tab: Home Dashboard');
-        break;
-      case 1:
-        ActivityLoggerService.log('Tab: Riwayat Pengajuan');
-        break;
-      case 2:
-        ActivityLoggerService.log('Tab: Forum Komunitas (SIDESA Timeline)');
-        break;
-      case 3:
-        ActivityLoggerService.log('Tab: Inbox / Pesan Masuk');
-        break;
-      case 4:
-        ActivityLoggerService.log('Tab: Profil Pengguna');
-        break;
+      case 0: ActivityLoggerService.log('Tab: Home Dashboard'); break;
+      case 1: ActivityLoggerService.log('Tab: Riwayat Pengajuan'); break;
+      case 2: ActivityLoggerService.log('Tab: Forum Komunitas (SIDESA Timeline)'); break;
+      case 3: ActivityLoggerService.log('Tab: Inbox / Pesan Masuk'); break;
+      case 4: ActivityLoggerService.log('Tab: Profil Pengguna'); break;
     }
   }
 
   @override
   void onInit() {
     super.onInit();
-
-    // Agar data riwayat surat langsung di-fetch dan siap dipakai oleh tab surat
     Get.put(SuratController());
     Get.put(AduanController());
     greetingText.value = GreetingUtil.getRandomGreeting();
     loadUserData();
     fetchUserProfile();
+    
+    // Load status unhide NIK terakhir dari Hive
+    initNikVisibility();
+  }
+
+  // --- AMBIL DATA KONDISI HIDE NIK TERAKHIR ---
+  void initNikVisibility() async {
+    var box = await Hive.openBox('app_settings');
+    // Default awal adalah TRUE (tersembunyi) jika user belum pernah mencet tombol mata
+    isNikHidden.value = box.get('is_nik_hidden', defaultValue: true);
   }
 
   void loadUserData() async {
@@ -77,14 +86,8 @@ class DashboardController extends GetxController {
 
   Future<void> fetchUserProfile() async {
     try {
-      // Panggil getProfile() yang sudah rapi melewati UserModel
       final user = await _authRepo.getProfile();
-
-      // Gunakan baseHost untuk memanggil URL Public[cite: 4]
-      userAvatar.value = user.avatar != null
-          ? '${ApiConfig.baseHost}/${user.avatar}'
-          : '';
-
+      userAvatar.value = user.avatar != null ? '${ApiConfig.baseHost}/${user.avatar}' : '';
       userJenisKelamin.value = user.jenisKelamin ?? '-';
       userNoTelp.value = user.nomorTelepon ?? '-';
       userAlamat.value = user.alamat ?? '-';
@@ -96,16 +99,12 @@ class DashboardController extends GetxController {
         userTanggalLahir.value = '-';
       }
     } catch (e) {
-      SnackbarHelper.info(
-        title: "Informasi",
-        message: "Gagal memuat profil terbaru.",
-      );
+      SnackbarHelper.info(title: "Informasi", message: "Gagal memuat profil terbaru.");
     }
   }
 
   void logout() async {
     await _authRepo.logout();
-    // Hapus juga SuratController dari memori saat logout
     Get.delete<SuratController>();
     Get.delete<AduanController>();
     Get.offAllNamed(Routes.LOGIN);

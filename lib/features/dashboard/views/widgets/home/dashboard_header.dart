@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../controllers/dashboard_controller.dart';
+import '../../../controllers/dashboard_controller.dart'; 
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -20,6 +20,7 @@ class DashboardHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Sapaan & Pantun / Quotes
               Obx(
                 () => Text(
                   controller.greetingText.value,
@@ -32,35 +33,44 @@ class DashboardHeader extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 4),
-              Obx(
-                () => Text(
-                  controller.userName.value.isNotEmpty
-                      ? controller.userName.value
-                      : "Warga Desa",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    // Jika Dark Mode: Warna Biru Terang + Glow, Light Mode: Biru Tua Standar
-                    color: isDark ? const Color(0xFF81D4FA) : Colors.blue[900],
-                    shadows: isDark
-                        ? [
-                            Shadow(
-                              color: Colors.blue.shade400.withOpacity(0.5),
-                              blurRadius: 10, // Efek berpendar lembut
-                            ),
-                          ]
-                        : null,
+              const SizedBox(height: 6),
+              
+              // --- PENGGANTI NAMA: STATUS AKUN (WARGA TERVERIFIKASI) ---
+              Row(
+                children: [
+                  Icon(
+                    Icons.verified_rounded, 
+                    // Cyan menyala di Dark Mode, Biru Tua di Light Mode
+                    color: isDark ? const Color(0xFF00E5FF) : Colors.blue[700], 
+                    size: 16,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Warga Terverifikasi",
+                    style: TextStyle(
+                      fontSize: 14, // Dikecilkan sedikit dari 16 agar proporsional
+                      fontWeight: FontWeight.bold,
+                      // Warna teks dan Glow yang senada dengan icon
+                      color: isDark ? const Color(0xFF81D4FA) : Colors.blue[900],
+                      shadows: isDark
+                          ? [
+                              Shadow(
+                                color: const Color(0xFF00E5FF).withOpacity(0.4),
+                                blurRadius: 8,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ],
           ),
         ),
         
-        // Notification Button dengan background dinamis
+        // Notification Button
         Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.primary.withOpacity(0.1),
