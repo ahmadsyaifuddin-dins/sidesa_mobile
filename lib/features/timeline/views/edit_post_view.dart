@@ -1,3 +1,5 @@
+// Lokasi: lib/features/timeline/views/edit_post_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
@@ -50,7 +52,7 @@ class _EditPostViewState extends State<EditPostView> {
       Future.delayed(const Duration(milliseconds: 300), () {
         // 3. Munculkan Snackbar di layar Timeline
         SnackbarHelper.success(
-          title: "Berhasil", 
+          title: "Berhasil",
           message: "Aspirasi Anda telah diperbarui."
         );
       });
@@ -59,30 +61,36 @@ class _EditPostViewState extends State<EditPostView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 1. Ambil referensi tema
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor, // Background utama dinamis
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface, // Background appbar dinamis
+        surfaceTintColor: Colors.transparent, // Hindari efek kusam Material 3
         elevation: 0.5,
+        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
+          icon: Icon(Icons.close_rounded, color: theme.colorScheme.onSurface), // Ikon close dinamis
           onPressed: () => Get.back(),
         ),
-        title: const Text("Edit Aspirasi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text(
+          "Edit Aspirasi", 
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.colorScheme.onSurface)
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0, top: 8, bottom: 8),
             child: ElevatedButton(
               onPressed: isLoading ? null : _submitEdit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary, // Warna tombol dinamis
+                foregroundColor: theme.colorScheme.onPrimary, // Warna teks tombol dinamis
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
               child: isLoading
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: theme.colorScheme.onPrimary, strokeWidth: 2))
                   : const Text("Simpan", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
@@ -99,12 +107,15 @@ class _EditPostViewState extends State<EditPostView> {
                   controller: contentC,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
+                  style: TextStyle(fontSize: 18, color: theme.colorScheme.onSurface), // Teks inputan dinamis
+                  decoration: InputDecoration(
                     hintText: "Ubah isi aspirasi Anda...",
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 18),
+                    hintStyle: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7), // Teks placeholder dinamis
+                      fontSize: 18
+                    ),
                   ),
-                  style: const TextStyle(fontSize: 18),
                   autofocus: true, // Keyboard otomatis muncul
                 ),
               ),
@@ -112,12 +123,14 @@ class _EditPostViewState extends State<EditPostView> {
               // Jika postingan ini memiliki gambar, tampilkan tapi buat agak transparan
               // sebagai penanda bahwa gambar aslinya akan tetap dipertahankan
               if (widget.post.attachment != null) ...[
-                const Divider(),
-                const Text("Gambar terlampir (Tidak dapat diubah pada mode edit)", 
-                  style: TextStyle(color: Colors.grey, fontSize: 12)),
+                Divider(color: theme.colorScheme.outlineVariant), // Divider dinamis
+                Text(
+                  "Gambar terlampir (Tidak dapat diubah pada mode edit)",
+                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12) // Teks instruksi dinamis
+                ),
                 const SizedBox(height: 8),
                 Opacity(
-                  opacity: 0.6,
+                  opacity: 0.6, // Dibuat transparan sebagai indikasi tak bisa diedit
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(

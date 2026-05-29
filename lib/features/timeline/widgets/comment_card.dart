@@ -24,6 +24,8 @@ class CommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Ambil tema
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,7 +39,12 @@ class CommentCard extends StatelessWidget {
             child: IntrinsicHeight(
               child: Row(
                 children: [
-                  Container(width: 2, color: Colors.grey.shade300, margin: const EdgeInsets.only(right: 12)),
+                  // Garis vertikal penghubung balasan dinamis
+                  Container(
+                    width: 2, 
+                    color: theme.colorScheme.outlineVariant, 
+                    margin: const EdgeInsets.only(right: 12)
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,12 +61,13 @@ class CommentCard extends StatelessWidget {
             ),
           ),
         
-        const Divider(height: 16, thickness: 0.5, color: Colors.black12),
+        Divider(height: 16, thickness: 0.5, color: theme.colorScheme.outlineVariant),
       ],
     );
   }
 
   Widget _buildCommentBody(BuildContext context, CommentModel item, {required bool isReply, int? parentId}) {
+    final theme = Theme.of(context);
     final bool isMine = item.userId == currentUserId;
 
     return Row(
@@ -74,13 +82,13 @@ class CommentCard extends StatelessWidget {
                 ? Image.network(
                     item.user!.avatar!.startsWith('http') ? item.user!.avatar! : "${ApiConfig.baseHost}/${item.user!.avatar}",
                     width: isReply ? 28 : 36, height: isReply ? 28 : 36, fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => _fallbackAvatar(isReply),
+                    errorBuilder: (context, error, stackTrace) => _fallbackAvatar(context, isReply),
                   )
-                : _fallbackAvatar(isReply),
+                : _fallbackAvatar(context, isReply),
           ),
         ),
         const SizedBox(width: 10),
-       
+        
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,40 +96,68 @@ class CommentCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    // 👇 BUNGKUS JUGA NAMANYA DENGAN GESTURE
                     child: GestureDetector(
                       onTap: () {
                         if (item.user != null) Get.toNamed(Routes.USER_PROFILE, arguments: item.user);
                       },
                       child: Row(
                         children: [
-                          Text(item.user?.name ?? 'Warga Desa', style: TextStyle(fontWeight: FontWeight.bold, fontSize: isReply ? 13 : 14), maxLines: 1, overflow: TextOverflow.ellipsis),
-                          if (item.user?.role == 'admin') ...[const SizedBox(width: 4), const Icon(Icons.verified, color: Colors.blue, size: 14)],
+                          Text(
+                            item.user?.name ?? 'Warga Desa', 
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, 
+                              fontSize: isReply ? 13 : 14,
+                              color: theme.colorScheme.onSurface, // Nama dinamis
+                            ), 
+                            maxLines: 1, 
+                            overflow: TextOverflow.ellipsis
+                          ),
+                          if (item.user?.role == 'admin') ...[
+                            const SizedBox(width: 4), 
+                            Icon(Icons.verified, color: theme.colorScheme.primary, size: 14) // Badge Admin dinamis
+                          ],
                         ],
                       ),
                     ),
                   ),
-                  Text(_formatDate(item.createdAt), style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
-                 
+                  Text(
+                    _formatDate(item.createdAt), 
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11) // Tanggal dinamis
+                  ),
+                  
                   if (isMine) ...[
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () => _showCommentMenu(context, item, parentId),
-                      child: const Icon(Icons.more_horiz, size: 16, color: Colors.grey),
+                      child: Icon(Icons.more_horiz, size: 16, color: theme.colorScheme.onSurfaceVariant),
                     )
                   ]
                 ],
               ),
               const SizedBox(height: 4),
-             
-              Text(item.content, style: TextStyle(fontSize: isReply ? 13 : 14, height: 1.3)),
+              
+              Text(
+                item.content, 
+                style: TextStyle(
+                  fontSize: isReply ? 13 : 14, 
+                  height: 1.3,
+                  color: theme.colorScheme.onSurface, // Teks Komentar dinamis
+                )
+              ),
               const SizedBox(height: 6),
-             
+              
               InkWell(
                 onTap: () => onReply(item),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 2, bottom: 4, right: 16),
-                  child: Text("Balas", style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.w600)),
+                  child: Text(
+                    "Balas", 
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant, // Teks Balas dinamis
+                      fontSize: 12, 
+                      fontWeight: FontWeight.w600
+                    )
+                  ),
                 ),
               ),
             ],
@@ -133,6 +169,7 @@ class CommentCard extends StatelessWidget {
 
   // --- MENU BOTTOM SHEET UNTUK KOMENTAR (LOGIKA 15 MENIT) ---
   void _showCommentMenu(BuildContext context, CommentModel item, int? parentId) {
+    final theme = Theme.of(context);
     final postDate = DateTime.parse(item.createdAt).toLocal();
     final difference = DateTime.now().difference(postDate).inMinutes;
     final bool canEdit = difference <= 15;
@@ -140,23 +177,40 @@ class CommentCard extends StatelessWidget {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor, // Background sheet dinamis
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10))),
+            Container(
+              width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16), 
+              decoration: BoxDecoration(color: theme.colorScheme.outlineVariant, borderRadius: BorderRadius.circular(10))
+            ),
             ListTile(
-              leading: Icon(Icons.edit_rounded, color: canEdit ? Colors.blue.shade700 : Colors.grey.shade400),
-              title: Text("Edit Komentar", style: TextStyle(fontWeight: FontWeight.bold, color: canEdit ? Colors.black87 : Colors.grey.shade400)),
-              subtitle: canEdit ? Text("Tersisa ${15 - difference} menit lagi") : Text("Waktu edit telah habis", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+              leading: Icon(
+                Icons.edit_rounded, 
+                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+              ),
+              title: Text(
+                "Edit Komentar", 
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, 
+                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                )
+              ),
+              subtitle: canEdit 
+                  ? Text("Tersisa ${15 - difference} menit lagi", style: TextStyle(color: theme.colorScheme.onSurfaceVariant)) 
+                  : Text("Waktu edit telah habis", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), fontSize: 12)),
               onTap: canEdit ? () {
                 Get.back();
                 onEdit(item, parentId: parentId);
               } : null,
             ),
             ListTile(
-              leading: const Icon(Icons.delete_rounded, color: Colors.red),
-              title: const Text("Hapus Komentar", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+              leading: Icon(Icons.delete_rounded, color: theme.colorScheme.error),
+              title: Text("Hapus Komentar", style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.error)),
               onTap: () {
                 Get.back();
                 onDelete(item.id, parentId: parentId);
@@ -168,9 +222,15 @@ class CommentCard extends StatelessWidget {
     );
   }
 
-  Widget _fallbackAvatar(bool isReply) {
+  // Avatar Placeholder Dinamis
+  Widget _fallbackAvatar(BuildContext context, bool isReply) {
+    final theme = Theme.of(context);
     double size = isReply ? 28 : 36;
-    return Container(width: size, height: size, color: Colors.grey.shade200, child: Icon(Icons.person, color: Colors.grey, size: size * 0.7));
+    return Container(
+      width: size, height: size, 
+      color: theme.colorScheme.surfaceVariant, 
+      child: Icon(Icons.person, color: theme.colorScheme.onSurfaceVariant, size: size * 0.7)
+    );
   }
 
   String _formatDate(String dateString) {

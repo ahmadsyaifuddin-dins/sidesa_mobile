@@ -1,3 +1,5 @@
+// Lokasi: lib/features/timeline/widgets/post_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/post_model.dart';
@@ -25,24 +27,37 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final bool isPinned = post.isPinned;
     final bool isOfficial = post.type == 'pengumuman';
     final bool isMine = post.user?.id == currentUserId;
-    final bool isPerangkatDesa = post.user != null && 
+    final bool isPerangkatDesa = post.user != null &&
         ['pimpinan', 'operator', 'rt', 'admin', 'developer'].contains(post.user!.role.toLowerCase());
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isOfficial ? Colors.blue.shade50 : Colors.white,
+        // Background Dinamis: Jika pengumuman resmi, gunakan warna primer pudar
+        color: isOfficial 
+            ? (isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50) 
+            : theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isPinned ? Colors.blue.shade400 : (isOfficial ? Colors.blue.shade200 : Colors.grey.shade200),
-          width: isPinned ? 1.5 : 1, 
+          // Border Dinamis menyesuaikan status pin/pengumuman dan mode gelap/terang
+          color: isPinned 
+              ? theme.colorScheme.primary 
+              : (isOfficial ? theme.colorScheme.primary.withOpacity(0.5) : theme.colorScheme.outlineVariant),
+          width: isPinned ? 1.5 : 1,
         ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05), // Shadow Dinamis
+            blurRadius: 8, 
+            offset: const Offset(0, 2)
+          ),
         ],
       ),
       child: Column(
@@ -61,17 +76,17 @@ class PostCard extends StatelessWidget {
 
           // 2. CONTENT TEXT
           PostCardContent(content: post.content),
-         
+          
           // 3. ATTACHMENT GAMBAR
           if (post.attachment != null) ...[
             const SizedBox(height: 12),
             PostCardAttachment(attachmentPath: post.attachment!),
           ],
-         
+          
           const SizedBox(height: 16),
-          const Divider(height: 1, thickness: 1),
+          Divider(height: 1, thickness: 1, color: theme.colorScheme.outlineVariant), // Divider Dinamis
           const SizedBox(height: 12),
-         
+          
           // 4. FOOTER AKSI
           PostCardFooter(
             post: post,
@@ -84,40 +99,59 @@ class PostCard extends StatelessWidget {
 
   // --- MENU BOTTOM SHEET (HAPUS/EDIT) ---
   void _showPostMenu(BuildContext context) {
+    final theme = Theme.of(context);
     final postDate = DateTime.parse(post.createdAt).toLocal();
     final difference = DateTime.now().difference(postDate).inMinutes;
-    final bool canEdit = difference <= 15; 
+    final bool canEdit = difference <= 15;
 
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor, // Background sheet dinamis
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16), decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10))),
-           
+            // Handle Drag Indicator
+            Container(
+              width: 40, 
+              height: 4, 
+              margin: const EdgeInsets.only(bottom: 16), 
+              decoration: BoxDecoration(
+                color: theme.colorScheme.outlineVariant, // Dinamis
+                borderRadius: BorderRadius.circular(10)
+              )
+            ),
+            
             ListTile(
-              leading: Icon(Icons.edit_rounded, color: canEdit ? Colors.blue.shade700 : Colors.grey.shade400),
-              title: Text("Edit Postingan", style: TextStyle(fontWeight: FontWeight.bold, color: canEdit ? Colors.black87 : Colors.grey.shade400)),
+              leading: Icon(
+                Icons.edit_rounded, 
+                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+              ),
+              title: Text(
+                "Edit Postingan", 
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, 
+                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                )
+              ),
               subtitle: canEdit
-                  ? Text("Tersisa ${15 - difference} menit lagi")
-                  : Text("Waktu edit telah habis (Maks 15 menit)", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                  ? Text("Tersisa ${15 - difference} menit lagi", style: TextStyle(color: theme.colorScheme.onSurfaceVariant))
+                  : Text("Waktu edit telah habis (Maks 15 menit)", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), fontSize: 12)),
               onTap: canEdit ? () {
-                Get.back(); 
-                onEdit();   
+                Get.back();
+                onEdit();  
               } : null,
             ),
-           
+            
             ListTile(
-              leading: const Icon(Icons.delete_rounded, color: Colors.red),
-              title: const Text("Hapus Postingan", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+              leading: Icon(Icons.delete_rounded, color: theme.colorScheme.error), // Merah dinamis
+              title: Text("Hapus Postingan", style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.error)),
               onTap: () {
-                Get.back(); 
-                onDelete(); 
+                Get.back();
+                onDelete();
               },
             ),
           ],

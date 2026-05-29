@@ -14,15 +14,19 @@ class InboxView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(InboxController());
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor, // Dinamis
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Pesan',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface, // Dinamis
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent, // Menyatu dengan scaffold
         elevation: 0,
         actions: [
           IconButton(
@@ -33,7 +37,7 @@ class InboxView extends StatelessWidget {
               // 2. Pindah halaman
               Get.toNamed(Routes.CONTACT);
             },
-            icon: const Icon(Icons.add_comment_rounded, color: Colors.blue),
+            icon: Icon(Icons.add_comment_rounded, color: theme.colorScheme.primary), // Dinamis
             tooltip: 'Kontak Baru',
           ),
           const SizedBox(width: 8),
@@ -42,7 +46,7 @@ class InboxView extends StatelessWidget {
 
       body: Obx(() {
         if (controller.isLoading.value && controller.inboxList.isEmpty) {
-          return _buildSkeletonInbox();
+          return _buildSkeletonInbox(context); // Lempar context
         }
 
         if (controller.inboxList.isEmpty) {
@@ -50,9 +54,19 @@ class InboxView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.inbox_outlined, size: 80, color: Colors.grey.shade300),
+                Icon(
+                  Icons.inbox_outlined,
+                  size: 80,
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4), // Dinamis
+                ),
                 const SizedBox(height: 16),
-                Text("Belum ada obrolan", style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
+                Text(
+                  "Belum ada obrolan",
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant, // Dinamis
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           );
@@ -60,10 +74,13 @@ class InboxView extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: controller.fetchInbox,
-          color: Colors.blue,
+          color: theme.colorScheme.primary, // Dinamis
           child: ListView.separated(
             itemCount: controller.inboxList.length,
-            separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+            separatorBuilder: (context, index) => Divider(
+              height: 1,
+              color: theme.colorScheme.outlineVariant, // Dinamis
+            ),
             itemBuilder: (context, index) {
               final msg = controller.inboxList[index];
               final opponent = controller.getOpponent(msg);
@@ -83,24 +100,36 @@ class InboxView extends StatelessWidget {
                   child: ClipOval(
                     child: (opponent?.avatar != null && opponent!.avatar!.isNotEmpty)
                         ? Image.network(
-                            opponent.avatar!.startsWith('http') ? opponent.avatar! : "${ApiConfig.baseHost}/${opponent.avatar}",
-                            width: 50, height: 50, fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => _fallbackAvatar(),
+                            opponent.avatar!.startsWith('http')
+                                ? opponent.avatar!
+                                : "${ApiConfig.baseHost}/${opponent.avatar}",
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => _fallbackAvatar(context),
                           )
-                        : _fallbackAvatar(),
+                        : _fallbackAvatar(context), // Lempar context
                   ),
                 ),
                 title: Text(
                   opponent?.name ?? 'Pengguna',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: theme.colorScheme.onSurface, // Dinamis
+                  ),
                 ),
                 subtitle: Row(
                   children: [
                     if (isMe) ...[
                       Icon(
-                        (msg.status == 'read' || msg.status == 'delivered') ? Icons.done_all : Icons.check,
+                        (msg.status == 'read' || msg.status == 'delivered')
+                            ? Icons.done_all
+                            : Icons.check,
                         size: 14,
-                        color: msg.status == 'read' ? Colors.blue : Colors.grey
+                        color: msg.status == 'read'
+                            ? theme.colorScheme.primary // Biru
+                            : theme.colorScheme.onSurfaceVariant, // Abu-abu
                       ),
                       const SizedBox(width: 4),
                     ],
@@ -108,8 +137,13 @@ class InboxView extends StatelessWidget {
                       child: Text(
                         msg.attachment != null ? "📷 Mengirim foto" : (msg.message ?? ''),
                         style: TextStyle(
-                          color: (msg.status != 'read' && !isMe) ? Colors.black87 : Colors.grey.shade600,
-                          fontWeight: (msg.status != 'read' && !isMe) ? FontWeight.bold : FontWeight.normal,
+                          // Dinamis: Unread = onSurface (Terang/Gelap solid), Read = onSurfaceVariant (Pudar)
+                          color: (msg.status != 'read' && !isMe)
+                              ? theme.colorScheme.onSurface
+                              : theme.colorScheme.onSurfaceVariant,
+                          fontWeight: (msg.status != 'read' && !isMe)
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -119,7 +153,10 @@ class InboxView extends StatelessWidget {
                 ),
                 trailing: Text(
                   _formatTime(msg.createdAt),
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant, // Dinamis
+                    fontSize: 12,
+                  ),
                 ),
               );
             },
@@ -130,27 +167,60 @@ class InboxView extends StatelessWidget {
   }
 
   // --- WIDGET SKELETON INBOX ---
-  Widget _buildSkeletonInbox() {
+  Widget _buildSkeletonInbox(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListView.separated(
       itemCount: 8,
-      separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+      separatorBuilder: (context, index) => Divider(
+        height: 1,
+        color: theme.colorScheme.outlineVariant,
+      ),
       itemBuilder: (context, index) {
         return Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
+          // Warna dinamis untuk Dark / Light mode
+          baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+          highlightColor: isDark ? Colors.grey[600]! : Colors.grey[100]!,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: Container(width: 50, height: 50, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
-            title: Container(height: 14, width: double.infinity, color: Colors.white, margin: const EdgeInsets.only(bottom: 8, right: 80)),
-            subtitle: Container(height: 12, width: double.infinity, color: Colors.white, margin: const EdgeInsets.only(right: 20)),
+            leading: Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                color: Colors.white, // Hanya cetakan
+                shape: BoxShape.circle,
+              ),
+            ),
+            title: Container(
+              height: 14,
+              width: double.infinity,
+              color: Colors.white, // Hanya cetakan
+              margin: const EdgeInsets.only(bottom: 8, right: 80),
+            ),
+            subtitle: Container(
+              height: 12,
+              width: double.infinity,
+              color: Colors.white, // Hanya cetakan
+              margin: const EdgeInsets.only(right: 20),
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _fallbackAvatar() {
-    return Container(width: 50, height: 50, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey));
+  Widget _fallbackAvatar(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: 50,
+      height: 50,
+      color: theme.colorScheme.surfaceVariant, // Dinamis
+      child: Icon(
+        Icons.person,
+        color: theme.colorScheme.onSurfaceVariant, // Dinamis
+      ),
+    );
   }
 
   String _formatTime(String dateString) {

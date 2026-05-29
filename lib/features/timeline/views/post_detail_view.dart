@@ -15,13 +15,16 @@ class PostDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CommentController());
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor, // Dinamis
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface, // Dinamis
+        surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
         elevation: 0.5,
+        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
+        foregroundColor: theme.colorScheme.onSurface, // Icon back dan Teks otomatis ngikut tema
         title: const Text("Komentar", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       ),
       body: Column(
@@ -39,7 +42,7 @@ class PostDetailView extends StatelessWidget {
                       onEdit: () {},
                       onDelete: () {},
                     ),
-                    const Divider(thickness: 4, color: Color(0xFFF5F5F5)),
+                    Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withOpacity(0.2)), // Divider dinamis
                     
                     // Tampilkan 4 Skeleton Komentar sebagai pengganti loading muter
                     Padding(
@@ -62,18 +65,24 @@ class PostDetailView extends StatelessWidget {
                     post: controller.post,
                     currentUserId: controller.currentUserId.value,
                     onCommentTap: () {}, // Kosongkan karena sudah di halaman komentar
-                    onEdit: () => Get.snackbar("Info", "Edit postingan dari halaman timeline ya!"),
-                    onDelete: () => Get.snackbar("Info", "Hapus postingan dari halaman timeline ya!"),
+                    onEdit: () => Get.snackbar("Info", "Edit postingan dari halaman timeline ya!", 
+                      backgroundColor: theme.colorScheme.surfaceVariant, 
+                      colorText: theme.colorScheme.onSurfaceVariant
+                    ),
+                    onDelete: () => Get.snackbar("Info", "Hapus postingan dari halaman timeline ya!",
+                      backgroundColor: theme.colorScheme.surfaceVariant, 
+                      colorText: theme.colorScheme.onSurfaceVariant
+                    ),
                   ),
                   
-                  const Divider(thickness: 4, color: Color(0xFFF5F5F5)),
+                  Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withOpacity(0.2)), // Divider tebal dinamis
                   
                   // 2. LIST KOMENTAR
                   if (controller.comments.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
-                        child: Text("Jadilah yang pertama berkomentar!", style: TextStyle(color: Colors.grey)),
+                        child: Text("Jadilah yang pertama berkomentar!", style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
                       ),
                     )
                   else
@@ -88,51 +97,57 @@ class PostDetailView extends StatelessWidget {
                             
                             // FITUR EDIT KOMENTAR
                             onEdit: (cmt, {parentId}) {
-                            TextEditingController editC = TextEditingController(text: cmt.content);
-      
-                    if (Get.context != null) {
-                      AwesomeDialog(
-                        context: Get.context!,
-                        dialogType: DialogType.info,
-                        animType: AnimType.bottomSlide,
-                        title: "Edit Komentar",
-                        body: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: TextField(
-                            controller: editC,
-                            maxLines: 3,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.all(12),
-                            ),
-                          ),
-                        ),
-                        btnCancelText: "Batal",
-                        btnOkText: "Simpan",
-                        btnOkColor: Colors.blue.shade700,
-                        btnCancelColor: Colors.grey[600],
-                        btnCancelOnPress: () {},
-                        btnOkOnPress: () async {
-                          if (editC.text.trim().isNotEmpty) {
-                            await controller.editCommentData(cmt.id, editC.text.trim(), parentId: parentId);
-                          }
-                        },
-                      ).show();
-                    }
-                  },
+                              TextEditingController editC = TextEditingController(text: cmt.content);
+                              
+                              if (Get.context != null) {
+                                AwesomeDialog(
+                                  context: Get.context!,
+                                  dialogType: DialogType.info,
+                                  animType: AnimType.bottomSlide,
+                                  dialogBackgroundColor: theme.cardColor, // Background modal dialog dinamis
+                                  title: "Edit Komentar",
+                                  titleTextStyle: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold),
+                                  body: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: TextField(
+                                      controller: editC,
+                                      maxLines: 3,
+                                      style: TextStyle(color: theme.colorScheme.onSurface), // Teks inputan dinamis
+                                      decoration: InputDecoration(
+                                        border: const OutlineInputBorder(),
+                                        contentPadding: const EdgeInsets.all(12),
+                                        fillColor: theme.colorScheme.surfaceVariant,
+                                        filled: true,
+                                      ),
+                                    ),
+                                  ),
+                                  btnCancelText: "Batal",
+                                  btnOkText: "Simpan",
+                                  btnOkColor: theme.colorScheme.primary,
+                                  btnCancelColor: theme.colorScheme.surfaceVariant,
+                                  buttonsTextStyle: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
+                                  btnCancelOnPress: () {},
+                                  btnOkOnPress: () async {
+                                    if (editC.text.trim().isNotEmpty) {
+                                      await controller.editCommentData(cmt.id, editC.text.trim(), parentId: parentId);
+                                    }
+                                  },
+                                ).show();
+                              }
+                            },
                             // FITUR HAPUS KOMENTAR
                             onDelete: (id, {parentId}) {
-                            AwesomeDialogHelper.showConfirm(
-                              title: "Hapus Komentar",
-                              desc: "Yakin ingin menghapus komentar ini secara permanen?",
-                              dialogType: DialogType.error,
-                              btnOkText: "Hapus",
-                              btnCancelText: "Batal",
-                              btnOkOnPress: () {
-                                controller.deleteCommentData(id, parentId: parentId);
-                              },
-                            );
-                          },
+                              AwesomeDialogHelper.showConfirm(
+                                title: "Hapus Komentar",
+                                desc: "Yakin ingin menghapus komentar ini secara permanen?",
+                                dialogType: DialogType.error,
+                                btnOkText: "Hapus",
+                                btnCancelText: "Batal",
+                                btnOkOnPress: () {
+                                  controller.deleteCommentData(id, parentId: parentId);
+                                },
+                              );
+                            },
                           );
                         }).toList(),
                       ),
@@ -151,10 +166,19 @@ class PostDetailView extends StatelessWidget {
 
   // WIDGET INPUT BAR BAWAH
   Widget _buildBottomInputBar(BuildContext context, CommentController controller) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2))],
+        color: theme.cardColor, // Background dinamis
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.05), 
+            blurRadius: 10, 
+            offset: const Offset(0, -2)
+          )
+        ],
       ),
       child: SafeArea(
         child: Column(
@@ -166,19 +190,27 @@ class PostDetailView extends StatelessWidget {
               if (controller.replyingTo.value != null) {
                 return Container(
                   width: double.infinity,
-                  color: Colors.blue.shade50,
+                  color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue.shade50, // Biru pudar yang soft
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
                           "Membalas @${controller.replyingTo.value!.user?.name}",
-                          style: TextStyle(color: Colors.blue.shade800, fontSize: 12, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: isDark ? const Color(0xFF81D4FA) : Colors.blue.shade800, // Warna teks kontras
+                            fontSize: 12, 
+                            fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                       InkWell(
                         onTap: controller.cancelReply,
-                        child: const Icon(Icons.close, size: 16, color: Colors.blue),
+                        child: Icon(
+                          Icons.close, 
+                          size: 16, 
+                          color: isDark ? const Color(0xFF81D4FA) : Colors.blue
+                        ),
                       )
                     ],
                   ),
@@ -198,11 +230,13 @@ class PostDetailView extends StatelessWidget {
                       focusNode: controller.focusNode, // Mengatur keyboard
                       maxLines: 4,
                       minLines: 1,
+                      style: TextStyle(color: theme.colorScheme.onSurface), // Warna inputan dinamis
                       decoration: InputDecoration(
                         hintText: "Tulis komentar...",
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: theme.colorScheme.surfaceVariant, // Background field abu-abu
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide.none,
@@ -214,11 +248,22 @@ class PostDetailView extends StatelessWidget {
                   Obx(() => IconButton(
                     onPressed: controller.isSending.value ? null : () => controller.submitComment(),
                     style: IconButton.styleFrom(
-                      backgroundColor: controller.isSending.value ? Colors.grey : Colors.blue.shade700,
-                      foregroundColor: Colors.white,
+                      backgroundColor: controller.isSending.value 
+                          ? theme.colorScheme.surfaceVariant 
+                          : theme.colorScheme.primary, // Button Send Biru vs Abu
+                      foregroundColor: controller.isSending.value 
+                          ? theme.colorScheme.onSurfaceVariant 
+                          : theme.colorScheme.onPrimary,
                     ),
                     icon: controller.isSending.value
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        ? SizedBox(
+                            width: 20, 
+                            height: 20, 
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2, 
+                              color: theme.colorScheme.onSurfaceVariant
+                            )
+                          )
                         : const Icon(Icons.send_rounded, size: 20),
                   )),
                 ],

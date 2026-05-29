@@ -1,11 +1,16 @@
+// Lokasi: lib/features/timeline/widgets/timeline_skeleton.dart
+
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart'; // Pastikan package shimmer: ^3.0.0 di pubspec sudah ter-import
+import 'package:shimmer/shimmer.dart'; 
 
 class TimelineSkeleton extends StatelessWidget {
   const TimelineSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListView.builder(
       itemCount: 5, // Tampilkan 5 skeleton card
       padding: const EdgeInsets.all(16),
@@ -14,13 +19,14 @@ class TimelineSkeleton extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor, // Background kotak dinamis
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
           ),
           child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
+            // Warna dasar dan kilap dinamis mengikuti tema
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -29,7 +35,7 @@ class TimelineSkeleton extends StatelessWidget {
                   children: [
                     const CircleAvatar(
                       radius: 22,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.white, // Hanya cetakan masking, aman putih
                     ),
                     const SizedBox(width: 12),
                     Column(
@@ -39,7 +45,7 @@ class TimelineSkeleton extends StatelessWidget {
                           width: 140,
                           height: 14,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white, // Hanya cetakan masking
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -48,7 +54,7 @@ class TimelineSkeleton extends StatelessWidget {
                           width: 90,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white, // Hanya cetakan masking
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -63,7 +69,7 @@ class TimelineSkeleton extends StatelessWidget {
                   width: double.infinity,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // Hanya cetakan masking
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -72,7 +78,7 @@ class TimelineSkeleton extends StatelessWidget {
                   width: double.infinity,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // Hanya cetakan masking
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -81,7 +87,7 @@ class TimelineSkeleton extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.6,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // Hanya cetakan masking
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

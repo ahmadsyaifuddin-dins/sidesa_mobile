@@ -8,7 +8,7 @@ import 'package:sidesa_mobile/features/timeline/views/edit_post_view.dart';
 import '../controllers/timeline_controller.dart';
 import '../widgets/timeline_skeleton.dart';
 import '../widgets/post_card.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart'; 
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../../routes/app_routes.dart';
 
 class TimelineView extends StatelessWidget {
@@ -17,20 +17,36 @@ class TimelineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(TimelineController());
+    final theme = Theme.of(context); // 1. Ambil referensi tema
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: theme.scaffoldBackgroundColor, // Background utama ngikut tema
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Forum SIDESA", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            Text("Ruang aspirasi & informasi desa", style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
+            Text(
+              "Forum SIDESA", 
+              style: TextStyle(
+                fontWeight: FontWeight.bold, 
+                fontSize: 18,
+                color: theme.colorScheme.onSurface, // Warna teks dinamis
+              ),
+            ),
+            Text(
+              "Ruang aspirasi & informasi desa", 
+              style: TextStyle(
+                fontSize: 12, 
+                fontWeight: FontWeight.normal,
+                color: theme.colorScheme.onSurfaceVariant, // Warna abu-abu dinamis
+              ),
+            ),
           ],
         ),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface, // Background appbar ngikut tema
+        surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
         elevation: 0.5,
+        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
       ),
       
       // Tombol Tulis Aspirasi Mengambang (Posisinya dinaikkan agar tidak ketutupan navbar)
@@ -45,31 +61,40 @@ class TimelineView extends StatelessWidget {
               controller.refreshTimeline();
             }
           },
-          backgroundColor: Colors.blue.shade700,
-          icon: const Icon(Icons.edit, color: Colors.white),
-          label: const Text("Tulis", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          backgroundColor: theme.colorScheme.primary, // Warna FAB utama
+          icon: Icon(Icons.edit, color: theme.colorScheme.onPrimary),
+          label: Text(
+            "Tulis", 
+            style: TextStyle(color: theme.colorScheme.onPrimary, fontWeight: FontWeight.bold)
+          ),
         ),
       ),
 
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const TimelineSkeleton();
+          // Asumsi: TimelineSkeleton juga sudah disesuaikan dengan Dark Mode
+          return const TimelineSkeleton(); 
         }
 
         if (controller.posts.isEmpty) {
           return RefreshIndicator(
             onRefresh: controller.refreshTimeline,
+            color: theme.colorScheme.primary,
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                const Icon(Icons.forum_outlined, size: 80, color: Colors.grey),
+                Icon(
+                  Icons.forum_outlined, 
+                  size: 80, 
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4) // Icon kosong dinamis
+                ),
                 const SizedBox(height: 16),
-                const Center(
+                Center(
                   child: Text(
                     "Belum ada postingan.\nJadilah yang pertama membuka obrolan!",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant), // Teks kosong dinamis
                   ),
                 ),
               ],
@@ -79,26 +104,32 @@ class TimelineView extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: controller.refreshTimeline,
-          color: Colors.blue,
+          color: theme.colorScheme.primary, // Warna loading spinner
           child: ListView.builder(
             controller: controller.scrollController,
             physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
             padding: const EdgeInsets.only(top: 8, bottom: 110), // Bottom padding ekstra
-            itemCount: controller.posts.length + 1, 
+            itemCount: controller.posts.length + 1,
             itemBuilder: (context, index) {
               
               if (index == controller.posts.length) {
                 if (controller.isPaginating.value) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: SpinKitThreeBounce(color: Colors.blue.shade300, size: 24.0), 
+                    child: SpinKitThreeBounce(
+                      color: theme.colorScheme.primary.withOpacity(0.5), // Animasi loading pagination dinamis
+                      size: 24.0,
+                    ),
                   );
                 }
                 if (!controller.hasMoreData.value && controller.posts.length > 5) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Center(
-                      child: Text("Semua postingan telah dimuat", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      child: Text(
+                        "Semua postingan telah dimuat", 
+                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                      ),
                     ),
                   );
                 }
@@ -108,9 +139,7 @@ class TimelineView extends StatelessWidget {
               final post = controller.posts[index];
               return PostCard(
                 post: post,
-                
-                currentUserId: controller.currentUserId.value, 
-                
+                currentUserId: controller.currentUserId.value,
                 onCommentTap: () {
                   Get.toNamed(Routes.POST_DETAIL, arguments: post);
                 },
@@ -122,17 +151,17 @@ class TimelineView extends StatelessWidget {
                   );
                 },
                 onDelete: () {
-                AwesomeDialogHelper.showConfirm(
-                  title: "Hapus Postingan",
-                  desc: "Yakin ingin menghapus aspirasi ini secara permanen?",
-                  dialogType: DialogType.error,
-                  btnOkText: "Hapus",
-                  btnCancelText: "Batal",
-                  btnOkOnPress: () async {
-                    await controller.deletePostData(post.id); 
-                  },
-                );
-              },
+                  AwesomeDialogHelper.showConfirm(
+                    title: "Hapus Postingan",
+                    desc: "Yakin ingin menghapus aspirasi ini secara permanen?",
+                    dialogType: DialogType.error,
+                    btnOkText: "Hapus",
+                    btnCancelText: "Batal",
+                    btnOkOnPress: () async {
+                      await controller.deletePostData(post.id);
+                    },
+                  );
+                },
               );
             },
           ),

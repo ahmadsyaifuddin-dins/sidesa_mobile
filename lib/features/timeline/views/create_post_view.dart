@@ -1,3 +1,5 @@
+// Lokasi: lib/features/timeline/views/create_post_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,31 +11,36 @@ class CreatePostView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CreatePostController());
+    final theme = Theme.of(context); // 1. Ambil referensi tema
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor, // Background utama dinamis
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface, // Background appbar dinamis
+        surfaceTintColor: Colors.transparent, // Hindari efek kusam Material 3
         elevation: 0.5,
+        shadowColor: theme.shadowColor.withOpacity(0.3),
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
+          icon: Icon(Icons.close_rounded, color: theme.colorScheme.onSurface), // Icon close dinamis
           onPressed: () => Get.back(),
         ),
-        title: const Text("Tulis Aspirasi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text(
+          "Tulis Aspirasi", 
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: theme.colorScheme.onSurface)
+        ),
         actions: [
           Obx(() => Padding(
             padding: const EdgeInsets.only(right: 16.0, top: 8, bottom: 8),
             child: ElevatedButton(
               onPressed: controller.isLoading.value ? null : () => controller.submitPost(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary, // Warna tombol dinamis
+                foregroundColor: theme.colorScheme.onPrimary, // Warna teks tombol dinamis
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
               child: controller.isLoading.value
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: theme.colorScheme.onPrimary, strokeWidth: 2))
                   : const Text("Posting", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           )),
@@ -53,12 +60,15 @@ class CreatePostView extends StatelessWidget {
                       controller: controller.contentC,
                       maxLines: null, // Bisa multiline tanpa batas
                       keyboardType: TextInputType.multiline,
-                      decoration: const InputDecoration(
+                      style: TextStyle(fontSize: 18, color: theme.colorScheme.onSurface), // Warna teks inputan
+                      decoration: InputDecoration(
                         hintText: "Apa yang ingin Anda sampaikan untuk desa?",
                         border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 18),
+                        hintStyle: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7), // Warna placeholder dinamis
+                          fontSize: 18
+                        ),
                       ),
-                      style: const TextStyle(fontSize: 18),
                     ),
                     const SizedBox(height: 16),
                     
@@ -83,7 +93,7 @@ class CreatePostView extends StatelessWidget {
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: const BoxDecoration(
-                                    color: Colors.black54,
+                                    color: Colors.black54, // Tetap hitam transparan karena gambar bisa berwarna apa saja
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(Icons.close, color: Colors.white, size: 20),
@@ -104,18 +114,18 @@ class CreatePostView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey.shade200)),
+                border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)), // Garis pemisah dinamis
               ),
               child: Row(
                 children: [
                   IconButton(
                     onPressed: () => _showImageSourceDialog(context, controller),
-                    icon: const Icon(Icons.image_outlined, color: Colors.blue, size: 28),
+                    icon: Icon(Icons.image_outlined, color: theme.colorScheme.primary, size: 28), // Icon warna primer dinamis
                     tooltip: "Sisipkan Gambar",
                   ),
                   IconButton(
                     onPressed: () => _showImageSourceDialog(context, controller, forceCamera: true),
-                    icon: const Icon(Icons.camera_alt_outlined, color: Colors.blue, size: 28),
+                    icon: Icon(Icons.camera_alt_outlined, color: theme.colorScheme.primary, size: 28),
                     tooltip: "Ambil Foto Baru",
                   ),
                 ],
@@ -134,29 +144,31 @@ class CreatePostView extends StatelessWidget {
       return;
     }
 
+    final theme = Theme.of(context);
+
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor, // Background sheet dinamis
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Pilih Sumber Gambar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text("Pilih Sumber Gambar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
             const SizedBox(height: 16),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.blue),
-              title: const Text("Kamera"),
+              leading: Icon(Icons.camera_alt, color: theme.colorScheme.primary),
+              title: Text("Kamera", style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Get.back();
                 controller.pickImage(ImageSource.camera);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Colors.blue),
-              title: const Text("Galeri"),
+              leading: Icon(Icons.photo_library, color: theme.colorScheme.primary),
+              title: Text("Galeri", style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Get.back();
                 controller.pickImage(ImageSource.gallery);

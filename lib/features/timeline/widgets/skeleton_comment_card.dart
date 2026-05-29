@@ -1,3 +1,5 @@
+// Lokasi: lib/features/post/widgets/skeleton_comment_card.dart (sesuaikan path-mu)
+
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -6,11 +8,13 @@ class SkeletonCommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Skeleton Komentar Utama
-        _buildSkeletonBody(isReply: false),
+        _buildSkeletonBody(context, isReply: false),
 
         // Skeleton Balasan (Simulasi ada 1 balasan)
         Padding(
@@ -20,13 +24,13 @@ class SkeletonCommentCard extends StatelessWidget {
               children: [
                 Container(
                   width: 2,
-                  color: Colors.grey.shade200, // Warna garis vertikal
+                  color: theme.colorScheme.outlineVariant, // Garis vertikal dinamis
                   margin: const EdgeInsets.only(right: 12),
                 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
-                    child: _buildSkeletonBody(isReply: true),
+                    child: _buildSkeletonBody(context, isReply: true),
                   ),
                 ),
               ],
@@ -34,18 +38,21 @@ class SkeletonCommentCard extends StatelessWidget {
           ),
         ),
         
-        const Divider(height: 16, thickness: 0.5, color: Colors.black12),
+        Divider(height: 16, thickness: 0.5, color: theme.colorScheme.outlineVariant),
       ],
     );
   }
 
   // Fungsi pembantu untuk membuat bentuk dasar komentar
-  Widget _buildSkeletonBody({required bool isReply}) {
+  Widget _buildSkeletonBody(BuildContext context, {required bool isReply}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     double avatarSize = isReply ? 28 : 36;
     
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      // Warna Shimmer dinamis
+      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+      highlightColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -54,7 +61,7 @@ class SkeletonCommentCard extends StatelessWidget {
             width: avatarSize,
             height: avatarSize,
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: Colors.white, // Hanya masking/cetakan
               shape: BoxShape.circle,
             ),
           ),

@@ -23,15 +23,20 @@ class _RiwayatTabState extends State<RiwayatTab> {
     // Panggil kedua controller agar rapi
     final dashboardC = Get.find<DashboardController>();
     final suratC = Get.find<SuratController>();
+    final theme = Theme.of(context); // Ambil referensi tema
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor, // Background otomatis tema
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Riwayat Pengajuan",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 18,
+            color: theme.colorScheme.onSurface, // Teks mengikuti tema
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent, // Transparan agar menyatu
         elevation: 0,
         centerTitle: true,
       ),
@@ -54,13 +59,13 @@ class _RiwayatTabState extends State<RiwayatTab> {
                         filterStatus = status;
                       });
                     },
-                    selectedColor: Colors.blue[100],
-                    backgroundColor: Colors.grey[100],
+                    // Warna saat chip aktif
+                    selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                    // Warna saat chip tidak aktif
+                    backgroundColor: theme.colorScheme.surfaceVariant,
                     labelStyle: TextStyle(
-                      color: isActive ? Colors.blue[900] : Colors.grey[700],
-                      fontWeight: isActive
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                     ),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
@@ -100,12 +105,12 @@ class _RiwayatTabState extends State<RiwayatTab> {
                       Icon(
                         Icons.history_toggle_off,
                         size: 60,
-                        color: Colors.grey[300],
+                        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         "Tidak ada riwayat $filterStatus",
-                        style: TextStyle(color: Colors.grey[500]),
+                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -113,16 +118,16 @@ class _RiwayatTabState extends State<RiwayatTab> {
               }
 
               return RefreshIndicator(
-                // UBAH: Gunakan suratC
+                color: theme.colorScheme.primary, // Warna loading spinner
                 onRefresh: () async => await suratC.fetchHistory(),
                 child: ListView.separated(
                   padding: const EdgeInsets.all(20),
                   itemCount: dataTampil.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 15),
+                  separatorBuilder: (context, index) => const SizedBox(height: 15),
                   itemBuilder: (context, index) {
                     final surat = dataTampil[index];
-                    return _buildCard(surat);
+                    // Lempar context ke helper _buildCard
+                    return _buildCard(context, surat);
                   },
                 ),
               );
@@ -133,21 +138,24 @@ class _RiwayatTabState extends State<RiwayatTab> {
     );
   }
 
-  Widget _buildCard(SuratModel surat) {
+  // Helper Widget: Menerima 'context' agar tahu tema yang aktif
+  Widget _buildCard(BuildContext context, SuratModel surat) {
+    final theme = Theme.of(context);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 15), // Margin luar untuk efek shadow
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Material(
-        color: Colors.white,
+        color: theme.cardColor, // Background kotak dinamis
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -158,7 +166,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[200]!),
+              border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,12 +174,12 @@ class _RiwayatTabState extends State<RiwayatTab> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     Icons.description_outlined,
-                    color: Colors.blue[700],
+                    color: theme.colorScheme.primary,
                   ),
                 ),
                 const SizedBox(width: 15),
@@ -180,17 +188,18 @@ class _RiwayatTabState extends State<RiwayatTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        StringFormatter.formatJenisSurat(surat.namaSurat), 
-                        style: const TextStyle(
+                        StringFormatter.formatJenisSurat(surat.namaSurat),
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
+                          color: theme.colorScheme.onSurface, // Teks judul
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "Diajukan: ${surat.tanggalFormatted}",
-                        style: const TextStyle(
-                          color: Colors.grey,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant, // Teks tanggal
                           fontSize: 12,
                         ),
                       ),
@@ -201,17 +210,17 @@ class _RiwayatTabState extends State<RiwayatTab> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: surat.statusColor.withOpacity(0.1),
+                          color: surat.statusColor.withOpacity(0.1), // Background status tetap senada
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                        surat.status.replaceAll('_', ' ').toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: surat.statusColor, 
+                          surat.status.replaceAll('_', ' ').toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: surat.statusColor,
+                          ),
                         ),
-                      )
                       ),
                     ],
                   ),

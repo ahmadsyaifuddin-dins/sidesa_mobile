@@ -1,3 +1,5 @@
+// Lokasi: lib/features/timeline/widgets/post_card/post_card_header.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sidesa_mobile/routes/app_routes.dart';
@@ -34,6 +36,8 @@ class PostCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Ambil referensi tema
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -47,9 +51,9 @@ class PostCardHeader extends StatelessWidget {
                 ? Image.network(
                     post.user!.avatar!.startsWith('http') ? post.user!.avatar! : "${ApiConfig.baseHost}/${post.user!.avatar}",
                     width: 40, height: 40, fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
+                    errorBuilder: (context, error, stackTrace) => _fallbackAvatar(context),
                   )
-                : Container(width: 40, height: 40, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey)),
+                : _fallbackAvatar(context),
           ),
         ),
         const SizedBox(width: 12),
@@ -66,31 +70,41 @@ class PostCardHeader extends StatelessWidget {
                 child: Row(
                   children: [
                     Flexible(
-                      child: Text(post.user?.name ?? 'Warga Desa', 
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      child: Text(
+                        post.user?.name ?? 'Warga Desa',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 15,
+                          color: theme.colorScheme.onSurface, // Teks nama dinamis
+                        ),
                         overflow: TextOverflow.ellipsis,
                       )
                     ),
                     if (isPerangkatDesa) ...[
-                      const SizedBox(width: 4), 
-                      const Icon(Icons.verified, color: Colors.blue, size: 16)
+                      const SizedBox(width: 4),
+                      Icon(Icons.verified, color: theme.colorScheme.primary, size: 16) // Badge verified dinamis
                     ]
                   ],
                 ),
               ),
               Row(
                 children: [
-                  Text(_formatDate(post.createdAt), style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
-                  Text(" • ", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                  Text(post.type == 'pengumuman' ? 'Pengumuman' : 'Aspirasi', 
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: post.type == 'pengumuman' ? FontWeight.w600 : FontWeight.normal)
+                  Text(_formatDate(post.createdAt), style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+                  Text(" • ", style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+                  Text(
+                    post.type == 'pengumuman' ? 'Pengumuman' : 'Aspirasi',
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant, // Warna teks abu-abu dinamis
+                      fontSize: 12, 
+                      fontWeight: post.type == 'pengumuman' ? FontWeight.w600 : FontWeight.normal
+                    )
                   ),
                 ],
               ),
             ],
           ),
         ),
-       
+        
         // 3. ICON PIN & MORE
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -98,19 +112,30 @@ class PostCardHeader extends StatelessWidget {
             if (isPinned)
               Padding(
                 padding: const EdgeInsets.only(right: 8.0, top: 2.0),
-                child: Icon(Icons.push_pin, color: Colors.blue.shade700, size: 18),
+                child: Icon(Icons.push_pin, color: theme.colorScheme.primary, size: 18), // Warna pin dinamis
               ),
             if (isMine)
               InkWell(
                 onTap: onMoreTap,
-                child: const Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Icon(Icons.more_horiz, color: Colors.grey),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(Icons.more_horiz, color: theme.colorScheme.onSurfaceVariant), // Titik tiga dinamis
                 ),
               ),
           ],
         ),
       ],
+    );
+  }
+
+  // Placeholder Avatar Dinamis
+  Widget _fallbackAvatar(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: 40, 
+      height: 40, 
+      color: theme.colorScheme.surfaceVariant, // Background abu-abu
+      child: Icon(Icons.person, color: theme.colorScheme.onSurfaceVariant) // Ikon abu-abu
     );
   }
 }
