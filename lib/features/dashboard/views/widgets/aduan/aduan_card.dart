@@ -9,42 +9,45 @@ class AduanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Setup Warna Status
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // 1. Setup Warna Status Dinamis
     Color statusColor = Colors.grey;
     Color statusBgColor = Colors.grey.shade100;
     
     switch (aduan.status.toLowerCase()) {
       case 'menunggu':
-        statusColor = Colors.orange.shade700;
-        statusBgColor = Colors.orange.shade50;
+        statusColor = isDark ? Colors.orange.shade400 : Colors.orange.shade700;
+        statusBgColor = isDark ? Colors.orange.withOpacity(0.15) : Colors.orange.shade50;
         break;
       case 'diproses':
-        statusColor = Colors.blue.shade700;
-        statusBgColor = Colors.blue.shade50;
+        statusColor = isDark ? Colors.blue.shade400 : Colors.blue.shade700;
+        statusBgColor = isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50;
         break;
       case 'selesai':
-        statusColor = Colors.green.shade700;
-        statusBgColor = Colors.green.shade50;
+        statusColor = isDark ? Colors.green.shade400 : Colors.green.shade700;
+        statusBgColor = isDark ? Colors.green.withOpacity(0.15) : Colors.green.shade50;
         break;
       case 'ditolak':
-        statusColor = Colors.red.shade700;
-        statusBgColor = Colors.red.shade50;
+        statusColor = isDark ? Colors.red.shade400 : Colors.red.shade700;
+        statusBgColor = isDark ? Colors.red.withOpacity(0.15) : Colors.red.shade50;
         break;
     }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Background dinamis
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(0.04), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
       ),
       child: Material(
         color: Colors.transparent,
@@ -69,13 +72,13 @@ class AduanCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
+                            color: isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             _getCategoryIcon(aduan.kategori),
                             size: 16,
-                            color: Colors.blue.shade700,
+                            color: theme.colorScheme.primary, // Icon kategori dinamis
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -84,7 +87,7 @@ class AduanCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800,
+                            color: isDark ? theme.colorScheme.primary : Colors.blue.shade800, // Warna kategori
                           ),
                         ),
                       ],
@@ -116,11 +119,11 @@ class AduanCard extends StatelessWidget {
                   aduan.judul,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     height: 1.3,
-                    color: Colors.black87,
+                    color: theme.colorScheme.onSurface, // Teks judul dinamis
                   ),
                 ),
                 
@@ -133,12 +136,12 @@ class AduanCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.grey.shade600,
+                    color: theme.colorScheme.onSurfaceVariant, // Teks deskripsi dinamis
                   ),
                 ),
                 
                 const SizedBox(height: 16),
-                Divider(color: Colors.grey.shade200, height: 1),
+                Divider(color: theme.colorScheme.outlineVariant, height: 1), // Divider dinamis
                 const SizedBox(height: 12),
                 
                 // --- BARIS 4: Meta Bawah (Tanggal, Prioritas, & Anonim) ---
@@ -147,29 +150,36 @@ class AduanCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.access_time, size: 14, color: Colors.grey.shade500),
+                        Icon(Icons.access_time, size: 14, color: theme.colorScheme.onSurfaceVariant),
                         const SizedBox(width: 4),
                         Text(
                           aduan.createdAt.substring(0, 10), // Format YYYY-MM-DD
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
                         ),
                         const SizedBox(width: 12),
                         
                         // Dot Separator
-                        Container(width: 4, height: 4, decoration: BoxDecoration(color: Colors.grey.shade400, shape: BoxShape.circle)),
+                        Container(
+                          width: 4, 
+                          height: 4, 
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), 
+                            shape: BoxShape.circle
+                          )
+                        ),
                         
                         const SizedBox(width: 12),
                         Icon(
                           Icons.flag,
                           size: 14,
-                          color: _getPriorityColor(aduan.prioritas),
+                          color: _getPriorityColor(aduan.prioritas, isDark),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           aduan.prioritas.capitalizeFirst!,
                           style: TextStyle(
                             fontSize: 12,
-                            color: _getPriorityColor(aduan.prioritas),
+                            color: _getPriorityColor(aduan.prioritas, isDark),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -178,9 +188,9 @@ class AduanCard extends StatelessWidget {
                     
                     // Ikon Anonim (Jika dikirim sebagai anonim)
                     if (aduan.isAnonymous == 1)
-                      Icon(Icons.visibility_off, size: 16, color: Colors.purple.shade400)
+                      Icon(Icons.visibility_off, size: 16, color: isDark ? Colors.purple.shade300 : Colors.purple.shade400)
                     else
-                      Icon(Icons.chevron_right, size: 20, color: Colors.grey.shade400),
+                      Icon(Icons.chevron_right, size: 20, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5)),
                   ],
                 ),
               ],
@@ -204,11 +214,11 @@ class AduanCard extends StatelessWidget {
   }
 
   // --- HELPER UNTUK WARNA PRIORITAS ---
-  Color _getPriorityColor(String prioritas) {
+  Color _getPriorityColor(String prioritas, bool isDark) {
     switch (prioritas.toLowerCase()) {
-      case 'tinggi': return Colors.red.shade600;
-      case 'sedang': return Colors.orange.shade600;
-      default: return Colors.green.shade600;
+      case 'tinggi': return isDark ? Colors.red.shade400 : Colors.red.shade600;
+      case 'sedang': return isDark ? Colors.orange.shade400 : Colors.orange.shade600;
+      default: return isDark ? Colors.green.shade400 : Colors.green.shade600;
     }
   }
 }

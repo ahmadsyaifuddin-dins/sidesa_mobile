@@ -83,7 +83,8 @@ class _RiwayatTabState extends State<RiwayatTab> {
               if (suratC.isLoadingHistory.value) {
                 // Tampilkan 5 skeleton sebagai placeholder saat loading
                 return ListView.builder(
-                  padding: const EdgeInsets.all(20),
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
                   itemCount: 5,
                   itemBuilder: (context, index) {
                     return const SkeletonRiwayatCard();
@@ -121,7 +122,10 @@ class _RiwayatTabState extends State<RiwayatTab> {
                 color: theme.colorScheme.primary, // Warna loading spinner
                 onRefresh: () async => await suratC.fetchHistory(),
                 child: ListView.separated(
-                  padding: const EdgeInsets.all(20),
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
                   itemCount: dataTampil.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 15),
                   itemBuilder: (context, index) {

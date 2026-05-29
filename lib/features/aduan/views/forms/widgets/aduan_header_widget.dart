@@ -5,6 +5,9 @@ class AduanHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -28,39 +31,56 @@ class AduanHeaderWidget extends StatelessWidget {
           Text(
             "Laporan Anda membantu kami membangun desa yang lebih baik. Silakan isi formulir di bawah ini dengan data yang valid.",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.5),
+            style: TextStyle(
+              fontSize: 14, 
+              color: theme.colorScheme.onSurfaceVariant, // Warna teks abu-abu dinamis
+              height: 1.5
+            ),
           ),
           const SizedBox(height: 24),
 
           // Accordion Panduan
           Container(
             decoration: BoxDecoration(
-              color: Colors.blue[50],
-              border: Border.all(color: Colors.blue[100]!),
+              // Background dinamis
+              color: isDark ? theme.colorScheme.primary.withOpacity(0.1) : Colors.blue[50],
+              border: Border.all(
+                color: isDark ? theme.colorScheme.primary.withOpacity(0.3) : Colors.blue[100]!
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
-                iconColor: Colors.blue[700],
-                collapsedIconColor: Colors.grey[500],
+                iconColor: theme.colorScheme.primary,
+                collapsedIconColor: theme.colorScheme.onSurfaceVariant,
                 title: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
+                        color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue[100],
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.menu_book_rounded, size: 18, color: Colors.blue[700]),
+                      child: Icon(Icons.menu_book_rounded, size: 18, color: theme.colorScheme.primary),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Baca Panduan & Etika", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue[900])),
-                          const Text("Penting: Agar laporan cepat diproses.", style: TextStyle(fontSize: 11, color: Colors.grey)),
+                          Text(
+                            "Baca Panduan & Etika", 
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, 
+                              fontSize: 14, 
+                              color: isDark ? theme.colorScheme.primary : Colors.blue[900]
+                            )
+                          ),
+                          Text(
+                            "Penting: Agar laporan cepat diproses.", 
+                            style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurfaceVariant)
+                          ),
                         ],
                       ),
                     ),
@@ -70,17 +90,21 @@ class AduanHeaderWidget extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
-                      border: Border(top: BorderSide(color: Colors.blue[100]!)),
+                      color: isDark ? Colors.transparent : Colors.white.withOpacity(0.5),
+                      border: Border(
+                        top: BorderSide(
+                          color: isDark ? theme.colorScheme.outlineVariant : Colors.blue[100]!
+                        )
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildGuideItem("1", "Tulis Laporan dengan Jelas (5W + 1H)", "Sebutkan Lokasi spesifik, Waktu kejadian, dan Kronologi singkat. Hindari kata kasar."),
+                        _buildGuideItem(theme, isDark, "1", "Tulis Laporan dengan Jelas (5W + 1H)", "Sebutkan Lokasi spesifik, Waktu kejadian, dan Kronologi singkat. Hindari kata kasar."),
                         const SizedBox(height: 12),
-                        _buildGuideItem("2", "Pilih Prioritas yang Tepat", "Tinggi (Darurat/Bahaya), Sedang (Mengganggu kenyamanan), Rendah (Usulan/Tidak bahaya)."),
+                        _buildGuideItem(theme, isDark, "2", "Pilih Prioritas yang Tepat", "Tinggi (Darurat/Bahaya), Sedang (Mengganggu kenyamanan), Rendah (Usulan/Tidak bahaya)."),
                         const SizedBox(height: 12),
-                        _buildGuideItem("3", "Fitur Anonim", "Gunakan jika laporan bersifat sensitif. Identitas dirahasiakan sistem."),
+                        _buildGuideItem(theme, isDark, "3", "Fitur Anonim", "Gunakan jika laporan bersifat sensitif. Identitas dirahasiakan sistem."),
                       ],
                     ),
                   ),
@@ -93,7 +117,8 @@ class AduanHeaderWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildGuideItem(String number, String title, String desc) {
+  // Helper dengan parsing theme
+  Widget _buildGuideItem(ThemeData theme, bool isDark, String number, String title, String desc) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -101,17 +126,23 @@ class AduanHeaderWidget extends StatelessWidget {
           width: 24,
           height: 24,
           alignment: Alignment.center,
-          decoration: BoxDecoration(color: Colors.blue[100], shape: BoxShape.circle),
-          child: Text(number, style: TextStyle(color: Colors.blue[700], fontWeight: FontWeight.bold, fontSize: 12)),
+          decoration: BoxDecoration(
+            color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue[100], 
+            shape: BoxShape.circle
+          ),
+          child: Text(
+            number, 
+            style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12)
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: theme.colorScheme.onSurface)),
               const SizedBox(height: 4),
-              Text(desc, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              Text(desc, style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
             ],
           ),
         ),

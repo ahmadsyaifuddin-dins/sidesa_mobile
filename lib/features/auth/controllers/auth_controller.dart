@@ -1,3 +1,5 @@
+// Lokasi: lib/features/auth/controllers/auth_controller.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -64,35 +66,48 @@ class AuthController extends GetxController {
     final TextEditingController ipController = TextEditingController(text: currentIP);
 
     if (Get.context != null) {
+      final context = Get.context!;
+      final theme = Theme.of(context); // Ambil referensi tema
+
       AwesomeDialog(
-        context: Get.context!,
+        context: context,
         dialogType: DialogType.info,
         animType: AnimType.bottomSlide,
+        dialogBackgroundColor: theme.cardColor, // Background dinamis
         title: "⚙️ Developer Mode",
+        titleTextStyle: TextStyle(
+          color: theme.colorScheme.onSurface, // Warna teks judul dinamis
+          fontWeight: FontWeight.bold, 
+          fontSize: 18
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             children: [
-              const Text(
-                // Mengubah instruksi agar warga/tester tahu bisa pakai URL
+              Text(
                 "Masukkan IP Lokal Wifi / URL Server SIDESA:",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 14, 
+                  fontWeight: FontWeight.bold, 
+                  color: theme.colorScheme.onSurface // Teks label dinamis
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: ipController,
-                // Mengubah tipe keyboard agar bisa mengetik huruf dan simbol link
-                keyboardType: TextInputType.url, 
+                keyboardType: TextInputType.url,
+                style: TextStyle(color: theme.colorScheme.onSurface), // Teks input dinamis
                 decoration: InputDecoration(
-                  // Menambahkan hint text yang lebih relevan
-                  hintText: "Cth: 192.168.0.28 atau https://ngrok...", 
-                  prefixIcon: const Icon(Icons.link, color: Colors.blue),
+                  hintText: "Cth: 192.168.0.28 atau https://ngrok...",
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                  prefixIcon: Icon(Icons.link, color: theme.colorScheme.primary), // Icon dinamis
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
+                  fillColor: theme.colorScheme.surfaceVariant, // Warna field dinamis
                 ),
               ),
             ],
@@ -100,14 +115,16 @@ class AuthController extends GetxController {
         ),
         btnCancelText: "BATAL",
         btnOkText: "SIMPAN",
-        btnOkColor: Colors.blue.shade700,
-        btnCancelColor: Colors.grey[600],
+        btnOkColor: theme.colorScheme.primary, // Warna OK dinamis
+        btnCancelColor: theme.colorScheme.surfaceVariant, // Warna Batal dinamis
+        buttonsTextStyle: TextStyle(
+          color: theme.colorScheme.onSurface, // Teks tombol dinamis
+          fontWeight: FontWeight.bold
+        ),
         btnCancelOnPress: () {},
         btnOkOnPress: () async {
           if (ipController.text.isNotEmpty) {
-            // Mencegah error jika ada spasi yang tidak sengaja tertik/ter-paste
             String finalInput = ipController.text.trim();
-            
             await ApiConfig.setIP(finalInput);
 
             SnackbarHelper.info(

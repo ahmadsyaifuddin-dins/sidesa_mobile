@@ -19,27 +19,34 @@ class BuatSuratView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Inisialisasi controller
     final controller = Get.put(BuatSuratController());
+    
+    // Deteksi mode gelap/terang
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey[50],
       appBar: AppBar(
         title: Obx(() => Text(
-          controller.isEditMode.value ? "Edit Pengajuan Surat" : "Pengajuan Surat Baru", 
+          controller.isEditMode.value ? "Edit Pengajuan Surat" : "Pengajuan Surat Baru",
           style: const TextStyle(fontWeight: FontWeight.w600)
         )),
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
         elevation: 0,
         centerTitle: true,
-        foregroundColor: Colors.black,
+        foregroundColor: isDark ? Colors.white : Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Pilih Jenis Surat",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16, 
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
             const SizedBox(height: 15),
             
@@ -52,16 +59,16 @@ class BuatSuratView extends StatelessWidget {
               mainAxisSpacing: 15,
               childAspectRatio: 2.5,
               children: [
-                _buildSuratOption(controller, id: 'sku', title: "Keterangan Usaha", icon: Icons.storefront_rounded, color: Colors.blue),
-                _buildSuratOption(controller, id: 'sktm', title: "Ket. Tidak Mampu", icon: Icons.health_and_safety_rounded, color: Colors.green),
-                _buildSuratOption(controller, id: 'kelahiran', title: "Ket. Kelahiran", icon: Icons.child_friendly_rounded, color: Colors.pink),
-                _buildSuratOption(controller, id: 'kematian', title: "Ket. Kematian", icon: Icons.event_busy_rounded, color: Colors.purple),
-                _buildSuratOption(controller, id: 'pengantar_skck', title: "Pengantar SKCK", icon: Icons.local_police_rounded, color: Colors.amber),
-                _buildSuratOption(controller, id: 'keterangan_penghasilan', title: "Ket. Penghasilan", icon: Icons.payments_rounded, color: Colors.green),
-                _buildSuratOption(controller, id: 'belum_pernah_menikah', title: "Ket. Belum Menikah", icon: Icons.favorite_border_rounded, color: Colors.pink),
-                _buildSuratOption(controller, id: 'keterangan_beda_nama', title: "Ket. Beda Nama", icon: Icons.badge_rounded, color: Colors.orange),
-                _buildSuratOption(controller, id: 'pengantar_ktp', title: "Pengantar KTP", icon: Icons.badge_rounded, color: Colors.blue),
-                _buildSuratOption(controller, id: 'keterangan_ahli_waris', title: "Ahli Waris", icon: Icons.family_restroom_rounded, color: Colors.indigo),
+                _buildSuratOption(context, controller, id: 'sku', title: "Keterangan Usaha", icon: Icons.storefront_rounded, color: Colors.blue),
+                _buildSuratOption(context, controller, id: 'sktm', title: "Ket. Tidak Mampu", icon: Icons.health_and_safety_rounded, color: Colors.green),
+                _buildSuratOption(context, controller, id: 'kelahiran', title: "Ket. Kelahiran", icon: Icons.child_friendly_rounded, color: Colors.pink),
+                _buildSuratOption(context, controller, id: 'kematian', title: "Ket. Kematian", icon: Icons.event_busy_rounded, color: Colors.purple),
+                _buildSuratOption(context, controller, id: 'pengantar_skck', title: "Pengantar SKCK", icon: Icons.local_police_rounded, color: Colors.amber),
+                _buildSuratOption(context, controller, id: 'keterangan_penghasilan', title: "Ket. Penghasilan", icon: Icons.payments_rounded, color: Colors.green),
+                _buildSuratOption(context, controller, id: 'belum_pernah_menikah', title: "Ket. Belum Menikah", icon: Icons.favorite_border_rounded, color: Colors.pink),
+                _buildSuratOption(context, controller, id: 'keterangan_beda_nama', title: "Ket. Beda Nama", icon: Icons.badge_rounded, color: Colors.orange),
+                _buildSuratOption(context, controller, id: 'pengantar_ktp', title: "Pengantar KTP", icon: Icons.badge_rounded, color: Colors.blue),
+                _buildSuratOption(context, controller, id: 'keterangan_ahli_waris', title: "Ahli Waris", icon: Icons.family_restroom_rounded, color: Colors.indigo),
               ],
             ),
             
@@ -70,10 +77,16 @@ class BuatSuratView extends StatelessWidget {
             // 2. FORM DINAMIS (Muncul berdasarkan pilihan)
             Obx(() {
               if (controller.selectedJenisSurat.value.isEmpty) {
-                return const Center(
+                return Center(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Text("Silakan pilih jenis surat di atas untuk mulai mengisi form.", style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)),
+                    padding: const EdgeInsets.only(top: 40),
+                    child: Text(
+                      "Silakan pilih jenis surat di atas untuk mulai mengisi form.", 
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey, 
+                        fontStyle: FontStyle.italic
+                      )
+                    ),
                   ),
                 );
               }
@@ -81,9 +94,11 @@ class BuatSuratView extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey[200]!),
+                  border: Border.all(
+                    color: isDark ? Colors.grey[800]! : Colors.grey[200]!
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,9 +126,9 @@ class BuatSuratView extends StatelessWidget {
                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                             : const Icon(Icons.send_rounded),
                         label: Obx(() => Text(
-                          controller.isLoading.value 
-                            ? "Menyimpan..." 
-                            : (controller.isEditMode.value ? "Simpan Perubahan" : "Kirim Pengajuan")
+                          controller.isLoading.value
+                              ? "Menyimpan..."
+                              : (controller.isEditMode.value ? "Simpan Perubahan" : "Kirim Pengajuan")
                         )),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[700],
@@ -132,24 +147,45 @@ class BuatSuratView extends StatelessWidget {
     );
   }
 
-  // WIDGET CARD PILIHAN SURAT
-  Widget _buildSuratOption(BuatSuratController controller, {required String id, required String title, required IconData icon, required MaterialColor color}) {
+  // WIDGET CARD PILIHAN SURAT (Diperbarui untuk Dark Mode)
+  Widget _buildSuratOption(BuildContext context, BuatSuratController controller, {required String id, required String title, required IconData icon, required MaterialColor color}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Obx(() {
       bool isSelected = controller.selectedJenisSurat.value == id;
+      
+      // Mengatur warna latar belakang berdasarkan mode dan seleksi
+      Color bgColor;
+      if (isSelected) {
+        bgColor = isDark ? color.withOpacity(0.2) : color[50]!;
+      } else {
+        bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+      }
+
+      // Mengatur warna border
+      Color borderColor = isSelected 
+          ? color[400]! 
+          : (isDark ? Colors.grey[800]! : Colors.grey[200]!);
+
+      // Mengatur warna teks dan ikon
+      Color iconAndTextColor = isSelected 
+          ? (isDark ? color[300]! : color[700]!)
+          : (isDark ? Colors.grey[400]! : Colors.grey[700]!);
+
       return InkWell(
         onTap: () => controller.changeSuratType(id),
         borderRadius: BorderRadius.circular(12),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            color: isSelected ? color[50] : Colors.white,
+            color: bgColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? color[400]! : Colors.grey[200]!, width: isSelected ? 2 : 1),
+            border: Border.all(color: borderColor, width: isSelected ? 2 : 1),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(icon, color: isSelected ? color[700] : Colors.grey[400], size: 28),
+              Icon(icon, color: iconAndTextColor, size: 28),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -157,7 +193,7 @@ class BuatSuratView extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     fontSize: 12,
-                    color: isSelected ? color[800] : Colors.grey[700],
+                    color: iconAndTextColor,
                   ),
                 ),
               ),

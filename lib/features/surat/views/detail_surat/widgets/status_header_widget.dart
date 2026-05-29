@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 // Sesuaikan path model jika menggunakan package absolute
-import '../../../../../data/models/surat_model.dart'; 
+import '../../../../../data/models/surat_model.dart';
 
 class StatusHeaderWidget extends StatelessWidget {
   final SuratModel surat;
@@ -27,20 +27,22 @@ class StatusHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 1. Ambil referensi tema
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Background kotak dinamis
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
       ),
       child: Column(
         children: [
           Icon(
             _getIconStatus(surat.status),
             size: 50,
-            color: surat.statusColor,
+            color: surat.statusColor, // Status color biasanya sudah kontras
           ),
           const SizedBox(height: 10),
           Text(
@@ -54,7 +56,7 @@ class StatusHeaderWidget extends StatelessWidget {
           const SizedBox(height: 5),
           Text(
             "Diajukan pada ${surat.tanggalFormatted}",
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12), // Teks tanggal dinamis
           ),
         ],
       ),

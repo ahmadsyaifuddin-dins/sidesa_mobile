@@ -1,3 +1,5 @@
+// Lokasi: lib/features/surat/views/detail_surat/widgets/workflow_status_widget.dart
+
 import 'package:flutter/material.dart';
 import '../../../../../data/models/surat_model.dart';
 
@@ -7,6 +9,9 @@ class WorkflowStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Ambil referensi tema
+    final isDark = theme.brightness == Brightness.dark;
+
     // Tentukan index aktif berdasarkan status
     // 0: Admin (Pending), 1: Kades (Validasi), 2: Selesai
     int activeStep = 0;
@@ -23,12 +28,12 @@ class WorkflowStatusWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Background dinamis
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[100]!),
+        border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -37,22 +42,28 @@ class WorkflowStatusWidget extends StatelessWidget {
       child: Row(
         children: [
           _buildStep(
+            theme: theme,
+            isDark: isDark,
             index: 0,
             activeIndex: activeStep,
             label: "Operator",
             icon: Icons.admin_panel_settings_outlined,
             isRejected: isRejected && activeStep == 0,
           ),
-          _buildArrow(0, activeStep),
+          _buildArrow(theme, isDark, 0, activeStep),
           _buildStep(
+            theme: theme,
+            isDark: isDark,
             index: 1,
             activeIndex: activeStep,
             label: "Validasi",
             icon: Icons.rate_review_outlined,
             isRejected: isRejected && activeStep == 1,
           ),
-          _buildArrow(1, activeStep),
+          _buildArrow(theme, isDark, 1, activeStep),
           _buildStep(
+            theme: theme,
+            isDark: isDark,
             index: 2,
             activeIndex: activeStep,
             label: "Selesai",
@@ -65,6 +76,8 @@ class WorkflowStatusWidget extends StatelessWidget {
   }
 
   Widget _buildStep({
+    required ThemeData theme,
+    required bool isDark,
     required int index,
     required int activeIndex,
     required String label,
@@ -76,13 +89,15 @@ class WorkflowStatusWidget extends StatelessWidget {
     
     Color color;
     if (isRejected) {
-      color = Colors.red;
+      color = theme.colorScheme.error;
     } else if (isActive) {
-      color = index == 2 ? Colors.green : Colors.blue;
+      // Step terakhir warna hijau, sisanya warna primary
+      color = index == 2 ? Colors.green : theme.colorScheme.primary;
     } else if (isDone) {
       color = Colors.green;
     } else {
-      color = Colors.grey[300]!;
+      // Warna step yang belum dilalui dinamis
+      color = isDark ? Colors.grey.shade700 : Colors.grey.shade300;
     }
 
     return Expanded(
@@ -100,8 +115,8 @@ class WorkflowStatusWidget extends StatelessWidget {
                 color: color,
                 width: isActive ? 2.5 : 1.5,
               ),
-              boxShadow: isActive 
-                ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 12, spreadRadius: 2)] 
+              boxShadow: isActive
+                ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 12, spreadRadius: 2)]
                 : [],
             ),
             child: Icon(
@@ -118,7 +133,10 @@ class WorkflowStatusWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              color: isActive ? Colors.black87 : Colors.grey[500],
+              // Warna label dinamis
+              color: isActive 
+                  ? theme.colorScheme.onSurface 
+                  : theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
             ),
           ),
         ],
@@ -126,14 +144,16 @@ class WorkflowStatusWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildArrow(int index, int activeIndex) {
+  Widget _buildArrow(ThemeData theme, bool isDark, int index, int activeIndex) {
     bool isPassed = index < activeIndex;
     return Container(
       margin: const EdgeInsets.only(bottom: 20), // Sejajarkan dengan posisi icon
       child: Icon(
         Icons.chevron_right_rounded,
         size: 16,
-        color: isPassed ? Colors.green : Colors.grey[300],
+        color: isPassed 
+            ? Colors.green 
+            : (isDark ? Colors.grey.shade700 : Colors.grey.shade300), // Warna panah dinamis
       ),
     );
   }

@@ -1,3 +1,5 @@
+// Lokasi: lib/features/auth/views/login_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -13,10 +15,8 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView>
     with SingleTickerProviderStateMixin {
-  // Inisialisasi AuthController menggunakan Get.put
   final AuthController controller = Get.put(AuthController());
 
-  // Variabel Animasi
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -25,7 +25,6 @@ class _LoginViewState extends State<LoginView>
   void initState() {
     super.initState();
 
-    // Setup Animasi (Durasi 1.2 Detik agar smooth)
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -41,7 +40,6 @@ class _LoginViewState extends State<LoginView>
           CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
         );
 
-    // Jalankan animasi saat halaman dimuat
     _animController.forward();
   }
 
@@ -53,8 +51,11 @@ class _LoginViewState extends State<LoginView>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      // Background Gradient Biru Elegan
+      backgroundColor: theme.scaffoldBackgroundColor, // Dinamis
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -62,7 +63,18 @@ class _LoginViewState extends State<LoginView>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade800, Colors.blue.shade400, Colors.white],
+            // Gradasi Dinamis: Biru Elegan (Light) vs Deep Space Blue (Dark)
+            colors: isDark
+                ? [
+                    const Color(0xFF0A1931), // Biru sangat gelap
+                    theme.scaffoldBackgroundColor,
+                    theme.scaffoldBackgroundColor,
+                  ]
+                : [
+                    Colors.blue.shade800,
+                    Colors.blue.shade400,
+                    theme.scaffoldBackgroundColor, // Transisi ke background default
+                  ],
             stops: const [0.0, 0.4, 0.4],
           ),
         ),
@@ -77,15 +89,15 @@ class _LoginViewState extends State<LoginView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 1. HEADER (LOGO) - Modular via Widgets
+                      // 1. HEADER (LOGO)
                       LoginHeader(
                         onLogoLongPress: () => controller.showChangeIPDialog(),
                       ),
 
                       const SizedBox(height: 30),
 
-                      // 2. CARD FORM LOGIN
-                      _buildLoginForm(),
+                      // 2. CARD FORM LOGIN (Lempar context ke helper)
+                      _buildLoginForm(context),
                     ],
                   ),
                 ),
@@ -97,16 +109,19 @@ class _LoginViewState extends State<LoginView>
     );
   }
 
-  // Bagian Form Login yang dipisah dalam method agar build() tidak terlalu panjang
-  Widget _buildLoginForm() {
+  // Helper Widget dengan parameter context
+  Widget _buildLoginForm(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor, // Background card dinamis
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.5)), // Tambahan border halus
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
+            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -114,23 +129,24 @@ class _LoginViewState extends State<LoginView>
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             "SIDESA Mobile",
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: theme.colorScheme.onSurface, // Teks judul dinamis
               letterSpacing: 1.2,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             "Selamat datang! Silakan masuk.",
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant), // Teks sub dinamis
           ),
           const SizedBox(height: 30),
 
           // INPUT EMAIL / NIK
+          // Pastikan CustomTextField milikmu juga sudah adaptif terhadap tema ya!
           CustomTextField(
             controller: controller.emailC,
             label: "Email / NIK",
@@ -139,7 +155,7 @@ class _LoginViewState extends State<LoginView>
 
           const SizedBox(height: 20),
 
-          // INPUT PASSWORD (Reaktif menggunakan Obx)
+          // INPUT PASSWORD
           Obx(
             () => CustomTextField(
               controller: controller.passwordC,
@@ -153,7 +169,7 @@ class _LoginViewState extends State<LoginView>
 
           const SizedBox(height: 30),
 
-          // TOMBOL LOGIN (Reaktif menggunakan Obx untuk Loading State)
+          // TOMBOL LOGIN
           Obx(
             () => SizedBox(
               width: double.infinity,
@@ -163,16 +179,16 @@ class _LoginViewState extends State<LoginView>
                     ? null
                     : () => controller.login(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade700,
-                  foregroundColor: Colors.white,
+                  backgroundColor: theme.colorScheme.primary, // Dinamis
+                  foregroundColor: theme.colorScheme.onPrimary, // Dinamis
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                   elevation: 5,
-                  shadowColor: Colors.blue.withOpacity(0.5),
+                  shadowColor: theme.colorScheme.primary.withOpacity(0.5),
                 ),
                 child: controller.isLoading.value
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? CircularProgressIndicator(color: theme.colorScheme.onPrimary)
                     : const Text(
                         "MASUK SEKARANG",
                         style: TextStyle(

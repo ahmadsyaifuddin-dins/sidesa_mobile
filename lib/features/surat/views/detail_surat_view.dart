@@ -19,12 +19,20 @@ class DetailSuratView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // 1. Ambil referensi tema
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor, // Background utama dinamis
       appBar: AppBar(
-        title: const Text("Detail Permohonan"),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        title: Text(
+          "Detail Permohonan", 
+          style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 16)
+        ),
+        backgroundColor: theme.colorScheme.surface, // Background Appbar dinamis
+        foregroundColor: theme.colorScheme.onSurface, // Icon Back dinamis
+        surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
+        elevation: 0.5,
+        shadowColor: theme.shadowColor.withOpacity(0.3),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -54,10 +62,10 @@ class DetailSuratView extends StatelessWidget {
 
         // --- FALLBACK UI JIKA DATA KOSONG ---
         if (currentSurat == null) {
-          return const Center(
+          return Center(
             child: Text(
               "Data surat tidak ditemukan / sedang memuat...",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant), // Teks fallback dinamis
             ),
           );
         }

@@ -26,6 +26,8 @@ class DetailBarisWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     bool isDataEmpty = _isEmpty(value);
     
     String displayValue = isDataEmpty ? "Tidak ada data" : value.toString();
@@ -37,19 +39,23 @@ class DetailBarisWidget extends StatelessWidget {
         displayValue = value.toString();
       }
     }
-   
+    
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: Colors.blueGrey[400]),
+          Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant), // Ikon dinamis
           const SizedBox(width: 10),
           SizedBox(
             width: 110,
             child: Text(
               label,
-              style: TextStyle(color: Colors.grey[600], fontSize: 12, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant, // Warna label (kiri) dinamis
+                fontSize: 12, 
+                fontWeight: FontWeight.w500
+              ),
             ),
           ),
           Expanded(
@@ -59,7 +65,15 @@ class DetailBarisWidget extends StatelessWidget {
                 fontWeight: isDataEmpty ? FontWeight.normal : (isCurrency ? FontWeight.w800 : FontWeight.bold),
                 fontSize: 14,
                 fontStyle: isDataEmpty ? FontStyle.italic : FontStyle.normal,
-                color: isDataEmpty ? Colors.grey[400] : (isCurrency ? Colors.green[700] : Colors.black87),
+                // Logika Warna Dinamis:
+                // - Kosong: Abu-abu
+                // - Uang: Hijau gelap (Light Mode) / Hijau terang (Dark Mode)
+                // - Normal: Teks solid (Hitam di Light, Putih di Dark)
+                color: isDataEmpty 
+                    ? theme.colorScheme.onSurfaceVariant.withOpacity(0.6) 
+                    : (isCurrency 
+                        ? (isDark ? Colors.green.shade400 : Colors.green.shade700) 
+                        : theme.colorScheme.onSurface),
               ),
             ),
           ),

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
 import 'package:sidesa_mobile/core/utils/snackbar_helper.dart';
-import 'package:sidesa_mobile/features/surat/controllers/surat_controller.dart'; 
-import '../../../../../data/models/surat_model.dart'; 
-import '../../../data/surat_repository.dart'; 
+import 'package:sidesa_mobile/features/surat/controllers/surat_controller.dart';
+import '../../../../../data/models/surat_model.dart';
+import '../../../data/surat_repository.dart';
 
 class TombolAksiWidget extends StatelessWidget {
   final SuratModel surat;
@@ -14,6 +14,9 @@ class TombolAksiWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Ambil referensi tema
+    final isDark = theme.brightness == Brightness.dark;
+
     // --- 1. KONDISI SELESAI (TOMBOL DOWNLOAD) ---
     if (surat.status == 'selesai' && surat.fileHasil != null) {
       return SizedBox(
@@ -55,7 +58,7 @@ class TombolAksiWidget extends StatelessWidget {
           icon: const Icon(Icons.description_rounded),
           label: const Text("UNDUH DOKUMEN (WORD)", style: TextStyle(fontWeight: FontWeight.bold)),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.green.shade600, // Pertahankan hijau sukses tapi slightly darker
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
@@ -77,13 +80,13 @@ class TombolAksiWidget extends StatelessWidget {
                   // Nanti di controller ditangkap untuk masuk mode Edit
                   Get.toNamed('/buat-surat', arguments: surat);
                 },
-                icon: Icon(Icons.edit_rounded, color: Colors.blue[700], size: 20),
+                icon: Icon(Icons.edit_rounded, color: theme.colorScheme.primary, size: 20), // Icon dinamis
                 label: Text(
                   "Edit Data",
-                  style: TextStyle(color: Colors.blue[700], fontWeight: FontWeight.bold),
+                  style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold), // Teks dinamis
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.blue[700]!),
+                  side: BorderSide(color: theme.colorScheme.primary), // Border dinamis
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
               ),
@@ -104,8 +107,10 @@ class TombolAksiWidget extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline_rounded, size: 20),
                 label: const Text("Batalkan", style: TextStyle(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[50],
-                  foregroundColor: Colors.red[700],
+                  // Background dinamis
+                  backgroundColor: isDark ? theme.colorScheme.error.withOpacity(0.15) : Colors.red.shade50,
+                  // Text dinamis
+                  foregroundColor: isDark ? Colors.red.shade300 : Colors.red.shade700,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
