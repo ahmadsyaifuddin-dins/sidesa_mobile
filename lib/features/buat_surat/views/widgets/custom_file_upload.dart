@@ -20,6 +20,7 @@ class CustomFileUpload extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -30,7 +31,11 @@ class CustomFileUpload extends StatelessWidget {
           if (label.isNotEmpty) ...[
             Text(
               label,
-              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13),
+              style: TextStyle(
+                fontWeight: FontWeight.w600, 
+                color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 6),
           ],
@@ -56,17 +61,21 @@ class CustomFileUpload extends StatelessWidget {
             IconData defaultIcon = allowDocument ? Icons.upload_file_rounded : Icons.add_photo_alternate_rounded;
 
             return InkWell(
-              onTap: () => allowDocument 
-                  ? controller.pickDocumentOrImage(fileKey) 
+              onTap: () => allowDocument
+                  ? controller.pickDocumentOrImage(fileKey)
                   : controller.pickFile(fileKey),
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
-                  color: isFileAttached ? Colors.green[50] : Colors.grey[50],
+                  color: isFileAttached 
+                      ? (isDark ? Colors.green.withOpacity(0.15) : Colors.green[50]) 
+                      : (isDark ? const Color(0xFF2C2C2C) : Colors.grey[50]),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isFileAttached ? Colors.green : Colors.grey[300]!,
+                    color: isFileAttached 
+                        ? (isDark ? Colors.green[400]! : Colors.green) 
+                        : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
                     width: 1,
                   ),
                 ),
@@ -77,13 +86,15 @@ class CustomFileUpload extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.grey[200]!),
+                        border: Border.all(
+                          color: isDark ? Colors.grey[700]! : Colors.grey[200]!
+                        ),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: _buildPreviewBox(hasNewFile, hasOldUrl, fileKey, controller, defaultIcon),
+                        child: _buildPreviewBox(hasNewFile, hasOldUrl, fileKey, controller, defaultIcon, isDark),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -95,7 +106,9 @@ class CustomFileUpload extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: isFileAttached ? Colors.green[800] : Colors.grey[500],
+                          color: isFileAttached 
+                              ? (isDark ? Colors.green[300] : Colors.green[800]) 
+                              : (isDark ? Colors.grey[400] : Colors.grey[500]),
                           fontSize: 13,
                           fontWeight: isFileAttached ? FontWeight.w600 : FontWeight.normal,
                         ),
@@ -122,7 +135,7 @@ class CustomFileUpload extends StatelessWidget {
   }
 
   // --- LOGIKA MENGGAMBAR KOTAK PREVIEW KECIL ---
-  Widget _buildPreviewBox(bool hasNewFile, bool hasOldUrl, String key, BuatSuratController c, IconData defaultIcon) {
+  Widget _buildPreviewBox(bool hasNewFile, bool hasOldUrl, String key, BuatSuratController c, IconData defaultIcon, bool isDark) {
     if (hasNewFile) {
       // 1. Jika file baru (Lokal File Path)
       String path = c.lampiranFiles[key]!.path.toLowerCase();
@@ -146,6 +159,6 @@ class CustomFileUpload extends StatelessWidget {
       }
     }
     // 3. Jika kosong
-    return Icon(defaultIcon, color: Colors.grey[400], size: 22);
+    return Icon(defaultIcon, color: isDark ? Colors.grey[600] : Colors.grey[400], size: 22);
   }
 }

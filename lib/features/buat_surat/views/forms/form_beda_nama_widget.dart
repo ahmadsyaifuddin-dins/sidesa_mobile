@@ -12,6 +12,7 @@ class FormBedaNamaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,14 +22,14 @@ class FormBedaNamaWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.amber[50],
-            border: Border.all(color: Colors.amber[200]!),
+            color: isDark ? Colors.amber.withOpacity(0.1) : Colors.amber[50],
+            border: Border.all(color: isDark ? Colors.amber[800]! : Colors.amber[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.difference_rounded, color: Colors.amber[600], size: 24),
+              Icon(Icons.difference_rounded, color: isDark ? Colors.amber[400] : Colors.amber[600], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,12 +37,20 @@ class FormBedaNamaWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Surat Keterangan Beda Nama",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[900], fontSize: 13),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        color: isDark ? Colors.amber[300] : Colors.amber[900], 
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Surat ini menerangkan bahwa nama yang tercantum pada dua dokumen yang berbeda adalah milik satu orang yang sama.",
-                      style: TextStyle(color: Colors.amber[800], fontSize: 12, height: 1.4),
+                      style: TextStyle(
+                        color: isDark ? Colors.amber[100] : Colors.amber[800], 
+                        fontSize: 12, 
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -55,15 +64,22 @@ class FormBedaNamaWidget extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            border: Border.all(color: Colors.grey[200]!),
+            color: isDark ? const Color(0xFF2C2C2C) : Colors.grey[50],
+            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("DATA PADA DOKUMEN PERTAMA", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[700])),
-              const Divider(height: 20),
+              Text(
+                "DATA PADA DOKUMEN PERTAMA", 
+                style: TextStyle(
+                  fontSize: 12, 
+                  fontWeight: FontWeight.bold, 
+                  color: isDark ? Colors.grey[300] : Colors.grey[700],
+                ),
+              ),
+              Divider(height: 20, color: isDark ? Colors.grey[700] : Colors.grey[300]),
               CustomInputField(
                 label: "Jenis Dokumen 1",
                 hint: "Contoh: KARTU TANDA PENDUDUK (KTP)",
@@ -85,15 +101,22 @@ class FormBedaNamaWidget extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            border: Border.all(color: Colors.grey[200]!),
+            color: isDark ? const Color(0xFF2C2C2C) : Colors.grey[50],
+            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("DATA PADA DOKUMEN KEDUA", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[700])),
-              const Divider(height: 20),
+              Text(
+                "DATA PADA DOKUMEN KEDUA", 
+                style: TextStyle(
+                  fontSize: 12, 
+                  fontWeight: FontWeight.bold, 
+                  color: isDark ? Colors.grey[300] : Colors.grey[700],
+                ),
+              ),
+              Divider(height: 20, color: isDark ? Colors.grey[700] : Colors.grey[300]),
               CustomInputField(
                 label: "Jenis Dokumen 2",
                 hint: "Contoh: IJAZAH SMA / SERTIFIKAT TANAH",
@@ -120,18 +143,32 @@ class FormBedaNamaWidget extends StatelessWidget {
         ),
 
         const SizedBox(height: 10),
-        const Text("Berkas Pembuktian", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const Divider(height: 20),
+        Text(
+          "Berkas Pembuktian", 
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 14,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        Divider(height: 20, color: isDark ? Colors.grey[800] : Colors.grey[300]),
 
         // --- LAMPIRAN WAJIB ---
         const CustomFileUpload(label: "Scan/Foto KTP Asli", fileKey: "ktp"),
         const CustomFileUpload(label: "Scan/Foto Kartu Keluarga", fileKey: "kk"),
-        
+       
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Bukti Beda Nama", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber[800])),
+          child: Text(
+            "Bukti Beda Nama", 
+            style: TextStyle(
+              fontSize: 12, 
+              fontWeight: FontWeight.bold, 
+              color: isDark ? Colors.amber[400] : Colors.amber[800],
+            ),
+          ),
         ),
-        
+       
         const CustomFileUpload(label: "Foto Dokumen 1 (Yg disebut di atas)", fileKey: "bukti_satu"),
         const CustomFileUpload(label: "Foto Dokumen 2 (Yg disebut di atas)", fileKey: "bukti_dua"),
       ],

@@ -30,6 +30,7 @@ class FormBelumMenikahWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,14 +40,14 @@ class FormBelumMenikahWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.pink[50],
-            border: Border.all(color: Colors.pink[200]!),
+            color: isDark ? Colors.pink.withOpacity(0.1) : Colors.pink[50],
+            border: Border.all(color: isDark ? Colors.pink[800]! : Colors.pink[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.favorite_border_rounded, color: Colors.pink[500], size: 24),
+              Icon(Icons.favorite_border_rounded, color: isDark ? Colors.pink[400] : Colors.pink[500], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -54,12 +55,20 @@ class FormBelumMenikahWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Surat Keterangan Belum Pernah Menikah",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.pink[900], fontSize: 13),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        color: isDark ? Colors.pink[300] : Colors.pink[900], 
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Surat ini menerangkan status perkawinan Anda saat ini (Jejaka/Perawan) dan belum pernah terikat pernikahan resmi maupun siri.",
-                      style: TextStyle(color: Colors.pink[800], fontSize: 12, height: 1.4),
+                      style: TextStyle(
+                        color: isDark ? Colors.pink[100] : Colors.pink[800], 
+                        fontSize: 12, 
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -78,8 +87,15 @@ class FormBelumMenikahWidget extends StatelessWidget {
         ),
 
         const SizedBox(height: 10),
-        const Text("Berkas Persyaratan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const Divider(height: 20),
+        Text(
+          "Berkas Persyaratan", 
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 14,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        Divider(height: 20, color: isDark ? Colors.grey[800] : Colors.grey[300]),
 
         // --- LAMPIRAN WAJIB UMUM ---
         const CustomFileUpload(
@@ -101,7 +117,11 @@ class FormBelumMenikahWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 "Surat Pernyataan Belum Menikah",
-                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600, 
+                  color: isDark ? Colors.grey[300] : Colors.grey[700], 
+                  fontSize: 13,
+                ),
               ),
             ),
             InkWell(
@@ -111,11 +131,15 @@ class FormBelumMenikahWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 child: Row(
                   children: [
-                    Icon(Icons.download_rounded, size: 14, color: Colors.blue[700]),
+                    Icon(Icons.download_rounded, size: 14, color: isDark ? Colors.blue[400] : Colors.blue[700]),
                     const SizedBox(width: 4),
                     Text(
                       "Download Format",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blue[700]),
+                      style: TextStyle(
+                        fontSize: 12, 
+                        fontWeight: FontWeight.bold, 
+                        color: isDark ? Colors.blue[400] : Colors.blue[700],
+                      ),
                     ),
                   ],
                 ),
@@ -135,16 +159,32 @@ class FormBelumMenikahWidget extends StatelessWidget {
         Text.rich(
           TextSpan(
             text: "* Wajib: ",
-            style: TextStyle(color: Colors.pink[600], fontSize: 11, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: isDark ? Colors.pink[400] : Colors.pink[600], 
+              fontSize: 11, 
+              fontWeight: FontWeight.bold,
+            ),
             children: [
               TextSpan(
                 text: "Silakan download format di atas, isi data diri, tempel ",
-                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.normal),
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600], 
+                  fontWeight: FontWeight.normal,
+                ),
               ),
-              TextSpan(text: "Materai Rp 10.000", style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold)),
+              TextSpan(
+                text: "Materai Rp 10.000", 
+                style: TextStyle(
+                  color: isDark ? Colors.grey[200] : Colors.grey[800], 
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               TextSpan(
                 text: ", tanda tangani, lalu foto/scan dan upload di atas.",
-                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.normal),
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600], 
+                  fontWeight: FontWeight.normal,
+                ),
               ),
             ],
           ),

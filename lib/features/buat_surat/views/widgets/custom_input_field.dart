@@ -10,16 +10,16 @@ class CustomInputField extends StatefulWidget {
   final bool isTextArea;
   final TextInputType keyboardType;
   final Function(String)? onChanged;
-  
+ 
   final bool readOnly;
   final VoidCallback? onTap;
   final Widget? suffixIcon;
   final TextEditingController? controller;
 
   // --- KEKUATAN BARU ---
-  final int? maxLength; 
-  final bool isCurrency; 
-  final List<TextInputFormatter>? inputFormatters; 
+  final int? maxLength;
+  final bool isCurrency;
+  final List<TextInputFormatter>? inputFormatters;
   final bool showCounter;
   final String? initialValue;
 
@@ -89,10 +89,13 @@ class _CustomInputFieldState extends State<CustomInputField> {
 
   @override
   Widget build(BuildContext context) {
+    // Deteksi mode gelap/terang
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // Logika cerdas untuk Suffix (Icon / Counter)
     Widget? buildSuffix() {
       if (widget.suffixIcon != null) return widget.suffixIcon;
-      
+     
       // Jika fitur showCounter aktif dan ada batas maxLength
       if (widget.maxLength != null && widget.showCounter) {
         bool isFull = _charCount == widget.maxLength;
@@ -103,8 +106,10 @@ class _CustomInputFieldState extends State<CustomInputField> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              // Berubah hijau jika sudah mencapai target, abu-abu jika belum
-              color: isFull ? Colors.green[600] : Colors.grey[400],
+              // Berubah hijau jika sudah mencapai target, abu-abu jika belum (disesuaikan untuk dark mode)
+              color: isFull 
+                  ? (isDark ? Colors.green[400] : Colors.green[600]) 
+                  : (isDark ? Colors.grey[500] : Colors.grey[400]),
             ),
           ),
         );
@@ -119,7 +124,11 @@ class _CustomInputFieldState extends State<CustomInputField> {
         children: [
           Text(
             widget.label,
-            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13),
+            style: TextStyle(
+              fontWeight: FontWeight.w600, 
+              color: isDark ? Colors.grey[300] : Colors.grey[700], 
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: 6),
           TextFormField(
@@ -128,13 +137,14 @@ class _CustomInputFieldState extends State<CustomInputField> {
             keyboardType: widget.keyboardType,
             readOnly: widget.readOnly,
             onTap: widget.onTap,
-            maxLength: widget.maxLength, 
-            
+            maxLength: widget.maxLength,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+            ),
             inputFormatters: [
               if (widget.inputFormatters != null) ...widget.inputFormatters!,
-              if (widget.isCurrency) CurrencyInputFormatter(), 
+              if (widget.isCurrency) CurrencyInputFormatter(),
             ],
-
             onChanged: (value) {
               if (widget.onChanged != null) {
                 if (widget.isCurrency) {
@@ -145,22 +155,29 @@ class _CustomInputFieldState extends State<CustomInputField> {
                 }
               }
             },
-            
+           
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              hintStyle: TextStyle(
+                color: isDark ? Colors.grey[500] : Colors.grey[400], 
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[50],
+              fillColor: isDark ? const Color(0xFF2C2C2C) : Colors.grey[50], // Warna field di dark mode sedikit lebih terang dari background utama
               suffixIcon: buildSuffix(), // <-- Panggil custom suffix di sini
               counterText: "", // <-- Wajib kosong agar counter bawaan di bawah garis menghilang
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey[200]!),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.blue),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.blue[300]! : Colors.blue,
+                ),
               ),
             ),
           ),

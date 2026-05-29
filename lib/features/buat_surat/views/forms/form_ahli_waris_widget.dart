@@ -43,6 +43,9 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
   Widget build(BuildContext context) {
     final tglLahirController = TextEditingController(text: controller.formData['tanggal_lahir_almarhum']?.toString());
     final tglMeninggalController = TextEditingController(text: controller.formData['tanggal_meninggal']?.toString());
+    
+    // Deteksi Mode Gelap
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,14 +55,14 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.indigo[50],
-            border: Border.all(color: Colors.indigo[200]!),
+            color: isDark ? Colors.indigo.withOpacity(0.1) : Colors.indigo[50],
+            border: Border.all(color: isDark ? Colors.indigo[800]! : Colors.indigo[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.family_restroom_rounded, color: Colors.indigo[500], size: 24),
+              Icon(Icons.family_restroom_rounded, color: isDark ? Colors.indigo[400] : Colors.indigo[500], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -67,12 +70,20 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
                   children: [
                     Text(
                       "Surat Keterangan Ahli Waris",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo[900], fontSize: 13),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        color: isDark ? Colors.indigo[300] : Colors.indigo[900], 
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Isi data almarhum/almarhumah dengan benar, kemudian tambahkan daftar nama ahli waris yang sah (Maksimal 3 orang).",
-                      style: TextStyle(color: Colors.indigo[800], fontSize: 12, height: 1.4),
+                      style: TextStyle(
+                        color: isDark ? Colors.indigo[100] : Colors.indigo[800], 
+                        fontSize: 12, 
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -82,16 +93,19 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
         ),
 
         // --- SECTION A: DATA ALMARHUM ---
-        const Text("A. DATA ALMARHUM/ALMARHUMAH", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const Divider(height: 20),
-        
+        Text(
+          "A. DATA ALMARHUM/ALMARHUMAH", 
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black),
+        ),
+        Divider(height: 20, color: isDark ? Colors.grey[800] : Colors.grey[300]),
+       
         CustomInputField(
           label: "Nama Almarhum",
           hint: "Nama lengkap sesuai KTP",
           initialValue: controller.formData['nama_almarhum']?.toString(),
           onChanged: (val) => controller.updateForm('nama_almarhum', val),
         ),
-        
+       
         CustomInputField(
           label: "NIK Almarhum",
           hint: "16 Digit NIK",
@@ -115,10 +129,13 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
           hint: "Pilih Tanggal",
           readOnly: true,
           controller: tglLahirController,
-          suffixIcon: const Icon(Icons.calendar_month, color: Colors.grey),
+          suffixIcon: Icon(Icons.calendar_month, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             DateTime? picked = await showDatePicker(
-              context: context, initialDate: DateTime(1970), firstDate: DateTime(1900), lastDate: DateTime.now(),
+              context: context, 
+              initialDate: DateTime(1970), 
+              firstDate: DateTime(1900), 
+              lastDate: DateTime.now(),
             );
             if (picked != null) {
               String formatted = DateFormat('yyyy-MM-dd').format(picked);
@@ -133,10 +150,13 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
           hint: "Pilih Tanggal",
           readOnly: true,
           controller: tglMeninggalController,
-          suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
+          suffixIcon: Icon(Icons.calendar_today, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             DateTime? picked = await showDatePicker(
-              context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime.now(),
+              context: context, 
+              initialDate: DateTime.now(), 
+              firstDate: DateTime(2000), 
+              lastDate: DateTime.now(),
             );
             if (picked != null) {
               String formatted = DateFormat('yyyy-MM-dd').format(picked);
@@ -166,14 +186,17 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
         // --- SECTION B: DAFTAR AHLI WARIS ---
         Obx(() {
           List<dynamic> listWaris = controller.formData['ahli_waris'] ?? [<String, dynamic>{}];
-          
+         
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("B. DAFTAR AHLI WARIS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  Text(
+                    "B. DAFTAR AHLI WARIS", 
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black),
+                  ),
                   if (listWaris.length < 3)
                     ElevatedButton.icon(
                       onPressed: () {
@@ -185,23 +208,23 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
                       label: const Text("Tambah", style: TextStyle(fontSize: 12)),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                        backgroundColor: Colors.indigo[600],
+                        backgroundColor: isDark ? Colors.indigo[500] : Colors.indigo[600],
                         foregroundColor: Colors.white,
                       ),
                     ),
                 ],
               ),
-              const Divider(height: 20),
-              
+              Divider(height: 20, color: isDark ? Colors.grey[800] : Colors.grey[300]),
+             
               ...List.generate(listWaris.length, (index) {
                 Map<String, dynamic> waris = listWaris[index] as Map<String, dynamic>;
-                
+               
                 return Container(
                   margin: const EdgeInsets.only(bottom: 15),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    border: Border.all(color: Colors.grey[200]!),
+                    color: isDark ? const Color(0xFF2C2C2C) : Colors.grey[50],
+                    border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -209,7 +232,14 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Ahli Waris Ke-${index + 1}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo[800], fontSize: 12)),
+                          Text(
+                            "Ahli Waris Ke-${index + 1}", 
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, 
+                              color: isDark ? Colors.indigo[300] : Colors.indigo[800], 
+                              fontSize: 12,
+                            ),
+                          ),
                           if (listWaris.length > 1)
                             InkWell(
                               onTap: () {
@@ -217,7 +247,7 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
                                 currentList.removeAt(index);
                                 controller.updateForm('ahli_waris', currentList);
                               },
-                              child: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                              child: Icon(Icons.delete_outline, color: isDark ? Colors.red[400] : Colors.red, size: 20),
                             ),
                         ],
                       ),
@@ -267,8 +297,11 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
         }),
 
         const SizedBox(height: 10),
-        const Text("C. BERKAS PERSYARATAN", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        const Divider(height: 20),
+        Text(
+          "C. BERKAS PERSYARATAN", 
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black),
+        ),
+        Divider(height: 20, color: isDark ? Colors.grey[800] : Colors.grey[300]),
 
         const CustomFileUpload(label: "Scan/Foto KTP Pemohon", fileKey: "ktp"),
         const CustomFileUpload(label: "Scan/Foto KK", fileKey: "kk"),
