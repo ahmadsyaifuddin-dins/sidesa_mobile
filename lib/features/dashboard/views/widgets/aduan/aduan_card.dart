@@ -19,19 +19,19 @@ class AduanCard extends StatelessWidget {
     switch (aduan.status.toLowerCase()) {
       case 'menunggu':
         statusColor = isDark ? Colors.orange.shade400 : Colors.orange.shade700;
-        statusBgColor = isDark ? Colors.orange.withOpacity(0.15) : Colors.orange.shade50;
+        statusBgColor = isDark ? Colors.orange.withValues(alpha: 0.15) : Colors.orange.shade50;
         break;
       case 'diproses':
         statusColor = isDark ? Colors.blue.shade400 : Colors.blue.shade700;
-        statusBgColor = isDark ? Colors.blue.withOpacity(0.15) : Colors.blue.shade50;
+        statusBgColor = isDark ? Colors.blue.withValues(alpha: 0.15) : Colors.blue.shade50;
         break;
       case 'selesai':
         statusColor = isDark ? Colors.green.shade400 : Colors.green.shade700;
-        statusBgColor = isDark ? Colors.green.withOpacity(0.15) : Colors.green.shade50;
+        statusBgColor = isDark ? Colors.green.withValues(alpha: 0.15) : Colors.green.shade50;
         break;
       case 'ditolak':
         statusColor = isDark ? Colors.red.shade400 : Colors.red.shade700;
-        statusBgColor = isDark ? Colors.red.withOpacity(0.15) : Colors.red.shade50;
+        statusBgColor = isDark ? Colors.red.withValues(alpha: 0.15) : Colors.red.shade50;
         break;
     }
 
@@ -42,7 +42,7 @@ class AduanCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.04), // Shadow dinamis
+            color: theme.shadowColor.withValues(alpha: 0.04), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -72,7 +72,7 @@ class AduanCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50,
+                            color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.15) : Colors.blue.shade50,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -97,7 +97,7 @@ class AduanCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: statusBgColor,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: statusColor.withOpacity(0.3)),
+                        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         aduan.status.toUpperCase(),
@@ -163,7 +163,7 @@ class AduanCard extends StatelessWidget {
                           width: 4, 
                           height: 4, 
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), 
+                            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5), 
                             shape: BoxShape.circle
                           )
                         ),
@@ -190,7 +190,7 @@ class AduanCard extends StatelessWidget {
                     if (aduan.isAnonymous == 1)
                       Icon(Icons.visibility_off, size: 16, color: isDark ? Colors.purple.shade300 : Colors.purple.shade400)
                     else
-                      Icon(Icons.chevron_right, size: 20, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                      Icon(Icons.chevron_right, size: 20, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                   ],
                 ),
               ],

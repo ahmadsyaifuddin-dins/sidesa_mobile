@@ -21,7 +21,7 @@ class LoginHeader extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black45 : Colors.black.withOpacity(0.2), // Shadow dinamis
+              color: isDark ? Colors.black45 : Colors.black.withValues(alpha: 0.2), // Shadow dinamis
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),

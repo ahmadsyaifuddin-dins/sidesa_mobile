@@ -65,7 +65,7 @@ class AduanView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.inbox_outlined, size: 80, color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5)),
+                Icon(Icons.inbox_outlined, size: 80, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                 const SizedBox(height: 16),
                 Text(
                   "Belum ada aduan yang Anda kirim.",

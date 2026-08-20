@@ -35,7 +35,7 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: Icon(prefixIcon, color: theme.colorScheme.primary), // Warna ikon prefix dinamis
         filled: true,
         // Warna background field: Abu-abu elegan (Dark) vs Abu-abu muda (Light)
-        fillColor: isDark ? theme.colorScheme.surfaceVariant.withOpacity(0.5) : Colors.grey.shade50,
+        fillColor: isDark ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5) : Colors.grey.shade50,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,

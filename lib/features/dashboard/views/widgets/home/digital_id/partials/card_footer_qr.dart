@@ -25,7 +25,7 @@ class CardFooterQr extends StatelessWidget {
               Text(
                 "Desa Anjir Muara Kota Tengah",
                 style: TextStyle(
-                  color: isDark ? Colors.white.withOpacity(0.9) : Colors.blue.shade100,
+                  color: isDark ? Colors.white.withValues(alpha: 0.9) : Colors.blue.shade100,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -56,7 +56,7 @@ class CardFooterQr extends StatelessWidget {
               boxShadow: [
                 isDark
                     ? BoxShadow(
-                        color: const Color(0xFF00E5FF).withOpacity(0.3), 
+                        color: const Color(0xFF00E5FF).withValues(alpha: 0.3), 
                         blurRadius: 8, 
                         offset: const Offset(0, 2), 
                       )

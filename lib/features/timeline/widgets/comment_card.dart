@@ -191,18 +191,18 @@ class CommentCard extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.edit_rounded, 
-                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
               ),
               title: Text(
                 "Edit Komentar", 
                 style: TextStyle(
                   fontWeight: FontWeight.bold, 
-                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
                 )
               ),
               subtitle: canEdit 
                   ? Text("Tersisa ${15 - difference} menit lagi", style: TextStyle(color: theme.colorScheme.onSurfaceVariant)) 
-                  : Text("Waktu edit telah habis", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), fontSize: 12)),
+                  : Text("Waktu edit telah habis", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12)),
               onTap: canEdit ? () {
                 Get.back();
                 onEdit(item, parentId: parentId);
@@ -228,7 +228,7 @@ class CommentCard extends StatelessWidget {
     double size = isReply ? 28 : 36;
     return Container(
       width: size, height: size, 
-      color: theme.colorScheme.surfaceVariant, 
+      color: theme.colorScheme.surfaceContainerHighest, 
       child: Icon(Icons.person, color: theme.colorScheme.onSurfaceVariant, size: size * 0.7)
     );
   }

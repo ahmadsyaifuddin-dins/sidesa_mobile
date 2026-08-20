@@ -69,7 +69,7 @@ class _EditPostViewState extends State<EditPostView> {
         backgroundColor: theme.colorScheme.surface, // Background appbar dinamis
         surfaceTintColor: Colors.transparent, // Hindari efek kusam Material 3
         elevation: 0.5,
-        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
+        shadowColor: theme.shadowColor.withValues(alpha: 0.3), // Bayangan halus
         leading: IconButton(
           icon: Icon(Icons.close_rounded, color: theme.colorScheme.onSurface), // Ikon close dinamis
           onPressed: () => Get.back(),
@@ -112,7 +112,7 @@ class _EditPostViewState extends State<EditPostView> {
                     hintText: "Ubah isi aspirasi Anda...",
                     border: InputBorder.none,
                     hintStyle: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7), // Teks placeholder dinamis
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7), // Teks placeholder dinamis
                       fontSize: 18
                     ),
                   ),

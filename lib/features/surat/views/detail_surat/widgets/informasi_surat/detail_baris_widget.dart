@@ -70,7 +70,7 @@ class DetailBarisWidget extends StatelessWidget {
                 // - Uang: Hijau gelap (Light Mode) / Hijau terang (Dark Mode)
                 // - Normal: Teks solid (Hitam di Light, Putih di Dark)
                 color: isDataEmpty 
-                    ? theme.colorScheme.onSurfaceVariant.withOpacity(0.6) 
+                    ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6) 
                     : (isCurrency 
                         ? (isDark ? Colors.green.shade400 : Colors.green.shade700) 
                         : theme.colorScheme.onSurface),

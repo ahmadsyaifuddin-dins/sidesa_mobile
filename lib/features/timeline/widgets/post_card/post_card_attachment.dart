@@ -42,7 +42,7 @@ class PostCardAttachment extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Container(
             height: 150, 
-            color: theme.colorScheme.surfaceVariant, // Background error dinamis
+            color: theme.colorScheme.surfaceContainerHighest, // Background error dinamis
             child: Icon(Icons.broken_image, color: theme.colorScheme.onSurfaceVariant), // Icon error dinamis
           )
         ),

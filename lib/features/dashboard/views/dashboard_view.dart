@@ -46,7 +46,7 @@ class DashboardView extends StatelessWidget {
           onPressed: () => controller.changeTab(2), 
           backgroundColor: isForum
               ? theme.colorScheme.primary
-              : theme.colorScheme.primary.withOpacity(0.8),
+              : theme.colorScheme.primary.withValues(alpha: 0.8),
           elevation: isForum ? 0 : 4,
           shape: const CircleBorder(),
           // Bikin ikonnya berdenyut mulus saat di-tap

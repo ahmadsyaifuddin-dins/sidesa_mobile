@@ -29,13 +29,13 @@ class CardHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(Icons.verified_user_rounded, color: Colors.white.withOpacity(0.8), size: 14),
+              Icon(Icons.verified_user_rounded, color: Colors.white.withValues(alpha: 0.8), size: 14),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   "KARTU WARGA DIGITAL",
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withValues(alpha: 0.85),
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.0,

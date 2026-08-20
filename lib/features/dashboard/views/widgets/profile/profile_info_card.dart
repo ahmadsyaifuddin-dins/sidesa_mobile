@@ -39,8 +39,8 @@ class ProfileInfoCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       // Agar warna tombol dinamis di Dark Mode
                       color: controller.isDataHidden.value
-                          ? theme.colorScheme.primary.withOpacity(0.1)
-                          : theme.colorScheme.surfaceVariant,
+                          ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                          : theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -82,7 +82,7 @@ class ProfileInfoCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: theme.shadowColor.withOpacity(0.1),
+                  color: theme.shadowColor.withValues(alpha: 0.1),
                   blurRadius: 15,
                   spreadRadius: 2,
                   offset: const Offset(0, 5),
@@ -98,7 +98,7 @@ class ProfileInfoCard extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         // Menggunakan opacity agar di Dark Mode tidak mencolok
-                        color: Colors.green.withOpacity(0.15),
+                        color: Colors.green.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -213,7 +213,7 @@ class ProfileInfoCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: theme.colorScheme.primary, size: 22),
@@ -252,7 +252,7 @@ class ProfileInfoCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     // Logika warna dinamis:
                     color: isHidden
-                        ? theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
                         : null,
                     letterSpacing: isHidden ? 2.0 : 0.0,
                   ),

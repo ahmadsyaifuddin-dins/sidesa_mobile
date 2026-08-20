@@ -40,7 +40,7 @@ class FormBelumMenikahWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: isDark ? Colors.pink.withOpacity(0.1) : Colors.pink[50],
+            color: isDark ? Colors.pink.withValues(alpha: 0.1) : Colors.pink[50],
             border: Border.all(color: isDark ? Colors.pink[800]! : Colors.pink[200]!),
             borderRadius: BorderRadius.circular(10),
           ),

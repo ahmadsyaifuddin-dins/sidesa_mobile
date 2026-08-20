@@ -60,9 +60,9 @@ class _RiwayatTabState extends State<RiwayatTab> {
                       });
                     },
                     // Warna saat chip aktif
-                    selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                    selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     // Warna saat chip tidak aktif
-                    backgroundColor: theme.colorScheme.surfaceVariant,
+                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
                     labelStyle: TextStyle(
                       color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                       fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
@@ -106,7 +106,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
                       Icon(
                         Icons.history_toggle_off,
                         size: 60,
-                        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
+                        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -152,7 +152,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
+            color: theme.shadowColor.withValues(alpha: 0.05), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -178,7 +178,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -214,7 +214,7 @@ class _RiwayatTabState extends State<RiwayatTab> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: surat.statusColor.withOpacity(0.1), // Background status tetap senada
+                          color: surat.statusColor.withValues(alpha: 0.1), // Background status tetap senada
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

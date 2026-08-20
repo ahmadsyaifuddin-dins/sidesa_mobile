@@ -34,7 +34,7 @@ class ChatBubbleItem extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.05),
+              color: theme.shadowColor.withValues(alpha: 0.05),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -69,7 +69,7 @@ class ChatBubbleItem extends StatelessWidget {
             // 5. Tabel (Merapikan border dan kontras teks dalam kotak tabel)
             tableBorder: TableBorder.all(
               color: isUser 
-                  ? Colors.white.withOpacity(0.4) 
+                  ? Colors.white.withValues(alpha: 0.4) 
                   : theme.colorScheme.outlineVariant,
               width: 1,
             ),
@@ -86,8 +86,8 @@ class ChatBubbleItem extends StatelessWidget {
             blockquoteDecoration: BoxDecoration(
               // Trik Opacity: Mode Dark jadi biru gelap, Mode Light jadi biru super muda
               color: isUser 
-                  ? Colors.white.withOpacity(0.15) 
-                  : (isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50),
+                  ? Colors.white.withValues(alpha: 0.15) 
+                  : (isDark ? theme.colorScheme.primary.withValues(alpha: 0.15) : Colors.blue.shade50),
               borderRadius: BorderRadius.circular(8),
               border: Border(
                 left: BorderSide(

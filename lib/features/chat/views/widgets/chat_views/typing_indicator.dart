@@ -16,7 +16,7 @@ class TypingIndicator extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           // 1. Warna Background (Biru Transparan)
-          color: theme.colorScheme.primary.withOpacity(isDark ? 0.15 : 0.08),
+          color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.08),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
@@ -24,7 +24,7 @@ class TypingIndicator extends StatelessWidget {
           ),
           // 2. Border Tipis biar lebih stand-out di Dark Mode
           border: Border.all(
-            color: theme.colorScheme.primary.withOpacity(isDark ? 0.4 : 0.2),
+            color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.4 : 0.2),
             width: 1,
           ),
         ),

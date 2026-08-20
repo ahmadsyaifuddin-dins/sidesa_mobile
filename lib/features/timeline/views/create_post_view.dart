@@ -19,7 +19,7 @@ class CreatePostView extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface, // Background appbar dinamis
         surfaceTintColor: Colors.transparent, // Hindari efek kusam Material 3
         elevation: 0.5,
-        shadowColor: theme.shadowColor.withOpacity(0.3),
+        shadowColor: theme.shadowColor.withValues(alpha: 0.3),
         leading: IconButton(
           icon: Icon(Icons.close_rounded, color: theme.colorScheme.onSurface), // Icon close dinamis
           onPressed: () => Get.back(),
@@ -65,7 +65,7 @@ class CreatePostView extends StatelessWidget {
                         hintText: "Apa yang ingin Anda sampaikan untuk desa?",
                         border: InputBorder.none,
                         hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7), // Warna placeholder dinamis
+                          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7), // Warna placeholder dinamis
                           fontSize: 18
                         ),
                       ),

@@ -29,7 +29,7 @@ class DeveloperInfoCard extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             spreadRadius: 2,
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -145,7 +145,7 @@ class DeveloperInfoCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.pink, // Tetap pink khas Instagram
                     // Trik opacity agar border pink-nya elegan di Dark Mode
-                    side: BorderSide(color: Colors.pink.withOpacity(0.3)), 
+                    side: BorderSide(color: Colors.pink.withValues(alpha: 0.3)), 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

@@ -177,7 +177,7 @@ class ChatRoomView extends StatelessWidget {
             bottomLeft: isMe ? const Radius.circular(16) : const Radius.circular(4),
             bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(16),
           ),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
         ),
         child: Padding(
           padding: const EdgeInsets.all(4.0),

@@ -48,7 +48,7 @@ class ChatView extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
         elevation: 1,
-        shadowColor: theme.shadowColor.withOpacity(0.2),
+        shadowColor: theme.shadowColor.withValues(alpha: 0.2),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_sweep, color: Colors.red),

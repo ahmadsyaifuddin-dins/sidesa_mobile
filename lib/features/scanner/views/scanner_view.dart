@@ -33,7 +33,7 @@ class ScannerView extends StatelessWidget {
           ),
           // Overlay Gelap dengan kotak transparan di tengah (opsional untuk mempercantik)
           Container(
-            decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.5)),
             child: Center(
               child: Container(
                 width: 250,

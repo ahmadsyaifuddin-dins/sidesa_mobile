@@ -17,10 +17,10 @@ class AlasanPenolakanWidget extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         // Background dinamis: Merah transparan (Dark Mode) vs Merah sangat muda (Light Mode)
-        color: isDark ? theme.colorScheme.error.withOpacity(0.15) : Colors.red.shade50,
+        color: isDark ? theme.colorScheme.error.withValues(alpha: 0.15) : Colors.red.shade50,
         borderRadius: BorderRadius.circular(12),
         // Border dinamis
-        border: Border.all(color: isDark ? theme.colorScheme.error.withOpacity(0.3) : Colors.red.shade200),
+        border: Border.all(color: isDark ? theme.colorScheme.error.withValues(alpha: 0.3) : Colors.red.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

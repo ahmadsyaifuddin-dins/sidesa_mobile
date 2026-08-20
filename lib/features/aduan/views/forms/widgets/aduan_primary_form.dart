@@ -86,7 +86,7 @@ class AduanPrimaryForm extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? color.withOpacity(0.1) : Colors.white,
+            color: isSelected ? color.withValues(alpha: 0.1) : Colors.white,
             border: Border.all(color: isSelected ? color : Colors.grey.shade300, width: isSelected ? 2 : 1),
             borderRadius: BorderRadius.circular(20),
           ),

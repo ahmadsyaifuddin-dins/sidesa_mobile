@@ -22,7 +22,7 @@ class FormBedaNamaWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: isDark ? Colors.amber.withOpacity(0.1) : Colors.amber[50],
+            color: isDark ? Colors.amber.withValues(alpha: 0.1) : Colors.amber[50],
             border: Border.all(color: isDark ? Colors.amber[800]! : Colors.amber[200]!),
             borderRadius: BorderRadius.circular(10),
           ),

@@ -33,7 +33,7 @@ class WorkflowStatusWidget extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
+            color: theme.shadowColor.withValues(alpha: 0.05), // Shadow dinamis
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -109,14 +109,14 @@ class WorkflowStatusWidget extends StatelessWidget {
             curve: Curves.easeInOut,
             padding: EdgeInsets.all(isActive ? 10 : 8),
             decoration: BoxDecoration(
-              color: isActive ? color.withOpacity(0.1) : Colors.transparent,
+              color: isActive ? color.withValues(alpha: 0.1) : Colors.transparent,
               shape: BoxShape.circle,
               border: Border.all(
                 color: color,
                 width: isActive ? 2.5 : 1.5,
               ),
               boxShadow: isActive
-                ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 12, spreadRadius: 2)]
+                ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 12, spreadRadius: 2)]
                 : [],
             ),
             child: Icon(
@@ -136,7 +136,7 @@ class WorkflowStatusWidget extends StatelessWidget {
               // Warna label dinamis
               color: isActive 
                   ? theme.colorScheme.onSurface 
-                  : theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                  : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
           ),
         ],

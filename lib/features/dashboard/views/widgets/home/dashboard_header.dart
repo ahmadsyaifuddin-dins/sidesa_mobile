@@ -55,7 +55,7 @@ class DashboardHeader extends StatelessWidget {
                       shadows: isDark
                           ? [
                               Shadow(
-                                color: const Color(0xFF00E5FF).withOpacity(0.4),
+                                color: const Color(0xFF00E5FF).withValues(alpha: 0.4),
                                 blurRadius: 8,
                               ),
                             ]
@@ -73,7 +73,7 @@ class DashboardHeader extends StatelessWidget {
         // Notification Button
         Container(
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: IconButton(

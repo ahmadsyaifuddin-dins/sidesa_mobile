@@ -39,7 +39,7 @@ class AduanActionWidget extends StatelessWidget {
                 backgroundColor: Colors.blue[700],
                 foregroundColor: Colors.white,
                 elevation: controller.isLoading.value ? 0 : 4,
-                shadowColor: Colors.blue.withOpacity(0.5),
+                shadowColor: Colors.blue.withValues(alpha: 0.5),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: controller.isLoading.value

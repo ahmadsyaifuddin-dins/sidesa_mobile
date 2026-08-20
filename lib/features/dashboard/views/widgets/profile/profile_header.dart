@@ -26,7 +26,7 @@ class ProfileHeader extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             // 2. Bayangan disesuaikan dengan shadowColor tema
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -41,14 +41,14 @@ class ProfileHeader extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   // 3. Garis border avatar mengikuti warna primary tema
-                  color: theme.colorScheme.primary.withOpacity(0.2),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   width: 2,
                 ),
               ),
               child: CircleAvatar(
                 radius: 50,
                 // 4. Background avatar memakai primary dengan transparansi
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                 backgroundImage: controller.userAvatar.value.isNotEmpty
                     ? NetworkImage(controller.userAvatar.value)
                     : null,
@@ -81,9 +81,9 @@ class ProfileHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               // 6. Label semantic (hijau) menggunakan trik opacity agar cocok di Dark Mode
-              color: Colors.green.withOpacity(0.15),
+              color: Colors.green.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.green.withOpacity(0.3)),
+              border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
             ),
             child: const Text(
               "Warga Terverifikasi",

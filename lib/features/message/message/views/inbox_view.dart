@@ -57,7 +57,7 @@ class InboxView extends StatelessWidget {
                 Icon(
                   Icons.inbox_outlined,
                   size: 80,
-                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4), // Dinamis
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4), // Dinamis
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -215,7 +215,7 @@ class InboxView extends StatelessWidget {
     return Container(
       width: 50,
       height: 50,
-      color: theme.colorScheme.surfaceVariant, // Dinamis
+      color: theme.colorScheme.surfaceContainerHighest, // Dinamis
       child: Icon(
         Icons.person,
         color: theme.colorScheme.onSurfaceVariant, // Dinamis

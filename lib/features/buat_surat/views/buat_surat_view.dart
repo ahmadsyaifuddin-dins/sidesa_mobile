@@ -157,7 +157,7 @@ class BuatSuratView extends StatelessWidget {
       // Mengatur warna latar belakang berdasarkan mode dan seleksi
       Color bgColor;
       if (isSelected) {
-        bgColor = isDark ? color.withOpacity(0.2) : color[50]!;
+        bgColor = isDark ? color.withValues(alpha: 0.2) : color[50]!;
       } else {
         bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
       }

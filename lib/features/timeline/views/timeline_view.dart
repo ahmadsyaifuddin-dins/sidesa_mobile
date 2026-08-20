@@ -46,7 +46,7 @@ class TimelineView extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface, // Background appbar ngikut tema
         surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
         elevation: 0.5,
-        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
+        shadowColor: theme.shadowColor.withValues(alpha: 0.3), // Bayangan halus
       ),
       
       // Tombol Tulis Aspirasi Mengambang (Posisinya dinaikkan agar tidak ketutupan navbar)
@@ -87,7 +87,7 @@ class TimelineView extends StatelessWidget {
                 Icon(
                   Icons.forum_outlined, 
                   size: 80, 
-                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4) // Icon kosong dinamis
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4) // Icon kosong dinamis
                 ),
                 const SizedBox(height: 16),
                 Center(
@@ -117,7 +117,7 @@ class TimelineView extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SpinKitThreeBounce(
-                      color: theme.colorScheme.primary.withOpacity(0.5), // Animasi loading pagination dinamis
+                      color: theme.colorScheme.primary.withValues(alpha: 0.5), // Animasi loading pagination dinamis
                       size: 24.0,
                     ),
                   );

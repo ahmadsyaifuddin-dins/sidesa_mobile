@@ -32,7 +32,7 @@ class DetailSuratView extends StatelessWidget {
         foregroundColor: theme.colorScheme.onSurface, // Icon Back dinamis
         surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
         elevation: 0.5,
-        shadowColor: theme.shadowColor.withOpacity(0.3),
+        shadowColor: theme.shadowColor.withValues(alpha: 0.3),
         centerTitle: true,
       ),
       body: Obx(() {

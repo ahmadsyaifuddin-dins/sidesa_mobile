@@ -19,7 +19,7 @@ class SkeletonHistoryItem extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
+            color: theme.shadowColor.withValues(alpha: 0.05), // Shadow dinamis
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),

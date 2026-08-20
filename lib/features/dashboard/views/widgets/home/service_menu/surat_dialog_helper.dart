@@ -96,7 +96,7 @@ class SuratDialogHelper {
       ),
       btnCancelText: "Batal",
       // 3. Tombol batal menggunakan warna dinamis agar terbaca
-      btnCancelColor: theme.colorScheme.surfaceVariant,
+      btnCancelColor: theme.colorScheme.surfaceContainerHighest,
       buttonsTextStyle: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
       btnCancelOnPress: () {},
     ).show();
@@ -120,8 +120,8 @@ class SuratDialogHelper {
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           // 4. Gunakan withOpacity untuk background dan border
-          color: baseColor.withOpacity(0.1),
-          border: Border.all(color: baseColor.withOpacity(0.3)),
+          color: baseColor.withValues(alpha: 0.1),
+          border: Border.all(color: baseColor.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -129,7 +129,7 @@ class SuratDialogHelper {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: baseColor.withOpacity(0.2), 
+                color: baseColor.withValues(alpha: 0.2), 
                 shape: BoxShape.circle
               ),
               child: Icon(icon, color: baseColor, size: 28),

@@ -35,13 +35,13 @@ class DigitalIdCard extends StatelessWidget {
         boxShadow: [
           isDark
               ? BoxShadow(
-                  color: const Color(0xFF00E5FF).withOpacity(0.25), 
+                  color: const Color(0xFF00E5FF).withValues(alpha: 0.25), 
                   blurRadius: 25, 
                   spreadRadius: 2,
                   offset: const Offset(0, 10), 
                 )
               : BoxShadow(
-                  color: Colors.blue.withOpacity(0.4), 
+                  color: Colors.blue.withValues(alpha: 0.4), 
                   blurRadius: 15, 
                   offset: const Offset(0, 8), 
                 ),

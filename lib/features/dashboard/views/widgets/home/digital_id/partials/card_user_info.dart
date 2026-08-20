@@ -54,7 +54,7 @@ class CardUserInfo extends StatelessWidget {
                 controller.isNikHidden.value
                     ? Icons.visibility_off_rounded
                     : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 size: 20,
               )),
             ),

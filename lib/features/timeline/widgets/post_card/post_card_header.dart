@@ -134,7 +134,7 @@ class PostCardHeader extends StatelessWidget {
     return Container(
       width: 40, 
       height: 40, 
-      color: theme.colorScheme.surfaceVariant, // Background abu-abu
+      color: theme.colorScheme.surfaceContainerHighest, // Background abu-abu
       child: Icon(Icons.person, color: theme.colorScheme.onSurfaceVariant) // Ikon abu-abu
     );
   }

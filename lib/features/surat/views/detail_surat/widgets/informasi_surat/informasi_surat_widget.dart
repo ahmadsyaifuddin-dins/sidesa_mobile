@@ -37,7 +37,7 @@ class InformasiSuratWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.05), // Bayangan dinamis
+                color: theme.shadowColor.withValues(alpha: 0.05), // Bayangan dinamis
                 blurRadius: 10, 
                 offset: const Offset(0, 4)
               )

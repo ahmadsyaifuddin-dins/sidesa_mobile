@@ -21,7 +21,7 @@ class ProfileMenuTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceVariant, // Warna dinamis
+          color: theme.colorScheme.surfaceContainerHighest, // Warna dinamis
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: theme.colorScheme.onSurfaceVariant, size: 18),

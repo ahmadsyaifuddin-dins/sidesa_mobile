@@ -52,7 +52,7 @@ void showQrBottomSheet(BuildContext context, DashboardController controller) {
             decoration: BoxDecoration(
               color: Colors.white, // Wajib putih demi scanner fisik
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3), width: 2),
+              border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.3), width: 2),
             ),
             child: QrImageView(
               data: webUrl.isNotEmpty ? webUrl : "SIDESA_GUEST",
@@ -76,7 +76,7 @@ void showQrBottomSheet(BuildContext context, DashboardController controller) {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1), // Biru pudar/transparan
+              color: theme.colorScheme.primary.withValues(alpha: 0.1), // Biru pudar/transparan
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(

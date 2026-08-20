@@ -92,7 +92,7 @@ class UserProfileView extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: bgColor,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: roleColor.withOpacity(0.3)),
+                        border: Border.all(color: roleColor.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         roleName,

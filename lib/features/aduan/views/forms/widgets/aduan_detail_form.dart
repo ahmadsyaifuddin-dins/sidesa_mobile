@@ -46,7 +46,7 @@ class AduanDetailForm extends StatelessWidget {
               height: 160,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: isShowingPhoto ? Colors.blue.withOpacity(0.05) : Colors.grey[50],
+                color: isShowingPhoto ? Colors.blue.withValues(alpha: 0.05) : Colors.grey[50],
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isShowingPhoto ? Colors.blue : Colors.grey.shade300,

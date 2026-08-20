@@ -23,7 +23,7 @@ class PostDetailView extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface, // Dinamis
         surfaceTintColor: Colors.transparent, // Hindari tint kusam dari Material 3
         elevation: 0.5,
-        shadowColor: theme.shadowColor.withOpacity(0.3), // Bayangan halus
+        shadowColor: theme.shadowColor.withValues(alpha: 0.3), // Bayangan halus
         foregroundColor: theme.colorScheme.onSurface, // Icon back dan Teks otomatis ngikut tema
         title: const Text("Komentar", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       ),
@@ -42,7 +42,7 @@ class PostDetailView extends StatelessWidget {
                       onEdit: () {},
                       onDelete: () {},
                     ),
-                    Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withOpacity(0.2)), // Divider dinamis
+                    Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2)), // Divider dinamis
                     
                     // Tampilkan 4 Skeleton Komentar sebagai pengganti loading muter
                     Padding(
@@ -66,16 +66,16 @@ class PostDetailView extends StatelessWidget {
                     currentUserId: controller.currentUserId.value,
                     onCommentTap: () {}, // Kosongkan karena sudah di halaman komentar
                     onEdit: () => Get.snackbar("Info", "Edit postingan dari halaman timeline ya!", 
-                      backgroundColor: theme.colorScheme.surfaceVariant, 
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest, 
                       colorText: theme.colorScheme.onSurfaceVariant
                     ),
                     onDelete: () => Get.snackbar("Info", "Hapus postingan dari halaman timeline ya!",
-                      backgroundColor: theme.colorScheme.surfaceVariant, 
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest, 
                       colorText: theme.colorScheme.onSurfaceVariant
                     ),
                   ),
                   
-                  Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withOpacity(0.2)), // Divider tebal dinamis
+                  Divider(thickness: 4, color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2)), // Divider tebal dinamis
                   
                   // 2. LIST KOMENTAR
                   if (controller.comments.isEmpty)
@@ -116,7 +116,7 @@ class PostDetailView extends StatelessWidget {
                                       decoration: InputDecoration(
                                         border: const OutlineInputBorder(),
                                         contentPadding: const EdgeInsets.all(12),
-                                        fillColor: theme.colorScheme.surfaceVariant,
+                                        fillColor: theme.colorScheme.surfaceContainerHighest,
                                         filled: true,
                                       ),
                                     ),
@@ -124,7 +124,7 @@ class PostDetailView extends StatelessWidget {
                                   btnCancelText: "Batal",
                                   btnOkText: "Simpan",
                                   btnOkColor: theme.colorScheme.primary,
-                                  btnCancelColor: theme.colorScheme.surfaceVariant,
+                                  btnCancelColor: theme.colorScheme.surfaceContainerHighest,
                                   buttonsTextStyle: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold),
                                   btnCancelOnPress: () {},
                                   btnOkOnPress: () async {
@@ -174,7 +174,7 @@ class PostDetailView extends StatelessWidget {
         color: theme.cardColor, // Background dinamis
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), 
+            color: theme.shadowColor.withValues(alpha: 0.05), 
             blurRadius: 10, 
             offset: const Offset(0, -2)
           )
@@ -190,7 +190,7 @@ class PostDetailView extends StatelessWidget {
               if (controller.replyingTo.value != null) {
                 return Container(
                   width: double.infinity,
-                  color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue.shade50, // Biru pudar yang soft
+                  color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.blue.shade50, // Biru pudar yang soft
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
@@ -233,10 +233,10 @@ class PostDetailView extends StatelessWidget {
                       style: TextStyle(color: theme.colorScheme.onSurface), // Warna inputan dinamis
                       decoration: InputDecoration(
                         hintText: "Tulis komentar...",
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         filled: true,
-                        fillColor: theme.colorScheme.surfaceVariant, // Background field abu-abu
+                        fillColor: theme.colorScheme.surfaceContainerHighest, // Background field abu-abu
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide.none,
@@ -249,7 +249,7 @@ class PostDetailView extends StatelessWidget {
                     onPressed: controller.isSending.value ? null : () => controller.submitComment(),
                     style: IconButton.styleFrom(
                       backgroundColor: controller.isSending.value 
-                          ? theme.colorScheme.surfaceVariant 
+                          ? theme.colorScheme.surfaceContainerHighest 
                           : theme.colorScheme.primary, // Button Send Biru vs Abu
                       foregroundColor: controller.isSending.value 
                           ? theme.colorScheme.onSurfaceVariant 

@@ -21,7 +21,7 @@ class SkeletonChatBubble extends StatelessWidget {
         decoration: BoxDecoration(
           // Warna dasar skeleton: Primary pudar untuk user, Card untuk AI
           color: isUser 
-              ? theme.colorScheme.primary.withOpacity(isDark ? 0.2 : 0.1) 
+              ? theme.colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.1) 
               : theme.cardColor,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
@@ -31,7 +31,7 @@ class SkeletonChatBubble extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.05),
+              color: theme.shadowColor.withValues(alpha: 0.05),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),

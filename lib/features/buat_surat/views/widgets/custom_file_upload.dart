@@ -69,7 +69,7 @@ class CustomFileUpload extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
                   color: isFileAttached 
-                      ? (isDark ? Colors.green.withOpacity(0.15) : Colors.green[50]) 
+                      ? (isDark ? Colors.green.withValues(alpha: 0.15) : Colors.green[50]) 
                       : (isDark ? const Color(0xFF2C2C2C) : Colors.grey[50]),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(

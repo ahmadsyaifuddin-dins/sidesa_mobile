@@ -82,7 +82,7 @@ class HistorySection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant, // Background dinamis
+        color: theme.colorScheme.surfaceContainerHighest, // Background dinamis
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
       ),
@@ -115,7 +115,7 @@ class HistorySection extends StatelessWidget {
           border: Border.all(color: theme.colorScheme.outlineVariant),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
+              color: theme.shadowColor.withValues(alpha: 0.05), // Shadow dinamis
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -127,7 +127,7 @@ class HistorySection extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 // Ikon bulat dengan warna primary transparan
-                color: theme.colorScheme.primary.withOpacity(0.1), 
+                color: theme.colorScheme.primary.withValues(alpha: 0.1), 
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -162,7 +162,7 @@ class HistorySection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: surat.statusColor.withOpacity(0.1),
+                color: surat.statusColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

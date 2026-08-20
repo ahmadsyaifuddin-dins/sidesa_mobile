@@ -100,14 +100,14 @@ class AuthController extends GetxController {
                 style: TextStyle(color: theme.colorScheme.onSurface), // Teks input dinamis
                 decoration: InputDecoration(
                   hintText: "Cth: 192.168.0.28 atau https://ngrok...",
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                   prefixIcon: Icon(Icons.link, color: theme.colorScheme.primary), // Icon dinamis
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surfaceVariant, // Warna field dinamis
+                  fillColor: theme.colorScheme.surfaceContainerHighest, // Warna field dinamis
                 ),
               ),
             ],
@@ -116,7 +116,7 @@ class AuthController extends GetxController {
         btnCancelText: "BATAL",
         btnOkText: "SIMPAN",
         btnOkColor: theme.colorScheme.primary, // Warna OK dinamis
-        btnCancelColor: theme.colorScheme.surfaceVariant, // Warna Batal dinamis
+        btnCancelColor: theme.colorScheme.surfaceContainerHighest, // Warna Batal dinamis
         buttonsTextStyle: TextStyle(
           color: theme.colorScheme.onSurface, // Teks tombol dinamis
           fontWeight: FontWeight.bold

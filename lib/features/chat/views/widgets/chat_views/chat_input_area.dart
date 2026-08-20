@@ -16,7 +16,7 @@ class ChatInputArea extends StatelessWidget {
         color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -38,9 +38,9 @@ class ChatInputArea extends StatelessWidget {
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: "Ketik pesan di sini...",
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                   filled: true,
-                  fillColor: theme.colorScheme.surfaceVariant,
+                  fillColor: theme.colorScheme.surfaceContainerHighest,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -67,7 +67,7 @@ class ChatInputArea extends StatelessWidget {
                           heroTag: null, 
                           key: const ValueKey('btn_loading'), 
                           elevation: 0,
-                          backgroundColor: theme.colorScheme.surfaceVariant,
+                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
                           shape: const CircleBorder(),
                           onPressed: null,
                           child: SizedBox(

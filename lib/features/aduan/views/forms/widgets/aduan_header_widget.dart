@@ -43,9 +43,9 @@ class AduanHeaderWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               // Background dinamis
-              color: isDark ? theme.colorScheme.primary.withOpacity(0.1) : Colors.blue[50],
+              color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.1) : Colors.blue[50],
               border: Border.all(
-                color: isDark ? theme.colorScheme.primary.withOpacity(0.3) : Colors.blue[100]!
+                color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.3) : Colors.blue[100]!
               ),
               borderRadius: BorderRadius.circular(16),
             ),
@@ -59,7 +59,7 @@ class AduanHeaderWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue[100],
+                        color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.blue[100],
                         shape: BoxShape.circle,
                       ),
                       child: Icon(Icons.menu_book_rounded, size: 18, color: theme.colorScheme.primary),
@@ -90,7 +90,7 @@ class AduanHeaderWidget extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.transparent : Colors.white.withOpacity(0.5),
+                      color: isDark ? Colors.transparent : Colors.white.withValues(alpha: 0.5),
                       border: Border(
                         top: BorderSide(
                           color: isDark ? theme.colorScheme.outlineVariant : Colors.blue[100]!
@@ -127,7 +127,7 @@ class AduanHeaderWidget extends StatelessWidget {
           height: 24,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isDark ? theme.colorScheme.primary.withOpacity(0.2) : Colors.blue[100], 
+            color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.blue[100], 
             shape: BoxShape.circle
           ),
           child: Text(

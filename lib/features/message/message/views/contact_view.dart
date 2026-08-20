@@ -50,7 +50,7 @@ class ContactView extends StatelessWidget {
         foregroundColor: theme.colorScheme.onSurface, // Teks dan icon ngikut tema
         titleSpacing: 0,
         elevation: 0,
-        shadowColor: theme.shadowColor.withOpacity(0.2), // Sedikit bayangan
+        shadowColor: theme.shadowColor.withValues(alpha: 0.2), // Sedikit bayangan
         title: const Text("Pilih Kontak", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(70),
@@ -62,11 +62,11 @@ class ContactView extends StatelessWidget {
               style: TextStyle(color: theme.colorScheme.onSurface), // Teks inputan
               decoration: InputDecoration(
                 hintText: "Cari nama warga atau perangkat...",
-                hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                 prefixIcon: Icon(Icons.search, color: theme.colorScheme.onSurfaceVariant),
                 filled: true,
                 // Di mode gelap jadi abu-abu elegan, di mode terang abu-abu sangat muda
-                fillColor: theme.colorScheme.surfaceVariant, 
+                fillColor: theme.colorScheme.surfaceContainerHighest, 
                 contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -151,7 +151,7 @@ class ContactView extends StatelessWidget {
     return Container(
       width: 45,
       height: 45,
-      color: theme.colorScheme.surfaceVariant, // Background abu-abu dinamis
+      color: theme.colorScheme.surfaceContainerHighest, // Background abu-abu dinamis
       child: Icon(Icons.person, color: theme.colorScheme.onSurfaceVariant),
     );
   }

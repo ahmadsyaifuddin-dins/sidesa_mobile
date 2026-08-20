@@ -138,7 +138,7 @@ class LampiranGridWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: theme.colorScheme.outlineVariant), // Border dinamis
                   boxShadow: [
-                    BoxShadow(color: theme.shadowColor.withOpacity(0.05), blurRadius: 5, offset: const Offset(0, 2))
+                    BoxShadow(color: theme.shadowColor.withValues(alpha: 0.05), blurRadius: 5, offset: const Offset(0, 2))
                   ],
                 ),
                 child: Column(
@@ -162,7 +162,7 @@ class LampiranGridWidget extends StatelessWidget {
                     // PREVIEW KOTAK TENGAH
                     Expanded(
                       child: Container(
-                        color: theme.colorScheme.surfaceVariant.withOpacity(0.5), // Background image placeholder dinamis
+                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5), // Background image placeholder dinamis
                         child: isPdf
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +194,7 @@ class LampiranGridWidget extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
                         // Warna Background tombol bawah (biru pudar di Dark Mode, biru sangat muda di Light Mode)
-                        color: isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50,
+                        color: isDark ? theme.colorScheme.primary.withValues(alpha: 0.15) : Colors.blue.shade50,
                         borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12))
                       ),
                       child: Row(

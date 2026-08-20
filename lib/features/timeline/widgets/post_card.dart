@@ -42,19 +42,19 @@ class PostCard extends StatelessWidget {
       decoration: BoxDecoration(
         // Background Dinamis: Jika pengumuman resmi, gunakan warna primer pudar
         color: isOfficial 
-            ? (isDark ? theme.colorScheme.primary.withOpacity(0.15) : Colors.blue.shade50) 
+            ? (isDark ? theme.colorScheme.primary.withValues(alpha: 0.15) : Colors.blue.shade50) 
             : theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           // Border Dinamis menyesuaikan status pin/pengumuman dan mode gelap/terang
           color: isPinned 
               ? theme.colorScheme.primary 
-              : (isOfficial ? theme.colorScheme.primary.withOpacity(0.5) : theme.colorScheme.outlineVariant),
+              : (isOfficial ? theme.colorScheme.primary.withValues(alpha: 0.5) : theme.colorScheme.outlineVariant),
           width: isPinned ? 1.5 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), // Shadow Dinamis
+            color: theme.shadowColor.withValues(alpha: 0.05), // Shadow Dinamis
             blurRadius: 8, 
             offset: const Offset(0, 2)
           ),
@@ -128,18 +128,18 @@ class PostCard extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.edit_rounded, 
-                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                color: canEdit ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
               ),
               title: Text(
                 "Edit Postingan", 
                 style: TextStyle(
                   fontWeight: FontWeight.bold, 
-                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                  color: canEdit ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
                 )
               ),
               subtitle: canEdit
                   ? Text("Tersisa ${15 - difference} menit lagi", style: TextStyle(color: theme.colorScheme.onSurfaceVariant))
-                  : Text("Waktu edit telah habis (Maks 15 menit)", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5), fontSize: 12)),
+                  : Text("Waktu edit telah habis (Maks 15 menit)", style: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5), fontSize: 12)),
               onTap: canEdit ? () {
                 Get.back();
                 onEdit();  

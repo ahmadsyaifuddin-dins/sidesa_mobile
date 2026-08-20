@@ -55,7 +55,7 @@ class _FormAhliWarisWidgetState extends State<FormAhliWarisWidget> {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: isDark ? Colors.indigo.withOpacity(0.1) : Colors.indigo[50],
+            color: isDark ? Colors.indigo.withValues(alpha: 0.1) : Colors.indigo[50],
             border: Border.all(color: isDark ? Colors.indigo[800]! : Colors.indigo[200]!),
             borderRadius: BorderRadius.circular(10),
           ),

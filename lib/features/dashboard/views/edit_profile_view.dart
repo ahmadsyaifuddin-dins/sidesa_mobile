@@ -47,10 +47,10 @@ class EditProfileView extends StatelessWidget {
                       height: 120,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.2), 
+                          color: theme.colorScheme.primary.withValues(alpha: 0.2), 
                           width: 4
                         ),
                         image: controller.selectedImage.value != null
@@ -72,7 +72,7 @@ class EditProfileView extends StatelessWidget {
                           ? Icon(
                               Icons.person,
                               size: 60,
-                              color: theme.colorScheme.primary.withOpacity(0.5),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.5),
                             )
                           : null,
                     );
@@ -123,7 +123,7 @@ class EditProfileView extends StatelessWidget {
                 prefixIcon: Icon(Icons.phone_android, color: theme.colorScheme.primary),
                 filled: true,
                 // Menggunakan surfaceVariant agar kolom input sedikit berbeda dengan background
-                fillColor: theme.colorScheme.surfaceVariant,
+                fillColor: theme.colorScheme.surfaceContainerHighest,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -141,9 +141,9 @@ class EditProfileView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

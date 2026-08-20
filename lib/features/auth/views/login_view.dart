@@ -118,10 +118,10 @@ class _LoginViewState extends State<LoginView>
       decoration: BoxDecoration(
         color: theme.cardColor, // Background card dinamis
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.5)), // Tambahan border halus
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)), // Tambahan border halus
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05), // Shadow dinamis
+            color: theme.shadowColor.withValues(alpha: 0.05), // Shadow dinamis
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -185,7 +185,7 @@ class _LoginViewState extends State<LoginView>
                     borderRadius: BorderRadius.circular(15),
                   ),
                   elevation: 5,
-                  shadowColor: theme.colorScheme.primary.withOpacity(0.5),
+                  shadowColor: theme.colorScheme.primary.withValues(alpha: 0.5),
                 ),
                 child: controller.isLoading.value
                     ? CircularProgressIndicator(color: theme.colorScheme.onPrimary)

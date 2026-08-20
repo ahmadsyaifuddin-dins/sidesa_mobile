@@ -35,7 +35,7 @@ class CustomDropdownField extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             onChanged: onChanged,
             dropdownColor: isDark ? const Color(0xFF2C2C2C) : Colors.white, // Agar menu popup mengikuti mode gelap
             style: TextStyle(

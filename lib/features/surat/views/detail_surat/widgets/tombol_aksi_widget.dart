@@ -108,7 +108,7 @@ class TombolAksiWidget extends StatelessWidget {
                 label: const Text("Batalkan", style: TextStyle(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   // Background dinamis
-                  backgroundColor: isDark ? theme.colorScheme.error.withOpacity(0.15) : Colors.red.shade50,
+                  backgroundColor: isDark ? theme.colorScheme.error.withValues(alpha: 0.15) : Colors.red.shade50,
                   // Text dinamis
                   foregroundColor: isDark ? Colors.red.shade300 : Colors.red.shade700,
                   elevation: 0,

@@ -22,7 +22,7 @@ class ProfileLogoutButton extends StatelessWidget {
           onPressed: () => _showLogoutDialog(controller),
           style: ElevatedButton.styleFrom(
             // Trik Opacity: Nyaman di Light Mode, Kontras dan Elegan di Dark Mode
-            backgroundColor: Colors.red.withOpacity(0.15),
+            backgroundColor: Colors.red.withValues(alpha: 0.15),
             foregroundColor: Colors.red,
             padding: const EdgeInsets.symmetric(vertical: 15),
             elevation: 0,

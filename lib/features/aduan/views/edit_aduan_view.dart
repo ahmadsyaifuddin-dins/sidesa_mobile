@@ -104,7 +104,7 @@ class EditAduanView extends StatelessWidget {
                                       backgroundColor: Colors.orange[600], // Warna orange khusus update
                                       foregroundColor: Colors.white,
                                       elevation: controller.isLoading.value ? 0 : 4,
-                                      shadowColor: Colors.orange.withOpacity(0.5),
+                                      shadowColor: Colors.orange.withValues(alpha: 0.5),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                     ),
                                     child: controller.isLoading.value
