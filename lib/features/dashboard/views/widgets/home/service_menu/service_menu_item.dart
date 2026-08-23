@@ -16,6 +16,8 @@ class ServiceMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -26,12 +28,13 @@ class ServiceMenuItem extends StatelessWidget {
             width: 55,
             height: 55,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              // Tint sedikit lebih pekat di dark mode agar tetap terlihat
+              color: color.withValues(alpha: isDark ? 0.18 : 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
               icon,
-              color: color,
+              color: isDark ? Color.lerp(color, Colors.white, 0.25) : color,
               size: 26,
             ),
           ),
