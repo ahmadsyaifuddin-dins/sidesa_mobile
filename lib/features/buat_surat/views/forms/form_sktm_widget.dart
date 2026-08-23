@@ -12,6 +12,7 @@ class FormSktmWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,8 +21,8 @@ class FormSktmWidget extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.green[50], borderRadius: BorderRadius.circular(8)),
-              child: Icon(Icons.health_and_safety_rounded, color: Colors.green[700], size: 20),
+              decoration: BoxDecoration(color: isDark ? Colors.green.withValues(alpha: 0.15) : Colors.green[50], borderRadius: BorderRadius.circular(8)),
+              child: Icon(Icons.health_and_safety_rounded, color: isDark ? Colors.green[300] : Colors.green[700], size: 20),
             ),
             const SizedBox(width: 10),
             const Text(

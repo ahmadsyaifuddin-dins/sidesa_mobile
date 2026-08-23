@@ -12,6 +12,7 @@ class FormPengantarKtpWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Variabel statis untuk value dropdown agar tidak salah ketik
     const String baru = "Perekaman Baru (Pemula / Usia 17 Th)";
@@ -27,14 +28,14 @@ class FormPengantarKtpWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
-            border: Border.all(color: Colors.blue[200]!),
+            color: isDark ? Colors.blue.withValues(alpha: 0.1) : Colors.blue[50],
+            border: Border.all(color: isDark ? Colors.blue[800]! : Colors.blue[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.badge_rounded, color: Colors.blue[600], size: 24),
+              Icon(Icons.badge_rounded, color: isDark ? Colors.blue[400] : Colors.blue[600], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -42,12 +43,12 @@ class FormPengantarKtpWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Surat Pengantar KTP Elektronik",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900], fontSize: 13),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.blue[300] : Colors.blue[900], fontSize: 13),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Digunakan untuk pengurusan pencetakan KTP-el di Kecamatan atau Disdukcapil.",
-                      style: TextStyle(color: Colors.blue[800], fontSize: 12, height: 1.4),
+                      style: TextStyle(color: isDark ? Colors.blue[100] : Colors.blue[800], fontSize: 12, height: 1.4),
                     ),
                   ],
                 ),

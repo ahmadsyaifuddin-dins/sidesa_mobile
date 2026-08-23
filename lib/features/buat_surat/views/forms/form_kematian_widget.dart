@@ -15,6 +15,7 @@ class FormKematianWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Controller untuk field tanggal/jam (Inisialisasi dengan data lama jika ada)
     final tglLahirController = TextEditingController(text: controller.formData['tanggal_lahir_almarhum']?.toString());
@@ -29,8 +30,8 @@ class FormKematianWidget extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.purple[50], borderRadius: BorderRadius.circular(8)),
-              child: Icon(Icons.person_off_rounded, color: Colors.purple[700], size: 20),
+              decoration: BoxDecoration(color: isDark ? Colors.purple.withValues(alpha: 0.15) : Colors.purple[50], borderRadius: BorderRadius.circular(8)),
+              child: Icon(Icons.person_off_rounded, color: isDark ? Colors.purple[300] : Colors.purple[700], size: 20),
             ),
             const SizedBox(width: 10),
             const Text("Data Almarhum/Almarhumah", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -76,7 +77,7 @@ class FormKematianWidget extends StatelessWidget {
           hint: "Pilih Tanggal",
           readOnly: true,
           controller: tglLahirController,
-          suffixIcon: const Icon(Icons.calendar_month, color: Colors.grey),
+          suffixIcon: Icon(Icons.calendar_month, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             DateTime? picked = await showDatePicker(
               context: context,
@@ -119,7 +120,7 @@ class FormKematianWidget extends StatelessWidget {
           hint: "Pilih Tanggal",
           readOnly: true,
           controller: tglMeninggalController,
-          suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
+          suffixIcon: Icon(Icons.calendar_today, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             DateTime? picked = await showDatePicker(
               context: context,
@@ -140,7 +141,7 @@ class FormKematianWidget extends StatelessWidget {
           hint: "Pilih Jam",
           readOnly: true,
           controller: jamMeninggalController,
-          suffixIcon: const Icon(Icons.access_time_filled, color: Colors.grey),
+          suffixIcon: Icon(Icons.access_time_filled, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             TimeOfDay? picked = await showTimePicker(context: context, initialTime: TimeOfDay.now());
             if (picked != null) {

@@ -12,6 +12,7 @@ class FormSkckWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,14 +22,14 @@ class FormSkckWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.amber[50],
-            border: Border.all(color: Colors.amber[200]!),
+            color: isDark ? Colors.amber.withValues(alpha: 0.1) : Colors.amber[50],
+            border: Border.all(color: isDark ? Colors.amber[800]! : Colors.amber[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.info_rounded, color: Colors.amber[600], size: 24),
+              Icon(Icons.info_rounded, color: isDark ? Colors.amber[400] : Colors.amber[600], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,13 +37,13 @@ class FormSkckWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Informasi Pembuatan Surat Pengantar SKCK",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber[900], fontSize: 13),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.amber[300] : Colors.amber[900], fontSize: 13),
                     ),
                     const SizedBox(height: 4),
                     Text.rich(
                       TextSpan(
                         text: "Surat ini digunakan sebagai pengantar dari desa untuk pembuatan ",
-                        style: TextStyle(color: Colors.amber[800], fontSize: 12, height: 1.4),
+                        style: TextStyle(color: isDark ? Colors.amber[200] : Colors.amber[800], fontSize: 12, height: 1.4),
                         children: const [
                           TextSpan(text: "Surat Keterangan Catatan Kepolisian (SKCK) ", style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(text: "di "),

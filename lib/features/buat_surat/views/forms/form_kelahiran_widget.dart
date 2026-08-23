@@ -14,6 +14,7 @@ class FormKelahiranWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Tambahkan ?.toString() agar aman dari error null
     final tglController = TextEditingController(text: controller.formData['tanggal_lahir']?.toString());
@@ -27,8 +28,8 @@ class FormKelahiranWidget extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.pink[50], borderRadius: BorderRadius.circular(8)),
-              child: Icon(Icons.child_friendly_rounded, color: Colors.pink[700], size: 20),
+              decoration: BoxDecoration(color: isDark ? Colors.pink.withValues(alpha: 0.15) : Colors.pink[50], borderRadius: BorderRadius.circular(8)),
+              child: Icon(Icons.child_friendly_rounded, color: isDark ? Colors.pink[300] : Colors.pink[700], size: 20),
             ),
             const SizedBox(width: 10),
             const Text("Data Bayi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -57,7 +58,7 @@ class FormKelahiranWidget extends StatelessWidget {
           hint: "Pilih Tanggal",
           readOnly: true,
           controller: tglController, 
-          suffixIcon: const Icon(Icons.calendar_month, color: Colors.grey),
+          suffixIcon: Icon(Icons.calendar_month, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             DateTime? pickedDate = await showDatePicker(
               context: context,
@@ -79,7 +80,7 @@ class FormKelahiranWidget extends StatelessWidget {
           hint: "Pilih Jam",
           readOnly: true,
           controller: jamController,
-          suffixIcon: const Icon(Icons.access_time_filled, color: Colors.grey),
+          suffixIcon: Icon(Icons.access_time_filled, color: isDark ? Colors.grey[500] : Colors.grey),
           onTap: () async {
             TimeOfDay? pickedTime = await showTimePicker(
               context: context,

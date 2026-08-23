@@ -12,6 +12,7 @@ class FormPenghasilanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BuatSuratController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,14 +22,14 @@ class FormPenghasilanWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            color: Colors.green[50],
-            border: Border.all(color: Colors.green[200]!),
+            color: isDark ? Colors.green.withValues(alpha: 0.1) : Colors.green[50],
+            border: Border.all(color: isDark ? Colors.green[800]! : Colors.green[200]!),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.payments_outlined, color: Colors.green[600], size: 24),
+              Icon(Icons.payments_outlined, color: isDark ? Colors.green[400] : Colors.green[600], size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -36,13 +37,13 @@ class FormPenghasilanWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Informasi Surat Keterangan Penghasilan",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[900], fontSize: 13),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.green[300] : Colors.green[900], fontSize: 13),
                     ),
                     const SizedBox(height: 4),
                     Text.rich(
                       TextSpan(
                         text: "Surat ini biasanya digunakan untuk persyaratan ",
-                        style: TextStyle(color: Colors.green[800], fontSize: 12, height: 1.4),
+                        style: TextStyle(color: isDark ? Colors.green[100] : Colors.green[800], fontSize: 12, height: 1.4),
                         children: const [
                           TextSpan(text: "pendaftaran beasiswa, sekolah anak, ", style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(text: "atau pengajuan kredit bagi pekerja "),
@@ -71,18 +72,18 @@ class FormPenghasilanWidget extends StatelessWidget {
           keyboardType: TextInputType.number,
           isCurrency: true,
           initialValue: controller.formData['jumlah_penghasilan']?.toString(), 
-          suffixIcon: const Padding(
-            padding: EdgeInsets.all(14.0),
-            child: Text("Rp", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: Text("Rp", style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.grey[500] : Colors.grey)),
           ),
           onChanged: (val) => controller.updateForm('jumlah_penghasilan', val),
         ),
 
-        const Padding(
-          padding: EdgeInsets.only(bottom: 16),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
           child: Text(
             "* Isi dengan angka saja tanpa titik/koma.",
-            style: TextStyle(fontSize: 10, color: Colors.grey, fontStyle: FontStyle.italic),
+            style: TextStyle(fontSize: 10, color: isDark ? Colors.grey[500] : Colors.grey, fontStyle: FontStyle.italic),
           ),
         ),
 
