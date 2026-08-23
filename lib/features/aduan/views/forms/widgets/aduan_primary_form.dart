@@ -8,6 +8,10 @@ class AduanPrimaryForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AduanController>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color fieldFill = isDark ? const Color(0xFF2C2C2C) : Colors.grey[50]!;
+    final Color borderColor = isDark ? Colors.grey.shade700 : Colors.grey.shade300;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,13 +23,13 @@ class AduanPrimaryForm extends StatelessWidget {
           controller: controller.judulC,
           decoration: InputDecoration(
             hintText: "Contoh: Lampu jalan mati di RT 05",
-            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-            prefixIcon: const Icon(Icons.title, color: Colors.grey),
+            hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 14),
+            prefixIcon: Icon(Icons.title, color: theme.colorScheme.onSurfaceVariant),
             filled: true,
-            fillColor: Colors.grey[50],
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.shade300)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.grey.shade300)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.blue, width: 2)),
+            fillColor: fieldFill,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: borderColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: borderColor)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.colorScheme.primary, width: 2)),
           ),
         ),
         const SizedBox(height: 20),
@@ -37,14 +41,15 @@ class AduanPrimaryForm extends StatelessWidget {
           () => Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: fieldFill,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: borderColor),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                dropdownColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+                icon: Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onSurfaceVariant),
                 value: controller.kategori.value,
                 items: controller.listKategori.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                 onChanged: (val) => controller.kategori.value = val!,
@@ -60,16 +65,16 @@ class AduanPrimaryForm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            border: Border.all(color: Colors.grey.shade200),
+            color: fieldFill,
+            border: Border.all(color: isDark ? Colors.grey.shade800 : Colors.grey.shade200),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildPriorityPill(controller, 'rendah', Colors.green),
-              _buildPriorityPill(controller, 'sedang', Colors.orange),
-              _buildPriorityPill(controller, 'tinggi', Colors.red),
+              _buildPriorityPill(context, controller, 'rendah', Colors.green),
+              _buildPriorityPill(context, controller, 'sedang', Colors.orange),
+              _buildPriorityPill(context, controller, 'tinggi', Colors.red),
             ],
           ),
         ),
@@ -77,7 +82,10 @@ class AduanPrimaryForm extends StatelessWidget {
     );
   }
 
-  Widget _buildPriorityPill(AduanController controller, String value, Color color) {
+  Widget _buildPriorityPill(BuildContext context, AduanController controller, String value, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Obx(() {
       final isSelected = controller.prioritas.value == value;
       return GestureDetector(
@@ -86,8 +94,11 @@ class AduanPrimaryForm extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? color.withValues(alpha: 0.1) : Colors.white,
-            border: Border.all(color: isSelected ? color : Colors.grey.shade300, width: isSelected ? 2 : 1),
+            color: isSelected ? color.withValues(alpha: 0.1) : (isDark ? const Color(0xFF3A3A3A) : Colors.white),
+            border: Border.all(
+              color: isSelected ? color : (isDark ? Colors.grey.shade600 : Colors.grey.shade300),
+              width: isSelected ? 2 : 1,
+            ),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -101,7 +112,7 @@ class AduanPrimaryForm extends StatelessWidget {
               Text(
                 value.capitalizeFirst!,
                 style: TextStyle(
-                  color: isSelected ? color : Colors.grey[700],
+                  color: isSelected ? color : theme.colorScheme.onSurfaceVariant,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 12,
                 ),

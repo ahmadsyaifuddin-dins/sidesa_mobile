@@ -8,6 +8,7 @@ class AduanActionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AduanController>();
+    final theme = Theme.of(context);
 
     return Row(
       children: [
@@ -24,7 +25,7 @@ class AduanActionWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-            child: Text("Batal", style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold, fontSize: 16)),
+            child: Text("Batal", style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold, fontSize: 16)),
           ),
         ),
         const SizedBox(width: 12),

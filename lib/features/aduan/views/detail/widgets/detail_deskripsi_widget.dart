@@ -7,12 +7,14 @@ class DetailDeskripsiWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.description_outlined, size: 20, color: Colors.grey[700]),
+            Icon(Icons.description_outlined, size: 20, color: theme.colorScheme.onSurfaceVariant),
             const SizedBox(width: 8),
             const Text(
               "Deskripsi Laporan",
@@ -23,7 +25,7 @@ class DetailDeskripsiWidget extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           aduan.deskripsi,
-          style: TextStyle(fontSize: 14, height: 1.6, color: Colors.grey[800]),
+          style: TextStyle(fontSize: 14, height: 1.6, color: theme.colorScheme.onSurface.withValues(alpha: 0.85)),
         ),
       ],
     );

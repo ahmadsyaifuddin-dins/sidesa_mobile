@@ -1,6 +1,5 @@
 // Lokasi: lib/features/message/views/chat_room_view.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -14,9 +13,11 @@ class ChatRoomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ChatRoomController());
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5), 
+      backgroundColor: theme.scaffoldBackgroundColor, 
       appBar: AppBar(
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
@@ -32,9 +33,9 @@ class ChatRoomView extends StatelessWidget {
                     ? Image.network(
                         controller.opponent.avatar!.startsWith('http') ? controller.opponent.avatar! : "${ApiConfig.baseHost}/${controller.opponent.avatar}",
                         width: 36, height: 36, fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => _fallbackAvatar(),
+                        errorBuilder: (context, error, stackTrace) => _fallbackAvatar(bg: theme.colorScheme.surfaceContainerHighest),
                       )
-                    : _fallbackAvatar(),
+                    : _fallbackAvatar(bg: theme.colorScheme.surfaceContainerHighest),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -71,11 +72,11 @@ class ChatRoomView extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value && controller.messages.isEmpty) {
-                return _buildSkeletonChat();
+                return _buildSkeletonChat(isDark);
               }
               
               if (controller.messages.isEmpty) {
-                return const Center(child: Text("Mulai obrolan sekarang", style: TextStyle(color: Colors.grey)));
+                return Center(child: Text("Mulai obrolan sekarang", style: TextStyle(color: theme.colorScheme.onSurfaceVariant)));
               }
               
               return ListView.builder(
@@ -85,7 +86,7 @@ class ChatRoomView extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final msg = controller.messages[index];
                   final isMe = msg.senderId == controller.currentUserId.value;
-                  return _buildChatBubble(msg, isMe);
+                  return _buildChatBubble(theme, msg, isMe, isDark);
                 },
               );
             }),
@@ -96,7 +97,7 @@ class ChatRoomView extends StatelessWidget {
             if (controller.selectedImage.value != null) {
               return Container(
                 padding: const EdgeInsets.all(12),
-                color: Colors.white,
+                color: theme.colorScheme.surface,
                 child: Row(
                   children: [
                     Stack(
@@ -124,14 +125,14 @@ class ChatRoomView extends StatelessWidget {
           }),
 
           // AREA INPUT BAWAH
-          _buildInputBar(controller),
+          _buildInputBar(context, controller),
         ],
       ),
     );
   }
 
   // --- WIDGET SKELETON CHAT BUBBLES ---
-  Widget _buildSkeletonChat() {
+  Widget _buildSkeletonChat(bool isDark) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       itemCount: 6,
@@ -140,14 +141,14 @@ class ChatRoomView extends StatelessWidget {
         return Align(
           alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
           child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
+            baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+            highlightColor: isDark ? Colors.grey.shade600 : Colors.grey.shade100,
             child: Container(
               margin: const EdgeInsets.only(bottom: 12),
               height: 45,
               width: isMe ? 180 : 220, // Lebar gelembung palsu
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -163,21 +164,23 @@ class ChatRoomView extends StatelessWidget {
   }
 
   // --- WIDGET GELEMBUNG CHAT (ASLI) ---
-  Widget _buildChatBubble(msg, bool isMe) {
+  Widget _buildChatBubble(ThemeData theme, msg, bool isMe, bool isDark) {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         constraints: BoxConstraints(maxWidth: Get.width * 0.75),
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue.shade100 : Colors.white,
+          color: isMe
+              ? theme.colorScheme.primaryContainer
+              : (isDark ? const Color(0xFF2C2C2C) : Colors.white),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
             bottomLeft: isMe ? const Radius.circular(16) : const Radius.circular(4),
             bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(16),
           ),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+          boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
         ),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
@@ -198,7 +201,7 @@ class ChatRoomView extends StatelessWidget {
               if (msg.message != null && msg.message!.isNotEmpty)
                 Padding(
                   padding: EdgeInsets.only(left: 8, right: 8, top: msg.attachment != null ? 8 : 4, bottom: 2),
-                  child: Text(msg.message!, style: const TextStyle(fontSize: 15, color: Colors.black87)),
+                  child: Text(msg.message!, style: TextStyle(fontSize: 15, color: isMe ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface)),
                 ),
               Padding(
                 padding: const EdgeInsets.only(right: 8, bottom: 4, left: 8),
@@ -206,12 +209,12 @@ class ChatRoomView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(_formatTime(msg.createdAt), style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+                    Text(_formatTime(msg.createdAt), style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant)),
                     if (isMe) ...[
                       const SizedBox(width: 4),
                       Icon(
                         msg.status == 'read' ? Icons.done_all : (msg.status == 'delivered' ? Icons.done_all : Icons.check),
-                        color: msg.status == 'read' ? Colors.blue : Colors.grey,
+                        color: msg.status == 'read' ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                         size: 16,
                       )
                     ]
@@ -226,15 +229,16 @@ class ChatRoomView extends StatelessWidget {
   }
 
   // --- WIDGET INPUT BAR ---
-  Widget _buildInputBar(ChatRoomController controller) {
+  Widget _buildInputBar(BuildContext context, ChatRoomController controller) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      color: Colors.white,
+      color: theme.colorScheme.surface,
       child: SafeArea(
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.image_outlined, color: Colors.blue),
+              icon: Icon(Icons.image_outlined, color: theme.colorScheme.primary),
               onPressed: controller.pickImage,
             ),
             Expanded(
@@ -246,7 +250,7 @@ class ChatRoomView extends StatelessWidget {
                   hintText: "Ketik pesan...",
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
+                  fillColor: theme.colorScheme.surfaceContainerHighest,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 ),
               ),
@@ -286,8 +290,8 @@ class ChatRoomView extends StatelessWidget {
     ));
   }
 
-  Widget _fallbackAvatar() {
-    return Container(width: 36, height: 36, color: Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey, size: 20));
+  Widget _fallbackAvatar({Color? bg}) {
+    return Container(width: 36, height: 36, color: bg ?? Colors.grey.shade200, child: const Icon(Icons.person, color: Colors.grey, size: 20));
   }
 
   String _formatTime(String dateString) {

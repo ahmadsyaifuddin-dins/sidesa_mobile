@@ -13,15 +13,17 @@ class UserProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(UserProfileController());
     final user = controller.user;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     // Menentukan apakah user adalah Perangkat Desa (untuk Icon Verified)
     final bool isPerangkatDesa = ['pimpinan', 'operator', 'rt', 'admin', 'developer'].contains(user.role.toLowerCase());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5), // Background abu-abu muda
+      backgroundColor: theme.scaffoldBackgroundColor, // Background ngikut tema
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
         title: const Text('Info Pengguna', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
@@ -30,7 +32,7 @@ class UserProfileView extends StatelessWidget {
           // KOTAK PROFIL ATAS
           Container(
             width: double.infinity,
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
             child: Column(
               children: [
@@ -39,9 +41,9 @@ class UserProfileView extends StatelessWidget {
                       ? Image.network(
                           user.avatar!.startsWith('http') ? user.avatar! : "${ApiConfig.baseHost}/${user.avatar}",
                           width: 120, height: 120, fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => _fallbackAvatar(120),
+                          errorBuilder: (context, error, stackTrace) => _fallbackAvatar(120, bg: theme.colorScheme.surfaceContainerHighest),
                         )
-                      : _fallbackAvatar(120),
+                      : _fallbackAvatar(120, bg: theme.colorScheme.surfaceContainerHighest),
                 ),
                 const SizedBox(height: 16),
                 
@@ -56,7 +58,7 @@ class UserProfileView extends StatelessWidget {
                     ),
                     if (isPerangkatDesa) ...[
                       const SizedBox(width: 6),
-                      const Icon(Icons.verified, color: Colors.blue, size: 22),
+                      Icon(Icons.verified, color: theme.colorScheme.primary, size: 22),
                     ]
                   ],
                 ),
@@ -66,24 +68,24 @@ class UserProfileView extends StatelessWidget {
                 Builder(
                   builder: (context) {
                     String roleName = 'Warga';
-                    Color roleColor = Colors.blue.shade600;
-                    Color bgColor = Colors.blue.shade100;
+                    Color roleColor = isDark ? Colors.blue.shade300 : Colors.blue.shade600;
+                    Color bgColor = isDark ? Colors.blue.shade900.withValues(alpha: 0.35) : Colors.blue.shade100;
 
                     switch (user.role.toLowerCase()) {
                       case 'pimpinan':
                         roleName = 'Kepala Desa';
-                        roleColor = Colors.purple.shade700;
-                        bgColor = Colors.purple.shade50;
+                        roleColor = isDark ? Colors.purple.shade300 : Colors.purple.shade700;
+                        bgColor = isDark ? Colors.purple.shade900.withValues(alpha: 0.35) : Colors.purple.shade50;
                         break;
                       case 'operator':
                         roleName = 'Operator Desa';
-                        roleColor = Colors.teal.shade700;
-                        bgColor = Colors.teal.shade50;
+                        roleColor = isDark ? Colors.teal.shade300 : Colors.teal.shade700;
+                        bgColor = isDark ? Colors.teal.shade900.withValues(alpha: 0.35) : Colors.teal.shade50;
                         break;
                       case 'rt':
                         roleName = 'Ketua RT';
-                        roleColor = Colors.orange.shade700;
-                        bgColor = Colors.orange.shade50;
+                        roleColor = isDark ? Colors.orange.shade300 : Colors.orange.shade700;
+                        bgColor = isDark ? Colors.orange.shade900.withValues(alpha: 0.35) : Colors.orange.shade50;
                         break;
                     }
 
@@ -125,15 +127,15 @@ class UserProfileView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(width: 10, height: 10, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.grey)),
+                            Container(width: 10, height: 10, decoration: BoxDecoration(shape: BoxShape.circle, color: theme.colorScheme.onSurfaceVariant)),
                             const SizedBox(width: 6),
-                            Text("Sedang Offline", style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+                            Text("Sedang Offline", style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
                           "Terakhir dilihat: ${controller.getLastSeen()}",
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontStyle: FontStyle.italic)
+                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8), fontStyle: FontStyle.italic)
                         ),
                       ],
                     );
@@ -146,13 +148,13 @@ class UserProfileView extends StatelessWidget {
 
           // KOTAK INFO TAMBAHAN
           Container(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.calendar_month_rounded, color: Colors.blue),
-                  title: const Text("Bergabung sejak", style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  subtitle: Text(controller.getJoinedDate(), style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                  leading: Icon(Icons.calendar_month_rounded, color: theme.colorScheme.primary),
+                  title: Text("Bergabung sejak", style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant)),
+                  subtitle: Text(controller.getJoinedDate(), style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface)),
                 ),
               ],
             ),
@@ -184,9 +186,9 @@ class UserProfileView extends StatelessWidget {
     );
   }
 
-  Widget _fallbackAvatar(double size) {
+  Widget _fallbackAvatar(double size, {Color? bg}) {
     return Container(
-      width: size, height: size, color: Colors.grey.shade200,
+      width: size, height: size, color: bg ?? Colors.grey.shade200,
       child: Icon(Icons.person, color: Colors.grey, size: size * 0.6),
     );
   }

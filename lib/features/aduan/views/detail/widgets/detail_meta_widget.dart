@@ -19,34 +19,39 @@ class DetailMetaWidget extends StatelessWidget {
           spacing: 12,
           runSpacing: 10,
           children: [
-            _buildChip(Icons.calendar_today, aduan.createdAt.substring(0, 10), Colors.grey),
-            _buildChip(Icons.category, aduan.kategori, Colors.blue),
+            _buildChip(context, Icons.calendar_today, aduan.createdAt.substring(0, 10), Colors.grey),
+            _buildChip(context, Icons.category, aduan.kategori, Colors.blue),
             _buildChip(
+              context,
               Icons.flag, 
               "Prioritas ${aduan.prioritas}", 
               aduan.prioritas == 'tinggi' ? Colors.red : (aduan.prioritas == 'sedang' ? Colors.orange : Colors.green),
             ),
             if (aduan.isAnonymous == 1)
-              _buildChip(Icons.visibility_off, "Anonim", Colors.purple),
+              _buildChip(context, Icons.visibility_off, "Anonim", Colors.purple),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildChip(IconData icon, String label, MaterialColor color) {
+  Widget _buildChip(BuildContext context, IconData icon, String label, MaterialColor color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isDark ? color.shade300 : color.shade700;
+    final Color bgColor = isDark ? color.shade900.withValues(alpha: 0.35) : color.shade50;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.shade50,
+        color: bgColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color.shade700),
+          Icon(icon, size: 14, color: textColor),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(color: color.shade700, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(label, style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600)),
         ],
       ),
     );

@@ -9,9 +9,10 @@ class SplashView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(SplashController());
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -42,25 +43,25 @@ class SplashView extends StatelessWidget {
             const SizedBox(height: 24),
             
             // Teks SIDESA Mobile dan Subtitle-nya
-            const Text(
+            Text(
               "SIDESA Mobile",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue, 
+                color: theme.colorScheme.primary, 
                 letterSpacing: 2,
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               "Layanan Desa Digital",
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
             ),
             const SizedBox(height: 50),
             
             // Animasi Loading Spinkit
-            const SpinKitDancingSquare(
-              color: Colors.blue, 
+            SpinKitDancingSquare(
+              color: theme.colorScheme.primary, 
               size: 50.0, 
             ),
           ],

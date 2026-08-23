@@ -11,14 +11,23 @@ class DetailTanggapanWidget extends StatelessWidget {
       return const SizedBox.shrink(); // Hilang total kalau gak ada
     }
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.green.shade50, Colors.white], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          gradient: LinearGradient(
+            colors: isDark
+                ? [Colors.green.shade900.withValues(alpha: 0.35), const Color(0xFF1E1E1E)]
+                : [Colors.green.shade50, Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.green.shade200),
+          border: Border.all(color: isDark ? Colors.green.shade800.withValues(alpha: 0.5) : Colors.green.shade200),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,14 +35,14 @@ class DetailTanggapanWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.green.shade100,
+                color: isDark ? Colors.green.shade900.withValues(alpha: 0.45) : Colors.green.shade100,
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.verified_user_rounded, size: 18, color: Colors.green.shade700),
+                  Icon(Icons.verified_user_rounded, size: 18, color: isDark ? Colors.green.shade300 : Colors.green.shade700),
                   const SizedBox(width: 8),
-                  Text("Tanggapan Petugas", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green.shade800)),
+                  Text("Tanggapan Petugas", style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.green.shade300 : Colors.green.shade800)),
                 ],
               ),
             ),
@@ -41,7 +50,7 @@ class DetailTanggapanWidget extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 aduan.tanggapan!,
-                style: const TextStyle(fontSize: 14, height: 1.6, color: Colors.black87),
+                style: TextStyle(fontSize: 14, height: 1.6, color: theme.colorScheme.onSurface.withValues(alpha: 0.85)),
               ),
             ),
           ],

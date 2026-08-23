@@ -11,16 +11,18 @@ class EditAduanView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AduanController>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           "Edit Laporan",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -32,10 +34,10 @@ class EditAduanView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  boxShadow: [
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  borderRadius: const BorderRadius.all(Radius.circular(24)),
+                  boxShadow: isDark ? null : const [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 10,
@@ -64,7 +66,7 @@ class EditAduanView extends StatelessWidget {
                           // 1. Panggil Form Utama
                           const AduanPrimaryForm(),
 
-                          Divider(height: 40, color: Colors.grey[200], thickness: 1),
+                          Divider(height: 40, color: isDark ? Colors.grey[800] : Colors.grey[200], thickness: 1),
 
                           // 2. Panggil Form Detail
                           const AduanDetailForm(),
@@ -86,7 +88,7 @@ class EditAduanView extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                   ),
-                                  child: Text("Batal", style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold, fontSize: 16)),
+                                  child: Text("Batal", style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold, fontSize: 16)),
                                 ),
                               ),
                               const SizedBox(width: 12),

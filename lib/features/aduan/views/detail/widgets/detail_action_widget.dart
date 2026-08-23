@@ -16,12 +16,13 @@ class DetailActionWidget extends StatelessWidget {
     if (aduan.status != 'menunggu') return const SizedBox.shrink();
 
     final aduanC = Get.find<AduanController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        boxShadow: isDark ? null : [
           BoxShadow(
             color: Colors.grey.withValues(alpha: 0.15),
             blurRadius: 15,

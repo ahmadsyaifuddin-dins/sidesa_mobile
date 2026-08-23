@@ -13,16 +13,18 @@ class BuatAduanView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Pastikan controller ditemukan
     Get.find<AduanController>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Background terang seperti web
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           "Buat Aduan Baru",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -34,9 +36,9 @@ class BuatAduanView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(24)),
-                  boxShadow: [
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  borderRadius: const BorderRadius.all(Radius.circular(24)),
+                  boxShadow: isDark ? null : const [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 10,
@@ -50,9 +52,9 @@ class BuatAduanView extends StatelessWidget {
                     Container(
                       height: 6,
                       width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Colors.blue, // Bisa diganti gradient
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(24),
                           topRight: Radius.circular(24),
                         ),
@@ -65,7 +67,7 @@ class BuatAduanView extends StatelessWidget {
                           // 2. Form Utama (Judul, Kategori, Urgensi)
                           AduanPrimaryForm(),
                           
-                          Divider(height: 40, color: Colors.grey[200], thickness: 1),
+                          Divider(height: 40, color: isDark ? Colors.grey[800] : Colors.grey[200], thickness: 1),
                           
                           // 3. Form Detail (Deskripsi, Foto, Anonim)
                           AduanDetailForm(),
@@ -88,7 +90,7 @@ class BuatAduanView extends StatelessWidget {
               child: Text(
                 "Dengan mengirimkan laporan, Anda setuju bahwa data yang dikirimkan adalah benar dan dapat dipertanggungjawabkan.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
               ),
             ),
             SizedBox(height: 20),
